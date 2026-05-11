@@ -802,6 +802,11 @@ See [Proof of History](#proof-of-history), [Consensus](#consensus), [Gulf Stream
 
 ## D
 
+### Dex adapter
+Concrete contract at `alm/evm/src/adapters/Dex.sol`. A multi-holder shim that wraps a single third-party concentrated-liquidity pool (Uniswap v3/v4, PancakeSwap V3/Infinity, Algebra, Ramses, Aerodrome Slipstream). Holders (Vaults, EOAs, multisigs) deposit principal; the adapter manages LP positions on the underlying pool and exposes a uniform NAV / `assetValue` surface.
+
+NOT to be confused with **Dex** (the BTR-native AIMM product, source tree `dex/evm/`). "Dex adapter" = the alm-side integration shim; "Dex" (capitalized, no qualifier) = the BTR DEX product.
+
 ### Dark Pool
 Private trading venue where transactions are hidden from public order book and mempool until settlement. Enables large trades without revealing volume, reducing market impact and information leakage.
 
@@ -828,9 +833,7 @@ decayAmount = liabilities × decaySlope × dt / WAD
 ### Delegatecall
 EVM opcode executing external contract code in caller's storage context.
 
-**AIMM use**: Diamond-lite proxy routes calls to modules via delegatecall.
-
-**See**: [Diamond-Lite](#diamond-lite).
+**AIMM use**: none. Phase 42H removed the Diamond/proxy pattern; all cross-contract calls are now normal external calls.
 
 ### Deviation (Oracle)
 Disagreement between multi-timeframe price signals:
@@ -843,8 +846,8 @@ High deviation indicates price uncertainty, triggering wider spreads in AIMM.
 
 **See**: [Internal Oracle](#internal-oracle), [Feed](#feed-oracle).
 
-### Diamond-Lite
-Simplified Diamond proxy pattern (EIP-2535) used by AIMM. Single proxy dispatches to modules via selector registry without facet cuts complexity.
+### Diamond-Lite (historical)
+A Diamond-lite proxy pattern was used by AIMM prior to **Phase 42H**. Replaced by standalone singletons + EIP-1167 `Pool` clones (no `delegatecall`, no ERC-7201 namespacing, no module trust). Retained here only as a glossary marker for historical references in audit / decision records.
 
 ### Dispersion
 The price range over which liquidity is distributed in AIMM's liquidity profiles. Dispersion scales dynamically with volatility—higher volatility widens the curve, lower volatility tightens it. This is AIMM's core innovation for volatility-responsive depth.

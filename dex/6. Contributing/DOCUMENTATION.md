@@ -2,6 +2,8 @@
 
 **Focus**: DeFi Protocol Documentation + Developer Experience + Public Guides
 
+> **Architecture note (post Phase 42H)** — diagrams or snippets in this file that show `PoolProxy` / Diamond / ERC-7201 are illustrative examples of documentation patterns, not the BTR DEX's current architecture (which uses standalone singletons + EIP-1167 `Pool` clones).
+
 ---
 
 ## Quick Reference
@@ -43,8 +45,7 @@ docs/
 │   │   ├── 1.2.3. Admin.md
 │   │   ├── 1.2.4. Staking.md
 │   │   ├── 1.2.5. Distributor.md
-│   │   ├── 1.2.6. Flash.md
-│   │   └── 1.2.7. Rescue.md
+│   │   └── 1.2.6. Flash.md
 │   └── 1.3. Integration/  # Integration guides
 │       ├── 1.3.1. Composability.md
 │       ├── 1.3.2. Hooks.md
@@ -250,8 +251,8 @@ Diagrams are rendered to **SVG at build time** via Playwright.
 
 ```mermaid
 graph LR
-    User --> Proxy[PoolProxyV1]
-    Proxy --> Module[CoreV1, AdminV1, etc.]
+    User --> Proxy[PoolProxy]
+    Proxy --> Module[Core, Admin, etc.]
     Registry[Module Registry] -.-> Proxy
 ```
 
@@ -431,10 +432,10 @@ For older browsers, tables will display with visible (empty) headers.
 ### NatSpec for Smart Contracts
 
 ```solidity
-/// @title PoolV1
+/// @title Pool
 /// @notice Liquidity pool with single-sided deposits and multi-asset support
 /// @dev Implements ERC-7201 namespaced storage pattern
-contract PoolV1 {
+contract Pool {
     /// @notice Deposit single asset into pool
     /// @dev Mints LP tokens proportional to contribution. Requires prior approval.
     /// @param asset Address of asset to deposit

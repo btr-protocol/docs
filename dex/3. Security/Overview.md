@@ -34,7 +34,7 @@ AIMM employs a **defense-in-depth** approach with multiple independent security 
 |-----------|-------------|---------------|
 | **Owner** | Trusted | Multi-sig with timelock |
 | **Treasury** | Trusted | Fee collection only |
-| **Bridge** | Semi-trusted | Limited to mint/burn operations |
+| **Bridge** (LayerZero v2 OApp endpoint) | Semi-trusted | Limited to mint/burn operations |
 | **External Oracles** | Verified | Deviation checking, fallbacks |
 | **Users** | Untrusted | All inputs validated |
 
@@ -117,28 +117,14 @@ FLASH_ENABLED_BIT     = 1 << 4   // Flash loans
 
 ## 4. Storage Security
 
-### 4.1. ERC-7201 Namespaced Storage
+### 4.1. Standalone-Contract Storage Isolation (Phase 42H)
 
-Each module uses isolated storage slots:
+Storage isolation is achieved structurally: every contract is standalone with its own default storage layout — there is no `delegatecall`, so cross-contract slot collisions are impossible by construction.
 
-```solidity
-bytes32 constant CORE_STORAGE_LOC =
-    keccak256("pool.storage.base.v1") - 1;
-
-bytes32 constant ORACLE_STORAGE_LOC =
-    keccak256("pool.storage.oracle.v1") - 1;
-
-bytes32 constant STAKING_STORAGE_LOC =
-    keccak256("pool.storage.staking.v1") - 1;
-
-bytes32 constant DISTRIBUTOR_STORAGE_LOC =
-    keccak256("pool.storage.distributor.v1") - 1;
-```
-
-**Benefits:**
-- No slot collisions between modules
-- Safe upgrades without storage migration
-- Clear separation of concerns
+- Each `Pool` is an EIP-1167 clone with its own `PoolStorage` at slot 0. Cross-clone isolation is automatic.
+- Singletons (`Admin`, `Staking`, `Distributor`, `Flash`) are key-by-`(pool, ...)`; their slot 0 holds the singleton-level state.
+- The reference `Pool` impl follows an **append-only** rule on `PoolStorage`: existing fields' offsets and types are frozen across upgrades (new fields appended only).
+- ERC-7201 namespaced storage is **no longer used**; the prior design dropped it once `delegatecall` was removed.
 
 ### 4.2. Transient Storage (EIP-1153)
 
@@ -208,23 +194,32 @@ See: [Oracles](/docs/3.5-Oracles)
 
 ## 7. Upgrade Security
 
-### 7.1. Diamond-Lite Proxy
+### 7.1. Reference-Impl Swap at PoolFactory
 
-**Module Registry:**
+`Pool` clones are per-instance immutable. Upgrades happen by swapping the **reference impl** at `PoolFactory`:
+
 ```solidity
-mapping(bytes4 => address) modules;  // selector  implementation
+factory.requestReferenceUpgrade(newImpl);   // starts 7-day timelock
+factory.executeReferenceUpgrade();          // applies after delay
+factory.cancelReferenceUpgrade();           // optional cancel before exec
 ```
 
-**Upgrade Process:**
-1. Request module update (3-day timelock)
-2. Wait for delay
-3. Execute within 7-day grace
-4. Old module removed, new module active
+**Properties:**
+- 7-day timelock (CRITICAL tier).
+- No grace window — the upgrade must be explicitly cancelled if no longer desired; it does not silently expire (chosen so governance never accidentally void-cancels a queued upgrade).
+- Only future clones use the new impl. Existing clones continue running their original `Pool` impl (per-clone immutability).
+- The `PoolStorage` layout is append-only across reference-impl versions to keep future clones forward-compatible with off-chain integrations.
 
-**Immutable Components:**
-- Proxy contract itself
-- Storage slot locations
-- Core libraries
+### 7.2. UUPS-Upgradeable Singletons
+
+- `Treasury`, `Bridge`, and the shared `AccessControl` use UUPS.
+- Upgrade authority gated through `AccessControl.owner()` with timelocks.
+- `Bridge` adds a queue + cancel path for peer / config changes (`cancelSetPeer`, `cancelConfigChange`).
+
+**Immutable / Replaced-Only Components:**
+- All AIMM libraries (Pricing, PoolOracle, Spline, Maths, AnchorTree, etc.).
+- `Admin`, `Staking`, `Distributor`, `Flash` singletons — replaced by re-deployment, not upgraded in place.
+- `Pool` clones — non-upgradeable per-instance.
 
 See: [Deployment & Upgrades](/docs/3.2-Deployment-&-Upgrades)
 
@@ -320,10 +315,45 @@ For security disclosures:
 
 ---
 
-## 11. Related Documentation
+## 11. Audit Hardening Summary (Phases 42C + 42H)
+
+This protocol has gone through two consolidated hardening sweeps. The verdicts below summarise what was closed and how — full per-finding write-ups live in the shared phase records (`docs/shared/16..33` for Phase 42C, `docs/shared/34..42` for Phase 42H).
+
+### 11.1. Phase 42C — Audit Findings R1-R18
+
+The third-party / internal audit produced 18 distinct findings. All are closed:
+
+| Group | Findings | Theme | Resolution |
+|---|---|---|---|
+| **Pricing / Oracle** | R1, R2, R5 | TWAP same-block manipulation, EMA drift on idle pools, deviation-check ordering | Same-block rejection enforced before any state read; idle-pool EMA snap re-sync on first post-idle swap; deviation check moved before fee/skew application. |
+| **Coverage / ALM** | R3, R7, R11 | Withdrawal-haircut rounding, decay-trigger off-by-one, liability-swap coverage check | Haircut math uses WAD precision then floors at the boundary; decay activates strictly when coverage `<` start ratio (was `<=`); liability swap re-checks both legs' coverage post-transfer. |
+| **Fees** | R4, R9 | Protocol/LP split rounding loss, flash-fee under-charge on extreme amounts | Rounded-up protocol share; flash-fee math switched to mulDivUp. |
+| **Routing** | R6, R10 | LCA cycle in adversarial anchor configs, hop-count under-count on degenerate trees | Anchor-tree mutation now revalidates no-cycle + depth invariants atomically; hop count counted from path length, not step list. |
+| **Hooks** | R8, R12 | Hook bypass via flag bit-pack collision, missing post-hook on revert path | Hook flag packing widened to 32 bits with explicit per-stage masks; post-hooks gated by success of the wrapped op. |
+| **Reentrancy / Flash** | R13, R14, R16 | Cross-asset reentrancy on flash-callback path, reserve-vs-ledger desync, campaign-id-zero ambiguity | Transient reentrancy guard upgraded to span all asset-touching paths; `flashAccount` writes ledger before `flashSend`; campaign ids start at 1 (lazy-bump). |
+| **Access / Governance** | R15, R17, R18 | Owner-takeover via uninitialised AC ref, freeze bypass through stale module trust, treasury skim on update | Singleton `AccessControl` checked non-zero at every singleton constructor; freeze-bit honoured pre-route in every entry path; treasury collect requires explicit per-pool whitelist. |
+
+**Outcome:** all 18 closed under the singleton refactor (Phase 42H) — no remaining open audit items.
+
+### 11.2. Phase 42H Architectural Hardening
+
+Phase 42H replaced the Diamond-lite proxy + ERC-7201 module pattern with standalone singletons + EIP-1167 `Pool` clones. The hardening rounds layered on top of that refactor:
+
+- **G18 — UUPS transient-flag pattern.** `Treasury` / `Bridge` / `AccessControl` upgrade authorisation flag is held in EIP-1153 transient storage and asserted/cleared per upgrade call. Removes any window where a stale "upgrade pending" flag could be exploited by an unrelated state-changing path.
+- **G19 — Singleton AccessControl wiring.** Every singleton (`Admin`, `Staking`, `Distributor`, `Flash`, `PoolFactory`) holds an `immutable AC` set at constructor and reverts on zero address. Eliminates the class of bugs where a singleton could be deployed pointing at the wrong owner.
+- **G20 — Distributor leaf domain separation.** Merkle leaves embed a static `BTR_DISTRIBUTOR_v1` tag plus `(pool, campaignId)` so proofs cannot be replayed across pools, campaigns, or protocol versions.
+- **G21 — Bridge cancel paths.** `Bridge.cancelConfigChange` and `Bridge.cancelSetPeer` were added so an in-flight queued upgrade can be explicitly retired without waiting for an indefinite grace window (and without ever silently expiring).
+
+Soft residuals are tracked separately:
+- **G6** — divergent Timelock encodings across 4 callsites; see [ADR-002 Timelock Encodings](/docs/shared/43-ADR-002-Timelock-Encodings) for the decision record.
+- **G17** — alm `Vault` async withdraw queue (ERC-7540) is exposed through the generic `ERC7540_ABI` in `sdk/src/eth/erc7540.ts`; no per-contract ABI regen is required.
+
+---
+
+## 12. Related Documentation
 
 - [Deployment & Upgrades](/docs/3.2-Deployment-&-Upgrades) — Upgrade procedures and deployment
 - [Access Control](/docs/3.3-Access-Control) — Roles and permissions
 - [Flow Guards](/docs/3.4-Flow-Guards) — JIT protection, cooldowns
 - [Oracles](/docs/3.5-Oracles) — Oracle security and fallbacks
-- [Admin Module](/docs/1.2.3-Admin) — Administrative functions
+- [Admin](/docs/1.2.3-Admin) — Administrative functions

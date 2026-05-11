@@ -13,43 +13,59 @@ AIMM is a multi-asset AMM designed for passive liquidity providers. Core compone
 - **Inventory-based pricing** — Avellaneda-Stoikov inspired mid-price adjustment
 - **Coverage-aware ALM** — Reserves/liabilities separation (Wombat-style)
 - **Catmull-Rom spline profiles** — Algo-optimized, depth curves supporting non-uniform and multimodal distributions
-- **Internal TWAP oracle** — Multi-timeframe (eg. 5min/1hr) with support for external fallback
-- **Diamond-lite proxy** — Modular module upgrades via ERC-7201 namespaced storage
+- **Internal TWAP oracle** — Multi-timeframe (eg. 5min/1hr) with support for external fallback, inherited directly by `Pool` (no separate module)
+- **Singleton contracts + EIP-1167 clones** — Each pool is a minimal-proxy clone of a single `Pool` impl. Governance / staking / rewards / flash are standalone singleton contracts shared across all pools.
 
 ---
 
 ## 2. Contract Architecture
 
-### 2.1. Diamond-Lite Proxy (PoolProxyV1)
+### 2.1. Standalone Singletons + Pool Clones
 
-All pool interactions route through a single proxy that dispatches to implementation modules via `delegatecall`:
+Phase 42H removed the Diamond/proxy pattern. The protocol is now a small set of standalone singletons plus per-pool EIP-1167 clones:
 
 ```mermaid
 graph LR
-    User --> Proxy[PoolProxyV1]
-    Proxy --> Module[CoreV1, AdminV1, etc.]
-    Registry[Module Registry] -.-> Proxy
+    User --> Pool[Pool clone]
+    User --> Admin
+    User --> Staking
+    User --> Distributor
+    User --> Flash
+    Admin -. external call .-> Pool
+    Staking -. external call .-> Pool
+    Distributor -. external call .-> Pool
+    Flash -. external call .-> Pool
+    Factory[PoolFactory] -. deploys .-> Pool
+    AC[AccessControl] -. owner ref .-> Admin
+    AC -. owner ref .-> Staking
+    AC -. owner ref .-> Distributor
+    AC -. owner ref .-> Factory
 ```
 
-**Storage Isolation**: Each module uses [ERC-7201](https://eips.ethereum.org/EIPS/eip-7201) namespaced storage to prevent collisions.
+**Properties:**
+- No `delegatecall` between contracts. All cross-contract interactions are standard external calls.
+- No ERC-7201 namespaced storage; each contract uses its own default storage layout.
+- Each `Pool` clone holds its own `PoolStorage` at slot 0 (set once via `initialize`). Clones are non-upgradeable per-instance; the reference impl is replaceable via a 7-day timelocked swap at `PoolFactory`, which produces fresh clones rather than mutating live storage.
+- Singletons (`Admin`, `Staking`, `Distributor`, `Flash`) are key-by-(pool, ...) so a single deployment serves every pool.
+- Owner authority for every singleton routes through a single shared `AccessControl` singleton (one source of truth).
 
-### 2.2. Core Modules
+### 2.2. Core Contracts
 
-| Module | Purpose | Key Functions |
-|--------|---------|---------------|
-| **[CoreV1](/docs/1.2.1-core)** | Main AMM operations | `swap`, `deposit`, `withdraw`, `liabilitySwap`, `donate` |
-| **[InternalOracleV1](/docs/1.2.2-internal-oracle)** | TWAP tracking | Auto-updated on swaps, dual-window EMAs |
-| **[AdminV1](/docs/1.2.3-admin)** | Configuration | Asset management, fee params, timelocks |
-| **[FlashV1](/docs/1.2.6-flash)** | Flash loans | ERC-3156 compliant |
-| **[StakingV1](/docs/1.2.4-staking)** | Governance staking | LP + gov token staking, voting power |
-| **[DistributorV1](/docs/1.2.5-distributor)** | Rewards | Accumulator-based distribution |
-| **[RescueV1](/docs/1.2.7-rescue)** | Emergency | Token rescue, admin recovery |
+| Contract | Path | Purpose |
+|---|---|---|
+| **[Pool](/docs/1.2.1-pool)** | `src/Pool.sol` | Swap, deposit, withdraw, donate, liability swap. Inherits internal TWAP oracle. |
+| **[Admin](/docs/1.2.3-admin)** | `src/Admin.sol` | Per-pool timelocked configuration. |
+| **[Staking](/docs/1.2.4-staking)** | `src/Staking.sol` | Governance + LP staking. |
+| **[Distributor](/docs/1.2.5-distributor)** | `src/Distributor.sol` | Token-only campaign Merkle distribution. |
+| **[Flash](/docs/1.2.6-flash)** | `src/Flash.sol` | ERC-3156 flash loans. |
+| **PoolFactory** | `src/PoolFactory.sol` | Deploys EIP-1167 Pool clones, owns reference-impl swap timelock. |
+| **AccessControl** | `@btr-shared/access/AccessControl.sol` | Single owner ref consumed by all singletons. |
 
 ---
 
 ## 3. Core Data Structures
 
-Per-asset state includes reserves, liabilities, pricing parameters, and sensitivity coefficients. See `IPoolV1.sol` for struct definitions.
+Per-asset state includes reserves, liabilities, pricing parameters, and sensitivity coefficients. See `IPool.sol` for struct definitions.
 
 **Key per-asset fields:**
 - Reserves & liabilities for coverage tracking
@@ -172,16 +188,19 @@ See: [Liquidity Shaping](/docs/1.1.2-liquidity-shaping) for profile design and e
 
 ---
 
-## 9. Storage Layout (ERC-7201)
+## 9. Storage Layout
 
-### 9.1. Namespaced Slots
+### 9.1. Per-Contract Layouts
 
-| Module | Location | Purpose |
-|--------|----------|---------|
-| Core | `CORE_STORAGE_LOC` | Assets, balances, config |
-| Oracle | `ORACLE_STORAGE_LOC` | Feed accumulators |
-| Staking | `STAKING_STORAGE_LOC` | Stakes, voting power |
-| Distributor | `DISTRIBUTOR_STORAGE_LOC` | Campaigns, rewards |
+Each singleton uses default Solidity storage (no ERC-7201 namespacing). Cross-pool keying is handled via `mapping(address pool => ...)` at the storage root.
+
+| Contract | Layout | Purpose |
+|---|---|---|
+| `Pool` (clone) | `PoolStorage` at slot 0 | Per-clone assets, reserves, config — set once via `initialize`. Append-only field order across reference-impl upgrades. |
+| `Admin` | `pendingOps[keccak256(pool, opId)]`, `pendingData[...]` | Per-pool timelock queue. |
+| `Staking` | `mapping(pool, ...)` per-user and per-LP-token | Stakes, voting power. |
+| `Distributor` | `mapping(pool, campaignId, ...)` | Campaigns + cumulative claims. |
+| `Flash` | none (reads pool state) | Stateless. |
 
 ### 9.2. Transient Storage (EIP-1153)
 
@@ -199,7 +218,7 @@ Used for:
 | OpType | Delay | Risk Level |
 |--------|-------|------------|
 | TRANSFER_OWNERSHIP | 3 days | HIGH |
-| UPDATE_MODULE | 2 days | BASE |
+| UPGRADE_POOL_IMPL (factory) | 7 days | CRITICAL |
 | MIGRATE_BASE_TOKEN | 7 days | CRITICAL |
 | UPDATE_ORACLE | 2 days | BASE |
 | ADD_ASSET | 1 day | LOW |
@@ -280,23 +299,24 @@ See: `contracts/src/interfaces/IErrors.sol`
 
 ### 14.1. Immutable Components
 
-- Library contracts (LibPricing, LibOracle, LibSpline, LibMaths)
-- Factory contracts
+- All AIMM library contracts (Pricing, PoolOracle, Spline, Maths, AnchorTree, etc.)
+- `Pool` clones (per-instance immutable — non-upgradeable post-deploy)
+- Singleton contracts: `Admin`, `Staking`, `Distributor`, `Flash` (new deployment for any change)
 
-### 14.2. Upgradeable via Proxy
+### 14.2. Replaceable via Factory Timelock
 
-- PoolProxyV1 (dispatcher)
-- All modules (CoreV1, AdminV1, etc.)
+- `Pool` reference impl — swappable via 7-day timelock at `PoolFactory`. New clones use the new impl; existing clones continue running their original impl.
 
 ### 14.3. Upgradeable via UUPS
 
-- TreasuryV1
-- BridgeV1
+- Treasury
+- Bridge (LayerZero v2 OApp endpoint)
+- AccessControl (shared singleton)
 
 ---
 
 ## 15. Related Documentation
 
 - [Inventory Management](/docs/1.1.1-inventory-management) — Pricing mechanics
-- [Core Module](/docs/1.2.1-core) — Module documentation
+- [Pool Contract](/docs/1.2.1-pool) — Module documentation
 - [Parametrization](/docs/1.1.7-parametrization) — Parameter reference

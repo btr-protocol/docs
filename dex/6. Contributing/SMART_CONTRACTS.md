@@ -2,6 +2,8 @@
 
 **Tech Stack**: EVM (Solidity) + SVM (Rust) + MoveVM (Move)
 
+> **Architecture note (post Phase 42H)** — code samples below that reference `PoolProxy`, the Diamond pattern, ERC-7201 namespaced storage, or `delegatecall`-based module dispatch describe **generic Solidity patterns** for educational purposes; they do **not** reflect the BTR DEX repo's current architecture. The DEX uses standalone singletons + EIP-1167 `Pool` clones (no Diamond, no delegatecall, no ERC-7201). See [3.2 Deployment & Upgrades](../../dex/3.\ Security/3.2.\ Deployment\ &\ Upgrades.md) for the current model.
+
 ---
 
 ## Quick Reference
@@ -114,7 +116,7 @@ contracts/
 ├── src/
 │   ├── interfaces/
 │   │   ├── external/       # External protocol interfaces (ERC20, IERC3156, etc.)
-│   │   └── modules/        # Internal module interfaces (ICoreV1, IOracleV1, etc.)
+│   │   └── modules/        # Internal module interfaces (ICore, IOracle, etc.)
 │   ├── modules/            # Core implementation modules
 │   ├── libraries/          # Reusable utility libraries
 │   ├── tokens/             # Token implementations
@@ -132,8 +134,8 @@ contracts/
 
 | Type | Convention | Example |
 |------|------------|---------|
-| Contracts | PascalCase | `PoolProxyV1`, `ExchangeV1` |
-| Interfaces | PascalCase with `I` prefix | `IPoolV1`, `ICoreV1` |
+| Contracts | PascalCase | `PoolProxy`, `Exchange` |
+| Interfaces | PascalCase with `I` prefix | `IPool`, `ICore` |
 | Libraries | PascalCase with descriptive name | `LibMaths`, `LibConstants` |
 | Functions | camelCase | `getSwapQuote`, `deposit` |
 | Variables | camelCase | `userBalance`, `totalSupply` |
@@ -194,7 +196,7 @@ struct PoolStorage {
 // bytes32 internal constant POOL_STORAGE_LOCATION =
 //     keccak256(abi.encode(uint256(keccak256("btr.pool.storage")) - 1)) & ~bytes32(uint256(0xff));
 
-contract PoolV1 {
+contract Pool {
     // Storage slot for namespaced storage
     bytes32 internal constant POOL_STORAGE_SLOT =
         0x...; // calculated namespace
@@ -211,8 +213,8 @@ contract PoolV1 {
 ### Modular Diamond Proxy Pattern
 
 ```solidity
-// PoolProxyV1.sol - Lightweight proxy
-contract PoolProxyV1 {
+// PoolProxy.sol - Lightweight proxy
+contract PoolProxy {
     mapping(bytes4 => address) private _modules;
 
     error UnauthorizedModule();
@@ -306,7 +308,7 @@ function sum(uint256[] calldata values) external pure returns (uint256) {
 ### Reentrancy Protection with Transient Storage
 
 ```solidity
-contract ProtectedV1 {
+contract Protected {
     // EIP-1153 transient storage for reentrancy guard
     bytes32 private constant REENTRANCY_SLOT =
         0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
@@ -335,16 +337,16 @@ contract ProtectedV1 {
 pragma solidity 0.8.33;
 
 import "forge-std/Test.sol";
-import { PoolV1 } from "../../src/modules/PoolV1.sol";
+import { Pool } from "../../src/modules/Pool.sol";
 
 contract PoolTest is Test {
-    PoolV1 pool;
+    Pool pool;
     address owner = address(0x1);
     address user = address(0x2);
 
     function setUp() public {
         vm.startPrank(owner);
-        pool = new PoolV1();
+        pool = new Pool();
         vm.stopPrank();
     }
 
@@ -388,8 +390,8 @@ contract PoolTest is Test {
 pragma solidity 0.8.33;
 
 import "forge-std/Script.sol";
-import { PoolProxyV1 } from "../src/PoolProxyV1.sol";
-import { ExchangeV1 } from "../src/modules/ExchangeV1.sol";
+import { PoolProxy } from "../src/PoolProxy.sol";
+import { Exchange } from "../src/modules/Exchange.sol";
 
 contract DeployScript is Script {
     function run() external {
@@ -397,11 +399,11 @@ contract DeployScript is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         // Deploy modules
-        ExchangeV1 exchange = new ExchangeV1();
+        Exchange exchange = new Exchange();
         console.log("Exchange deployed:", address(exchange));
 
         // Deploy proxy
-        PoolProxyV1 proxy = new PoolProxyV1();
+        PoolProxy proxy = new PoolProxy();
         proxy.registerModule(exchange.swap.selector, address(exchange));
 
         vm.stopBroadcast();
@@ -708,7 +710,7 @@ function testFork_Mainnet() public {
 ```solidity
 // EVM: Forge invariant
 contract InvariantTest is Test {
-    PoolV1 pool;
+    Pool pool;
 
     function invariant_totalSupplyEqualsSumBalances() public view {
         uint256 total = pool.totalSupply();
@@ -769,7 +771,7 @@ import { IERC20 } from "./interfaces/external/IERC20.sol";
 /// @title Pool Contract
 /// @notice Implements liquidity pool functionality
 /// @dev Uses ERC-7201 namespaced storage
-contract PoolV1 is IPoolV1 {
+contract Pool is IPool {
     /*//////////////////////////////////////////////////////////////
                                 EVENTS
     //////////////////////////////////////////////////////////////*/

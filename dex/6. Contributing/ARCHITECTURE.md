@@ -9,7 +9,7 @@
 | Area | Standard |
 |------|----------|
 | **Architecture Style** | Modular monolith → microservices when needed |
-| **Smart Contracts** | Upgradeable proxies, diamond pattern |
+| **Smart Contracts (current)** | Standalone singletons + EIP-1167 clones for per-pool state. UUPS only on Treasury/Bridge/AccessControl. **No Diamond / delegatecall / ERC-7201 in this repo since Phase 42H.** |
 | **Frontend** | Signal-first, atomic components |
 | **Backend** | Event-driven, WebSocket-first |
 | **Cross-layer** | SDK as single source of truth |
@@ -118,7 +118,7 @@ Frontend (signal update)
 │  ┌──────────────┐  ┌──────────────┐                 │
 │  │ LP Module    │  │ Security     │                 │
 │  │ - mint()     │  │ - pause()    │                 │
-│  │ - burn()     │  │ - rescue()   │                 │
+│  │ - burn()     │  │ - salvage()  │                 │
 │  └──────────────┘  └──────────────┘                 │
 └─────────────────────────────────────────────────────┘
 ```
@@ -132,40 +132,40 @@ Frontend (signal update)
 | **Fees** | Fee calculation, distribution | `calcFee()`, `claimFees()` |
 | **Oracle** | Price feeds, TWAP | `getPrice()`, `updatePrice()` |
 | **Governance** | Parameter updates, voting | `propose()`, `vote()` |
-| **Security** | Emergency controls | `pause()`, `rescue()` |
+| **Security** | Emergency controls | `pause()`, `salvage()` |
 
-### Storage Patterns
+### Storage Patterns (post Phase 42H — no ERC-7201)
 
 ```solidity
-/// @dev ERC-7201 namespaced storage
-/// @custom:storage-location erc7201:btr.pool.storage
+// Each Pool clone keeps its own storage at slot 0 (no namespacing required because
+// EIP-1167 clones never share storage with their impl or with each other).
+// PoolStorage field order is APPEND-ONLY across reference-impl versions.
 struct PoolStorage {
-    // Reserves (packed for gas)
-    uint96 reserve0;           // Slot 0, 0-95 bits
-    uint96 reserve1;           // Slot 0, 96-191 bits
-    uint32 lastUpdate;         // Slot 0, 192-223 bits
-    uint8 paused;              // Slot 0, 224-231 bits
-
-    // Mappings (separate slots)
+    uint96 reserve0;
+    uint96 reserve1;
+    uint32 lastUpdate;
+    uint8  paused;
     mapping(address => uint256) balances;
-    mapping(bytes32 => Asset) assets;
+    mapping(bytes32 => Asset)   assets;
 }
 
-// Get storage with inline assembly
-function _getPoolStorage() internal pure returns (PoolStorage storage $) {
-    assembly {
-        $.slot := POOL_STORAGE_SLOT
-    }
+contract Pool {
+    PoolStorage internal $;  // slot 0
+    // ...
 }
 ```
 
-### Upgrade Patterns
+For singletons (`Admin` / `Staking` / `Distributor` / `Flash`), cross-pool state is keyed by `mapping(address pool => ...)` at the storage root. No assembly indirection.
 
-| Pattern | Pros | Cons | Use Case |
-|---------|------|------|----------|
-| **UUPS** | Gas efficient | Implementation handles upgrade | Core contracts |
-| **Transparent** | Simple proxy | Higher gas | Simple contracts |
-| **Diamond (EIP-2535)** | Modular, many facets | Complex | Large protocols |
+### Upgrade Patterns (current usage in this repo)
+
+| Pattern | Where used | Notes |
+|---|---|---|
+| **EIP-1167 clones + factory-timelock impl swap** | `Pool` via `PoolFactory` | Per-clone immutability; reference-impl swap (7d) affects only future clones. |
+| **UUPS** | `Treasury`, `Bridge`, `AccessControl` | Owner-gated; upgrade-pending flag held in transient storage (Phase 42H · G18). |
+| **Singleton replacement** | `Admin`, `Staking`, `Distributor`, `Flash` | Redeployed rather than upgraded in place. |
+
+**Not used in this repo:** EIP-2535 Diamond, ERC-7201 namespaced storage, `delegatecall` between protocol contracts. (Historical references exist in `docs/shared/12..33` decision records.)
 
 ---
 

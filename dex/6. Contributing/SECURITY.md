@@ -4,6 +4,8 @@
 
 > **Note**: BTR currently deploys on EVM chains only. SVM (Solana) and MoveVM (Aptos/Sui) sections are included for future cross-chain expansion reference.
 
+> **Architecture note (post Phase 42H)** — examples below that show `PoolProxy`, Diamond storage namespacing, `delegatecall`-based facets, or ERC-7201 helpers are **generic Solidity security pattern references**. The BTR DEX repo no longer uses any of these — it uses standalone singletons + EIP-1167 `Pool` clones with default storage. Treat the patterns here as "what to do **if** you ever encounter that pattern" rather than as a description of current BTR code.
+
 ---
 
 ## Table of Contents
@@ -31,7 +33,7 @@
 | **Protocol Fees** | Protocol share of swap fees, flash fees | Admin functions, fee collection |
 | **Oracle Integrity** | Internal TWAP, external oracle fallback | External calls, stale data |
 | **Upgrade Authority** | Module updates, proxy upgrades | Timelock, multisig |
-| **Cross-Chain Mint/Burn** | BridgeV1 LayerZero operations | Peer verification, LZ endpoint |
+| **Cross-Chain Mint/Burn** | Bridge LayerZero operations | Peer verification, LZ endpoint |
 | **Base Token** | Pool's reserve currency (e.g., USDC) | Migration timelock (7 days) |
 
 ### 1.2 Adversary Model
@@ -49,7 +51,7 @@
 
 1. **External Calls (EVM)**
    - Token transfers (`IERC20.transfer`, `transferFrom`)
-   - Oracle reads (`IOracleV1.getFeed`, `isFeedFresh`)
+   - Oracle reads (`IOracle.getFeed`, `isFeedFresh`)
    - Hook calls (`IPoolHooks` on swap/stake)
    - LayerZero endpoint messaging
 
@@ -65,7 +67,7 @@
 
 4. **Oracle Trust**
    - Primary oracle → Secondary oracle fallback
-   - **Warning**: Fallback bypasses deviation checks (see BaseV1:M-03)
+   - **Warning**: Fallback bypasses deviation checks (see Base:M-03)
 
 ---
 
@@ -222,13 +224,13 @@ function expensiveOperation() external nonReentrant {
 **Policy for BTR:**
 
 ```text
-Allowed: Custom transient guard (BaseV1:23-45) on EIP-1153 chains ONLY
+Allowed: Custom transient guard (Base:23-45) on EIP-1153 chains ONLY
 Fallback: Use Solady ReentrancyGuard (storage-based) on non-EIP-1153 chains
 Default: Prefer OpenZeppelin ReentrancyGuardTransient for new code
 Never: Bespoke assembly guards without explicit network gating
 ```
 
-**Current Implementation (BaseV1.sol:23-45):**
+**Current Implementation (Base.sol:23-45):**
 
 ```solidity
 // ✅ BTR Pattern: Transient storage guard
@@ -255,7 +257,7 @@ modifier nonReentrant() {
 ```solidity
 import {ReentrancyGuard} from "solady/utils/ReentrancyGuard.sol";
 
-contract BridgeV1 is ReentrancyGuard {
+contract Bridge is ReentrancyGuard {
     // Uses storage slot 0x... for guard state
     // Compatible with all EVM networks
 }
@@ -333,7 +335,7 @@ function totalSupply() public view override returns (uint256) {
 
 #### 3.3.1 Admin & Upgrade Authority
 
-**Current BTR Pattern (AdminV1.sol):**
+**Current BTR Pattern (Admin.sol):**
 
 ```solidity
 // ✅ Multi-tier timelock (LibTimelock)
@@ -365,7 +367,7 @@ function executeOwnershipTransfer() external nonReentrant onlyOwner {
 // ✅ SECURE: Multisig for owner role
 import {Ownable} from "solady/auth/Ownable.sol";
 
-contract PoolProxyV1 is Ownable {
+contract PoolProxy is Ownable {
     // Owner should be a multisig (e.g., 3/5 or 5/7)
     // Recommended: Safe (Gnosis Safe) multisig wallet
 }
@@ -379,7 +381,7 @@ contract PoolProxyV1 is Ownable {
 // they can become the owner and drain funds.
 
 // ✅ SECURE: Constructor sets immutable owner
-contract PoolProxyV1 {
+contract PoolProxy {
     constructor(address _owner) {
         owner = _owner;
         initialized = true;  // Prevent front-running initialization
@@ -430,7 +432,7 @@ function execute(address target, bytes calldata data) external {
 // ✅ SECURE: Constrained delegatecall via UUPS
 import {UUPSUpgradeable} from "solady/utils/UUPSUpgradeable.sol";
 
-contract BridgeV1 is UUPSUpgradeable {
+contract Bridge is UUPSUpgradeable {
     // Only owner can call upgradeToAndCall
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }
@@ -445,7 +447,7 @@ bytes32 private constant CORE_STORAGE_LOC =
 #### 3.4.1 Deadline & Slippage (Current BTR Pattern)
 
 ```solidity
-// ✅ BTR ExchangeV1: Includes deadline and slippage
+// ✅ BTR Exchange: Includes deadline and slippage
 struct SwapParams {
     address tokenIn;
     address tokenOut;
@@ -507,15 +509,15 @@ function goodWithdraw() external nonReentrant {
 #### 3.5.1 Staleness Checks (Current BTR Pattern)
 
 ```solidity
-// ✅ BTR InternalOracleV1: Dual-window TWAP with staleness protection
-function _readOracle(IPoolV1.PoolStorage storage $, address token) internal returns (IOracleV1.FeedData memory data) {
+// ✅ BTR InternalOracle: Dual-window TWAP with staleness protection
+function _readOracle(IPool.PoolStorage storage $, address token) internal returns (IOracle.FeedData memory data) {
     // Try transient cache first
     (bool found, data) = TCache.tryLoadOracleFeed(token);
     if (found) return data;
 
     // Try primary oracle with try/catch for DoS resilience
-    try IOracleV1(cfg.primary).getFeed(cfg.feedId) returns (IOracleV1.FeedData memory feedData) {
-        try IOracleV1(cfg.primary).isFeedFresh(cfg.feedId) returns (bool fresh) {
+    try IOracle(cfg.primary).getFeed(cfg.feedId) returns (IOracle.FeedData memory feedData) {
+        try IOracle(cfg.primary).isFeedFresh(cfg.feedId) returns (bool fresh) {
             if (fresh) {
                 TCache.cacheOracleFeed(token, feedData);
                 return feedData;
@@ -523,7 +525,7 @@ function _readOracle(IPoolV1.PoolStorage storage $, address token) internal retu
         } catch { /* treat as stale */ }
     } catch { /* primary failed, try fallback */ }
 
-    // ⚠️ SECURITY NOTE (BaseV1:M-03):
+    // ⚠️ SECURITY NOTE (Base:M-03):
     // Fallback oracle does NOT perform deviation checks!
     // If primary is DoS'd and secondary is manipulated, system accepts bad prices.
     // Mitigation: Use reputable oracle providers with independent infrastructure.
@@ -533,7 +535,7 @@ function _readOracle(IPoolV1.PoolStorage storage $, address token) internal retu
 #### 3.5.2 TWAP Manipulation Resistance
 
 ```solidity
-// ✅ BTR InternalOracleV1: Multi-window protection
+// ✅ BTR InternalOracle: Multi-window protection
 uint32 private constant FAST_WINDOW = 300;   // 5 minutes
 uint32 private constant SLOW_WINDOW = 3600;  // 1 hour
 
@@ -579,7 +581,7 @@ function _checkPriceDeviation(uint256 newPrice, uint256 oldPrice) internal pure 
 **IMPORTANT**: Flow guards are **UX constraints**, NOT primary security boundaries.
 
 ```solidity
-// ✅ BTR BaseV1: Correct flow guard pattern
+// ✅ BTR Base: Correct flow guard pattern
 mapping(address => mapping(address => uint32)) public lastDepositTime;
 uint16 public flowCooldownSeconds = 15;  // Configurable, 0 = disabled
 
@@ -892,7 +894,7 @@ public entry fun deposit_shared(pool: &mut SharedPool, account: &signer, amount:
 
 ### 6.1 Message Domain Separation
 
-**Current BTR Pattern (BridgeV1.sol):**
+**Current BTR Pattern (Bridge.sol):**
 
 ```solidity
 // ✅ BTR binds source chain, peer, nonce, and payload
@@ -958,7 +960,7 @@ function hashMessage(CrossChainMessage memory msg) internal pure returns (bytes3
 // - Relayer network honesty assumption
 // - Circuit breakers (rate limits, caps) are critical
 
-// BTR BridgeV1: Per-token rate limits
+// BTR Bridge: Per-token rate limits
 struct TokenConfig {
     uint64 limitOutB64;        // Daily outbound limit
     uint64 bridgedOutB64;      // Today's outbound
@@ -1028,7 +1030,7 @@ struct VelocityState {
 
 ### 6.4 Failed Message Recovery (CRITICAL-6 FIX)
 
-**Current BTR Pattern (BridgeV1.sol:49-70, 179-196, 248-287):**
+**Current BTR Pattern (Bridge.sol:49-70, 179-196, 248-287):**
 
 ```solidity
 // ✅ Queue failed messages instead of reverting
@@ -1114,7 +1116,7 @@ function recoverFailedMessage(bytes32 guid) external onlyOwner nonReentrant {
 - [ ] Storage layout collision prevention (ERC-7201)
 - [ ] Delegatecall constrained (UUPS pattern)
 
-#### Cross-Chain (BridgeV1)
+#### Cross-Chain (Bridge)
 
 - [ ] Peer validation per source chain
 - [ ] Rate limiting per token (daily + velocity)
@@ -1236,7 +1238,7 @@ function recoverFailedMessage(bytes32 guid) external onlyOwner nonReentrant {
 
 | Mechanism | Implementation | Status |
 |-----------|----------------|--------|
-| **Reentrancy Guard** | Transient storage (BaseV1:23-45) | EIP-1153 chains only |
+| **Reentrancy Guard** | Transient storage (Base:23-45) | EIP-1153 chains only |
 | **Reentrancy Guard (Bridge)** | Solady storage-based | All chains |
 | **Timelock** | Multi-tier (1-7 days) | Operational |
 | **Oracle** | Internal TWAP + external fallback | Operational |
@@ -1246,7 +1248,7 @@ function recoverFailedMessage(bytes32 guid) external onlyOwner nonReentrant {
 
 ### A.2 Known Security Considerations
 
-1. **BaseV1:M-03**: Oracle fallback bypasses deviation checks
+1. **Base:M-03**: Oracle fallback bypasses deviation checks
    - **Mitigation**: Use reputable oracle providers with independent infrastructure
    - **Future**: Add deviation circuit breaker at AMM level
 
@@ -1260,15 +1262,15 @@ function recoverFailedMessage(bytes32 guid) external onlyOwner nonReentrant {
 
 ### A.3 Architecture-Specific Risks
 
-**Diamond-Lite Pattern (PoolProxyV1)**
+**Diamond-Lite Pattern (PoolProxy)**
 - Risk: Storage collision if modules use same slot
 - Mitigation: ERC-7201 storage namespaces enforced
 
-**Internal Oracle (InternalOracleV1)**
+**Internal Oracle (InternalOracle)**
 - Risk: TWAP manipulation via low-liquidity swaps
 - Mitigation: Dual-window (5min + 1hr) + staleness threshold
 
-**LayerZero Bridge (BridgeV1)**
+**LayerZero Bridge (Bridge)**
 - Risk: Optimistic verification assumes honest relayers
 - Mitigation: Rate limits, failed message queue, emergency pause
 
