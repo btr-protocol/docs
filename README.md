@@ -15,27 +15,23 @@ Canonical docs root for the BTR protocol. Three product surfaces under one tree,
 | File | Topic |
 |------|-------|
 | [`Overview.md`](./Overview.md) | Top-level product surfaces + cross-cutting concepts |
-| [`Manifesto.md`](./Manifesto.md) | Technical manifesto -problems, solutions, architecture, roadmap |
-| [`Foundations.md`](./Foundations.md) | Design precedents: Avellaneda-Stoikov, Platypus / Wombat ALM, Curve v2 |
-| [`Glossary.md`](./Glossary.md) | Glossary of protocol terms (AIMM + ALM unified) |
-| [`HYBRID_SEARCH.md`](./HYBRID_SEARCH.md) | Notes on the docs-search implementation |
-| [`legal/`](./legal/) | Terms of Service, Privacy Policy, Risk Disclaimer, Cookie Policy, Acknowledgement, Geographic Restriction Strategy |
+| [`Glossary.md`](./Glossary.md) | Glossary of protocol terms (ALM dual meaning + AIMM unified) |
+| [`legal/`](./legal/) | Terms of Service, Privacy Policy, Risk Disclaimer, Cookie Policy, Acknowledgement |
+
+Note: `Manifesto.md` and `Foundations.md` are nested under [`dex/`](./dex/) - they describe BTR DEX architecture and design precedents.
 
 ## Layout
 
 ```
 docs/
 ├── README.md            ← this file
-├── Manifesto.md
 ├── Glossary.md
-├── Foundations.md
 ├── Overview.md
-├── HYBRID_SEARCH.md
 ├── legal/               ← legal markdown (served by /docs-api)
 ├── swap/                ← BTR Swap (off-chain aggregator)
-├── dex/                 ← BTR Dex (AIMM): AIMM, Governance, Security, User & Dev guides, Contributing
+├── dex/                 ← BTR DEX (AIMM): Manifesto, Foundations, AIMM, Governance, Security, User & Dev guides, Contributing
 ├── supply/              ← BTR Supply (ALM Vaults)
-└── prime/               ← BTR Prime (quant trading) -internal, not served on public docs
+└── prime/               ← BTR Prime (quant trading) - internal, not served on public docs
 ```
 
 ## Build & Serve
@@ -53,8 +49,8 @@ The front-end fetches `/docs-api/{structure,all,search-index}` (proxied to `loca
 
 ## Editing
 
-- Top-level files (`Manifesto.md`, `Glossary.md`, `Foundations.md`, `Overview.md`) are protocol-wide.
-- Per-surface docs live under `swap/`, `dex/`, `supply/` -keep numbering consistent within each surface.
+- Top-level files (`Overview.md`, `Glossary.md`) are protocol-wide.
+- Per-surface docs live under `swap/`, `dex/`, `supply/` - keep numbering consistent within each surface.
 - After edits, re-run the build above to regenerate the search index. The watcher in dev mode also picks up changes without a restart.
 
 ## Out of Scope
