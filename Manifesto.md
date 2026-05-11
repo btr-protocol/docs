@@ -1,10 +1,10 @@
 # BTR Manifesto: Why We're Building AIMM
 
-> *Adaptive Inventory Market Maker — Bringing Order Book Intelligence to On-Chain Liquidity*
+> *Adaptive Inventory Market Maker -Bringing Order Book Intelligence to On-Chain Liquidity*
 
 ---
 
-> **See also**: [Foundations](/docs/Foundations) — Theoretical lineage and prior art: Avellaneda-Stoikov, Platypus/Wombat ALM, Swaap MMM, Curve v2.
+> **See also**: [Foundations](/docs/Foundations) -Theoretical lineage and prior art: Avellaneda-Stoikov, Platypus/Wombat ALM, Swaap MMM, Curve v2.
 
 ---
 
@@ -25,24 +25,26 @@ After months of development on existing DEX stacks (primarily Uniswap V3/V4, Ray
 
 ### 1.2. The Pivot
 
-Building ALM strategies on top of existing concentrated liquidity protocols was a **waste of resources**. The underlying DEX architecture fundamentally limited what we could achieve:
+Building ALM strategies on top of existing concentrated liquidity protocols is **capital-intensive and structurally constrained**. The work is necessary—that is where today's liquidity and traders are—but the underlying CL DEX architecture caps what any manager can achieve:
 
-- **Gas inefficiency**: Every rebalance costs transaction fees
-- **Rebalancing costs dominate**: The real killer isn't information leakage—it's market impact and slippage at scale. Rebalancing optimization becomes a trader cost optimization dilemma. We built [BTR Swap](https://github.com/btr-supply/btr-swap) and achieved better rates than competing ALMs 95% of the time. We explored integration of intent-based platforms (1inch Fusion, UniswapX, CoW Swap, Velora) just to make rebalancing viable. The result: 80% of engineering effort went to integration plumbing, only 20% to actual quantitative, value-adding work.
-- **Constrained optimization**: We could only optimize *within* the tick-based model
-- **Index price requirements**: Off-chain decision making required an extremely reliable, transparent, and fast price aggregator—faster than existing oracles (Pyth, Chainlink). We ended up building [BTR Markets](https://github.com/btr-supply/btr-markets) to track 50+ CEXs and 2000+ liquidity pools, covering ~98% of on- and off-chain volumes (excluding OTC).
+- **Gas overhead**: Every rebalance costs transaction fees
+- **Rebalancing costs dominate**: The dominant cost isn't information leakage—it's market impact and slippage at scale. Rebalancing optimization becomes a trader cost optimization dilemma. We built [BTR Swap](https://github.com/btr-supply/btr-swap) and achieved better rates than competing ALMs 95% of the time. We integrated intent-based platforms (1inch Fusion, UniswapX, CoW Swap, Velora) to keep rebalancing viable. The reality: a large share of engineering effort goes to integration plumbing rather than quantitative work.
+- **Constrained optimization**: We can only optimize *within* the tick-based model
+- **Index price requirements**: Off-chain decision making requires a reliable, transparent, and fast price aggregator—faster than existing oracles (Pyth, Chainlink). We ended up building [BTR Markets](https://github.com/btr-supply/btr-markets) to track 50+ CEXs and 2000+ liquidity pools, covering ~98% of on- and off-chain volumes (excluding OTC).
 
-A **better DEX design** could enable:
+This is why BTR ships **two complementary products**. **BTR Supply** brings best-in-class ALM adapters to existing CL DEXs (Uniswap V3/V4, PancakeSwap V3/Infinity, Aerodrome Slipstream, and peers) because that is where users and liquidity live today—we make the existing reality work better. In parallel, **BTR DEX (AIMM)** delivers the architecture we believe is the better long-term path: multi-asset, spline-based, inventory-aware, natively single-sided.
+
+A **better DEX design** can enable:
 - Dynamic fees computed on-chain by properly estimating volatility and price deviation (inventory risk)—no off-chain infrastructure
 - Capital efficiency through unified multi-asset pools: stables, LSTs, and volatiles together, serving different user needs (low risk, yield, exposure) with reduced fragmentation
 - Native inventory management eliminating rebalance transactions
 - Full decentralization without external dependencies
 
-In a word, we could be **more decentralized**, **more capital efficient**, and have a **much leaner codebase**—all at once.
+In a word, the long-term target is to be **more decentralized**, **more capital efficient**, and have a **much leaner codebase**—all at once.
 
-This is when we pivoted from building an ALM to building **AIMM**.
+This is when we extended our scope from ALM-on-CL alone to also building **AIMM**. We did not abandon CL ALM work—we kept shipping it as BTR Supply—but we also began designing the architecture we think comes next.
 
-> **Legacy ALM codebase**: [github.com/btr-supply/alm-contracts](https://github.com/btr-supply/alm-contracts) — Our original ALM work, preserved for historical reference.
+> **Legacy ALM codebase**: [github.com/btr-supply/alm-contracts](https://github.com/btr-supply/alm-contracts) -Our original ALM work, preserved for historical reference.
 
 ---
 
@@ -184,19 +186,19 @@ The explosion of isolated pairs, fee tiers, and hooks has shattered liquidity ac
 
 Capital efficiency plummets. Traders face worse execution. LPs spread thin across competing pools.
 
-### 3.3. The LVR Tax — The Hidden Drain on LP Capital
+### 3.3. The LVR Tax -The Hidden Drain on LP Capital
 
 **Loss-Versus-Rebalancing (LVR)** is the hidden tax that costs LPs [5-7% of their liquidity annually](https://docs.cow.fi/cow-amm/concepts/the-problem-of-lvr)—hundreds of millions in aggregate. Research by [Milionis et al.](https://arxiv.org/pdf/2208.06046) established that AMMs systematically trade at worse-than-market prices, creating guaranteed arbitrage profits.
 
-> *"Fees do not sufficiently compensate for arbitrage losses in most of the largest Uniswap liquidity pools—historically, returns from fees have been smaller than losses to arbitrageurs."* — [Measuring Arbitrage Losses and Profitability of AMM Liquidity (2024)](https://arxiv.org/html/2404.05803v1)
+> *"Fees do not sufficiently compensate for arbitrage losses in most of the largest Uniswap liquidity pools—historically, returns from fees have been smaller than losses to arbitrageurs."* -[Measuring Arbitrage Losses and Profitability of AMM Liquidity (2024)](https://arxiv.org/html/2404.05803v1)
 
 LVR accounts for more value extraction than frontrunning and sandwich attacks combined. Yet every major AMM—including Uniswap v4's hook ecosystem—remains fundamentally vulnerable because they share the same architectural flaw: **constant fees and stale reserves allow one-sided extraction in most market conditions**—whether the pool uses market price directly from reserves (CLMMs) or TWAP/VWAP derived (like Curve's EMA).
 
 **Current solutions are insufficient.** Uniswap v4 and Balancer V3 hooks enable [LVR minimization experiments](https://github.com/sameshl/uniswap-v4-hooks-exploration), [volatility-based fee hooks](https://github.com/fewwwww/awesome-uniswap-hooks), and [impermanent loss hedging hooks](https://github.com/johnsonstephan/awesome-uniswap-v4-hooks). Hooks can override the entire pricing function—escaping x·y=k is technically possible. But doing so is anti-pattern: you're carrying the dead-weight of legacy architecture. The tick-size constraint exemplifies this: you want smaller tick sizes for concentrated stable pools, but gas consumption scales with ticks crossed, and tick spacing can't be changed after pool initialization.
 
-We consider this design too heavy and inefficient. Better to build a lighter, more efficient AMM from scratch that natively supports volatility tracking, dynamic fees, inventory-aware pricing, multi-asset pools, and cooperative arbitrage—without the legacy baggage.
+We consider this design heavier than necessary for the next generation of AMMs. A lighter, purpose-built AMM that natively supports volatility tracking, dynamic fees, inventory-aware pricing, multi-asset pools, and cooperative arbitrage is, in our view, the better long-term direction—without inheriting legacy constraints. In the meantime, BTR Supply meets users where they are by optimizing positions on the existing CL stacks.
 
-That said, hooks remain elegantly extensible. It's not excluded that the DAO deploys Uni V4 pools with hooks as proxies to BTR's Core instance.
+Hooks remain elegantly extensible. It's not excluded that the DAO deploys Uni V4 pools with hooks as proxies to BTR's Core instance.
 
 ---
 
@@ -235,13 +237,13 @@ We **decouple price from reserves**, using oracle-derived reference prices inste
 
 Instead of invariant formulas, AIMM uses:
 
-1. **Internal TWAPs** — Dual-window (5min fast, 1hr slow) exponential moving averages updated on every swap
-2. **Multi-timeframe Volatility EMAs** — Real-time σ tracking for dynamic spread adjustment
-3. **Customizable Spline Profiles** — Monotone cubic Hermite interpolation defining liquidity depth at any price point
+1. **Internal TWAPs** -Dual-window (5min fast, 1hr slow) exponential moving averages updated on every swap
+2. **Multi-timeframe Volatility EMAs** -Real-time σ tracking for dynamic spread adjustment
+3. **Customizable Spline Profiles** -Monotone cubic Hermite interpolation defining liquidity depth at any price point
 
 By default, we use the internal oracle for TWAP. But by design, we support external oracles with fallback. A pool can therefore be:
-- **Fully permissionless and autonomous** — relying only on internal oracle
-- **Oracle-integrated** — for institutional market makers wanting to run advanced strategies with their own price feeds, or RWA issuers pegging illiquid tokens to off-chain assets with minimal slippage
+- **Fully permissionless and autonomous** -relying only on internal oracle
+- **Oracle-integrated** -for institutional market makers wanting to run advanced strategies with their own price feeds, or RWA issuers pegging illiquid tokens to off-chain assets with minimal slippage
 
 **Liquidity profiles are infinitely flexible:**
 - Concentrate liquidity around expected price ranges
@@ -347,9 +349,9 @@ Hooks can technically skip tick traversal entirely, but it's anti-pattern—you'
 
 AIMM is what hooks *tried* to do but couldn't cleanly: a clean-slate architecture built for informed market making from the ground up.
 
-### 6.2. The LP Experience Is Broken
+### 6.2. The LP Experience Is Constrained
 
-Studies consistently show that **90%+ of Uniswap v3/v4 LPs lose money** when accounting for LVR. The concentrated liquidity model shifts complexity onto users who:
+Studies consistently show that **90%+ of Uniswap v3/v4 LPs underperform** when accounting for LVR. The concentrated liquidity model shifts complexity onto users who:
 - Must actively manage positions (gas costs to move ranges)
 - Suffer LVR passively from stale pricing—arbitrageurs extract value on every price move, even if prices revert
 - Compete against sophisticated market makers
@@ -359,7 +361,7 @@ There's a nostalgia for Uniswap V2 among early LPs. They were subject to imperma
 
 **Our design is opinionated:** Most liquidity providers don't want to run market-making strategies. They want to deposit capital and earn yield. AIMM optimizes liquidity profiles automatically—single range, professionally managed—which is net positive for the vast majority of LPs.
 
-Beyond retail, our design also addresses institutions. Professional market makers aren't all hyper-profitable. A fair share of whales providing to ALMs like Kamino, Beefy CLM, Gamma, and Arrakis are unaware of their net loss—these applications display only short-term yield APRs without netting the LVR losses. It's a widespread blind spot that LPs fall for until it's too late and they realize the shiny APY correlates inversely with their position value.
+Beyond retail, our design also addresses institutions. Professional market makers aren't all hyper-profitable. A fair share of whales providing to ALMs like Kamino, Beefy CLM, Gamma, and Arrakis underestimate their net result—these applications typically display short-term yield APRs without netting LVR. This is a structural reporting gap rather than malice, and BTR Supply explicitly reports LVR-adjusted performance to close it on the CL venues we plug into today.
 
 ### 6.3. DEXs Must Rival CEX Spot Markets
 
@@ -421,10 +423,10 @@ For low-volume pools, external oracle fallback prevents TWAP manipulation across
 
 **What happens in a flash crash?**
 
-1. **Volatility fees spike** — σ-based component widens spreads automatically
-2. **Inventory skew caps at ±100** — bounded price adjustment prevents runaway
-3. **Maximum slippage = liquidity profile edge** — dispersion-scaled worst-case execution
-4. **Emergency pause available** — governance can freeze operations if needed
+1. **Volatility fees spike** -σ-based component widens spreads automatically
+2. **Inventory skew caps at ±100** -bounded price adjustment prevents runaway
+3. **Maximum slippage = liquidity profile edge** -dispersion-scaled worst-case execution
+4. **Emergency pause available** -governance can freeze operations if needed
 
 The pool becomes a price-taker at extremes, but with explicit bounds rather than unbounded loss.
 
@@ -432,10 +434,10 @@ The pool becomes a price-taker at extremes, but with explicit bounds rather than
 
 When coverage drops below critical threshold (default 50%):
 
-1. **Withdrawal haircuts scale quadratically** — early exiters pay less, protecting remaining LPs
-2. **Liability decay activates** — gradual reduction of claims to restore solvency
-3. **Maximum premium applies** — +100 skew discourages further withdrawals
-4. **Manual pause available** — governance can halt operations
+1. **Withdrawal haircuts scale quadratically** -early exiters pay less, protecting remaining LPs
+2. **Liability decay activates** -gradual reduction of claims to restore solvency
+3. **Maximum premium applies** -+100 skew discourages further withdrawals
+4. **Manual pause available** -governance can halt operations
 
 These mechanics prevent bank runs while giving LPs time to respond.
 
@@ -459,10 +461,10 @@ Customizable liquidity profiles are powerful but create a trust question: who se
 
 **AIMM's Approach:**
 
-1. **Time-locked parameter changes** — Profile updates have mandatory delay (hours), giving LPs time to exit if needed
-2. **Algorithmic profile fitting** — Keeper-driven updates based on on-chain trade density analysis
-3. **Transparent on-chain state** — All profile parameters publicly readable and auditable
-4. **Per-pool curator model** — Pool deployers set initial profiles; ongoing management per pool governance
+1. **Time-locked parameter changes** -Profile updates have mandatory delay (hours), giving LPs time to exit if needed
+2. **Algorithmic profile fitting** -Keeper-driven updates based on on-chain trade density analysis
+3. **Transparent on-chain state** -All profile parameters publicly readable and auditable
+4. **Per-pool curator model** -Pool deployers set initial profiles; ongoing management per pool governance
 
 We're replacing strict invariant risk with bounded human discretion risk, with full transparency and exit rights.
 
@@ -513,10 +515,10 @@ We're exploring dedicating ~20% of token emissions to traders who contribute to 
 
 ### 10.1. Why Stables?
 
-1. **Curve dominates but has 30bps+ spreads on smaller pairs** — room for improvement
-2. **Wombat proved ALM works here** — coverage-ratio mechanics validated at scale
-3. **Clean signal** — LVR is highest on volatile pairs; proving our model on stables demonstrates fundamental viability
-4. **Clear benchmark** — "tightest spreads in DeFi" is measurable and marketable
+1. **Curve dominates but has 30bps+ spreads on smaller pairs** -room for improvement
+2. **Wombat proved ALM works here** -coverage-ratio mechanics validated at scale
+3. **Clean signal** -LVR is highest on volatile pairs; proving our model on stables demonstrates fundamental viability
+4. **Clear benchmark** -"tightest spreads in DeFi" is measurable and marketable
 
 ### 10.2. Initial Launch
 
@@ -537,16 +539,16 @@ Once we own stables, expansion to ETH, BTC, and blue-chip pairs. Trying to be ev
 ### 11.1. Target Chains
 
 Most active and liquid EVMs:
-- **Ethereum** — deepest liquidity, institutional presence
-- **Base** — Coinbase ecosystem, growing rapidly
-- **Arbitrum** — established DeFi hub
-- **BNB Chain** — high retail volume
+- **Ethereum** -deepest liquidity, institutional presence
+- **Base** -Coinbase ecosystem, growing rapidly
+- **Arbitrum** -established DeFi hub
+- **BNB Chain** -high retail volume
 
 ### 11.2. Security
 
-- **Multiple third-party audits** — Pre-launch security review by professional auditors
-- **Bug bounty program** — Immunefi or equivalent
-- **Gradual TVL caps** — Staged rollout with limits
+- **Multiple third-party audits** -Pre-launch security review by professional auditors
+- **Bug bounty program** -Immunefi or equivalent
+- **Gradual TVL caps** -Staged rollout with limits
 
 Safety is non-negotiable. We won't launch without comprehensive security coverage.
 
@@ -581,9 +583,9 @@ These are fundamentally different designs. Uniswap could build AIMM, but it woul
 
 ### 12.2. Unforkable Advantages
 
-1. **Network effects in multi-asset pools** — More assets = deeper liquidity = better execution = more assets
-2. **Operational expertise** — Profile optimization requires market-making knowledge, not just code
-3. **Integrated incentive design** — Token model aligned with LP success, not governance extraction
+1. **Network effects in multi-asset pools** -More assets = deeper liquidity = better execution = more assets
+2. **Operational expertise** -Profile optimization requires market-making knowledge, not just code
+3. **Integrated incentive design** -Token model aligned with LP success, not governance extraction
 
 ---
 
@@ -611,9 +613,11 @@ Traditional AMMs treat every trade identically. AIMM treats every trade based on
 | **Flexibility** | Fixed curve shapes | Customizable liquidity profiles per asset |
 | **Intelligence** | Passive price taker | Dynamic fees (volatility + momentum) |
 
-We're not building a better Uniswap. We're building what comes after the invariant era.
+We're not just building a better Uniswap—we're building what comes after the invariant era, while pragmatically improving what exists today.
+
+**Two products, one thesis.** BTR ships **BTR Supply** and **BTR DEX** together because the market needs both. BTR Supply optimizes liquidity management on the concentrated-liquidity venues where users and volume live today (Uniswap V3/V4, PancakeSwap V3/Infinity, Aerodrome Slipstream, and peers)—CL liquidity management is more capital-intensive than we would like, but it is the reality of on-chain liquidity in 2026, and someone has to do it well. BTR DEX (AIMM) delivers the architecture we believe is the better long-term path: multi-asset, spline-based, inventory-aware, natively single-sided. The two products fund and inform each other.
 
 ---
 
-*BTR Protocol — Adaptive Inventory Market Making*
+*BTR Protocol -Adaptive Inventory Market Making*
 
