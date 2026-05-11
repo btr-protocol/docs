@@ -2,7 +2,7 @@
 
 *Last Updated: May 2026*
 
-BTR Supply and its contributors (collectively "BTR", "we", "us", "our") fully respect your privacy and are committed to ensuring that we provide you with the relevant information and tools so that you can manage your cookie preferences. This policy applies to all BTR products including the AIMM DEX and the BTR ALM (Active Liquidity Management) vault Interface.
+BTR Supply and its contributors (collectively "BTR", "we", "us", "our") fully respect your privacy and are committed to ensuring that we provide you with the relevant information and tools so that you can manage your cookie preferences. This policy applies to all BTR products including the AIMM DEX and the BTR ALM (Automated Liquidity Management) vault Interface.
 
 This Cookie Policy applies to residents of the EEA. If you're a resident outside of the EEA, please refer to [our privacy policy](/privacy-policy).
 

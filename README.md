@@ -1,4 +1,4 @@
-# BTR Protocol — Documentation Index
+# BTR Protocol -Documentation Index
 
 Canonical docs root for the BTR protocol. Three product surfaces under one tree, served by `back/services/docs/`.
 
@@ -15,7 +15,7 @@ Canonical docs root for the BTR protocol. Three product surfaces under one tree,
 | File | Topic |
 |------|-------|
 | [`Overview.md`](./Overview.md) | Top-level product surfaces + cross-cutting concepts |
-| [`Manifesto.md`](./Manifesto.md) | Technical manifesto — problems, solutions, architecture, roadmap |
+| [`Manifesto.md`](./Manifesto.md) | Technical manifesto -problems, solutions, architecture, roadmap |
 | [`Foundations.md`](./Foundations.md) | Design precedents: Avellaneda-Stoikov, Platypus / Wombat ALM, Curve v2 |
 | [`Glossary.md`](./Glossary.md) | Glossary of protocol terms (AIMM + ALM unified) |
 | [`HYBRID_SEARCH.md`](./HYBRID_SEARCH.md) | Notes on the docs-search implementation |
@@ -35,7 +35,7 @@ docs/
 ├── swap/                ← BTR Swap (off-chain aggregator)
 ├── dex/                 ← BTR Dex (AIMM): AIMM, Governance, Security, User & Dev guides, Contributing
 ├── supply/              ← BTR Supply (ALM Vaults)
-└── prime/               ← BTR Prime (quant trading) — internal, not served on public docs
+└── prime/               ← BTR Prime (quant trading) -internal, not served on public docs
 ```
 
 ## Build & Serve
@@ -54,10 +54,10 @@ The front-end fetches `/docs-api/{structure,all,search-index}` (proxied to `loca
 ## Editing
 
 - Top-level files (`Manifesto.md`, `Glossary.md`, `Foundations.md`, `Overview.md`) are protocol-wide.
-- Per-surface docs live under `swap/`, `dex/`, `supply/` — keep numbering consistent within each surface.
+- Per-surface docs live under `swap/`, `dex/`, `supply/` -keep numbering consistent within each surface.
 - After edits, re-run the build above to regenerate the search index. The watcher in dev mode also picks up changes without a restart.
 
 ## Out of Scope
 
-- `prime/` — BTR Prime (quant trading consumer of NX Rates) docs. Internal; not currently served via the public docs endpoint.
-- API source: `swap/` SDK and aggregator adapters live at `/Users/derpa/Work/btr/swap/packages/core/src/` — code only, not docs.
+- `prime/` -BTR Prime (quant trading consumer of NX Rates) docs. Internal; not currently served via the public docs endpoint.
+- API source: `swap/` SDK and aggregator adapters live at `/Users/derpa/Work/btr/swap/packages/core/src/` -code only, not docs.

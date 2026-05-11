@@ -4,18 +4,18 @@
 
 ## RISK ACKNOWLEDGMENT
 
-You are using BTR — comprising the AIMM decentralized exchange protocol and the BTR ALM (Active Liquidity Management) vault system — which is experimental software subject to ongoing development. Use is entirely at your own risk.
+You are using BTR -comprising the AIMM decentralized exchange protocol and the BTR ALM (Automated Liquidity Management) vault system -which is experimental software subject to ongoing development. Use is entirely at your own risk.
 
 **By accessing BTR, you acknowledge and accept:**
 
 1. **Full Responsibility**: You take sole responsibility for your use of the protocol and all associated risks. You have read and understand:
-   - [Risk Disclaimer](/risk-disclaimer) — Comprehensive risk disclosures, including ALM-specific sections §7.5–§7.12
-   - [Terms of Service](/terms-of-service) — Legal agreement and conditions, including ALM-specific Section 20
+   - [Risk Disclaimer](/risk-disclaimer) -Comprehensive risk disclosures, including ALM-specific sections §7.5–§7.12
+   - [Terms of Service](/terms-of-service) -Legal agreement and conditions, including ALM-specific Section 20
 
 2. **Potential for Total Loss**: Using the protocol may result in partial or complete loss of deposited funds. This includes:
    - Loss from smart-contract bugs in BTR contracts (DEX or ALM)
    - Loss from third-party DEX pool bugs, exploits, or shutdown (Uniswap v3 / v4, PancakeSwap, Aerodrome, Algebra, Ramses, others)
-   - Loss from impermanent loss (IL), loss-versus-rebalancing (LVR), tick-range exit drag, or fee-tier mismatch on ALM adapters
+   - Loss from impermanent loss (IL), loss-versus-rebalancing (LVR), tick-range exit drag, or fee-tier mismatch on Dex adapters
    - Loss from oracle deviation, sequencer outage, kill-switch activation, or governance authority compromise
    - Loss from intent / atomic-swap counterparty default
    No compensation will be provided for any losses.
@@ -28,7 +28,7 @@ You are using BTR — comprising the AIMM decentralized exchange protocol and th
 
 6. **Third-Party DEX and Routing** (ALM): You acknowledge that ALM vaults allocate to third-party concentrated-liquidity pools and route swaps through third-party aggregators / settlers. BTR does not control these third parties and does not warrant their security or continued availability.
 
-7. **Operator and Keeper Authority** (ALM): You acknowledge that BTR or its delegates hold multi-sig governance authority over ALM adapter configuration, swapper rotation, factory rotation, and treasury rotation, subject to on-chain timelocks (6 hours to 14 days depending on action) and rate limits (per-adapter kill 1/h; cluster cap 2/day). You accept the centralization risk inherent in this design.
+7. **Operator and Keeper Authority** (ALM): You acknowledge that BTR or its delegates hold multi-sig governance authority over Dex adapter configuration, swapper rotation, factory rotation, and treasury rotation, subject to on-chain timelocks (6 hours to 14 days depending on action) and rate limits (per-adapter kill 1/h; cluster cap 2/day). You accept the centralization risk inherent in this design.
 
 8. **Forward-Looking Items**: You acknowledge that cross-chain ALM allocation, additional DEX integrations, BTR token issuance, and future governance frameworks are forward-looking and not commitments. They may change, be delayed, or be cancelled.
 

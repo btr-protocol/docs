@@ -16,8 +16,8 @@ ML-driven trading platform for crypto spot + concentrated liquidity. Consumes Ba
 
 `architecture.md` and `methodology.md` cover orthogonal concerns:
 
-- **architecture.md** — services, processes, K8s resources, data flow, CLI surface, file layout. Read this when wiring up infra or onboarding a new strategy binary.
-- **methodology.md** — ML algorithm: features, walk-forward GBM, Parkinson labeling, fitness function, trading rules. Read this when changing the model or interpreting results.
+- **architecture.md** -services, processes, K8s resources, data flow, CLI surface, file layout. Read this when wiring up infra or onboarding a new strategy binary.
+- **methodology.md** -ML algorithm: features, walk-forward GBM, Parkinson labeling, fitness function, trading rules. Read this when changing the model or interpreting results.
 
 ## Cross-repo boundary
 

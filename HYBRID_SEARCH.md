@@ -283,8 +283,8 @@ where:
 | Document | Lexical Rank | Semantic Rank | RRF Score |
 |----------|--------------|---------------|-----------|
 | docs/A.md | 3 | 5 | 1/(60+3) + 1/(60+5) = 0.0303 |
-| docs/B.md | 1 | — | 1/(60+1) = 0.0164 |
-| docs/C.md | — | 2 | 1/(60+2) = 0.0161 |
+| docs/B.md | 1 | -| 1/(60+1) = 0.0164 |
+| docs/C.md | -| 2 | 1/(60+2) = 0.0161 |
 
 ### 5.2 Source Merging Algorithm
 

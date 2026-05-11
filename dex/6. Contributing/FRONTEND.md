@@ -660,9 +660,9 @@ bun run build
 - Use `*` for center dot (·), `xx` for cross (×)
 
 **Brackets & Grouping**:
-- **Visible parentheses**: `(` `)` — always rendered
-- **Invisible grouping**: `{` `}` — grouping only, not rendered
-- **Visible curly braces**: `{:` `:}` — rendered as curly braces
+- **Visible parentheses**: `(` `)` -always rendered
+- **Invisible grouping**: `{` `}` -grouping only, not rendered
+- **Visible curly braces**: `{:` `:}` -rendered as curly braces
 - Use invisible grouping for fraction numerators/denominators: `{numerator}/{denominator}`
 
 **Symbol Naming**:

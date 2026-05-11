@@ -1,10 +1,10 @@
 # Security & Audit Best Practices
 
-**Focus**: BTR AIMM Protocol — EVM (Solidity) smart contract security
+**Focus**: BTR AIMM Protocol -EVM (Solidity) smart contract security
 
 > **Note**: BTR currently deploys on EVM chains only. SVM (Solana) and MoveVM (Aptos/Sui) sections are included for future cross-chain expansion reference.
 
-> **Architecture note (post Phase 42H)** — examples below that show `PoolProxy`, Diamond storage namespacing, `delegatecall`-based facets, or ERC-7201 helpers are **generic Solidity security pattern references**. The BTR DEX repo no longer uses any of these — it uses standalone singletons + EIP-1167 `Pool` clones with default storage. Treat the patterns here as "what to do **if** you ever encounter that pattern" rather than as a description of current BTR code.
+> **Architecture note (post Phase 42H)** -examples below that show `PoolProxy`, Diamond storage namespacing, `delegatecall`-based facets, or ERC-7201 helpers are **generic Solidity security pattern references**. The BTR DEX repo no longer uses any of these -it uses standalone singletons + EIP-1167 `Pool` clones with default storage. Treat the patterns here as "what to do **if** you ever encounter that pattern" rather than as a description of current BTR code.
 
 ---
 

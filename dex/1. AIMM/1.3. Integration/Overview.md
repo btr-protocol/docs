@@ -49,9 +49,9 @@ const tx = await pool.swap(tokenIn, tokenOut, amount, minOut);
 ### 3.2. Direct Solidity
 
 ```solidity
-import { IPoolV1 } from '@btr/interfaces';
+import { IPool } from '@btr/interfaces';
 
-IPoolV1 pool = IPoolV1(poolAddress);
+IPool pool = IPool(poolAddress);
 
 // Get quote
 SwapQuote memory quote = pool.getSwapQuote(tokenIn, tokenOut, amountIn);
@@ -66,15 +66,15 @@ uint256 amountOut = pool.swap(tokenIn, tokenOut, amountIn, minOut, recipient);
 
 | Interface | Purpose |
 |-----------|---------|
-| `ICoreV1` | Swaps, deposits, withdrawals |
-| `IStakingV1` | LP and gov token staking |
-| `IFlashV1` | ERC-3156 flash loans |
+| `ICore` | Swaps, deposits, withdrawals |
+| `IStaking` | LP and gov token staking |
+| `IFlash` | ERC-3156 flash loans |
 | `IPoolHooks` | Per-asset hooks |
 
 ---
 
 ## 5. Related Documentation
 
-- [Architecture Overview](../../Overview.md) — Pool design and modules
-- [Spread & Fees](../1.1.\ Pricing/1.1.4.\ Spread\ &\ Fees.md) — Fee calculation
-- [Parametrization](../1.1.\ Pricing/1.1.7.\ Parametrization.md) — Parameter reference
+- [Architecture Overview](../../Overview.md) -Pool design and modules
+- [Spread & Fees](../1.1.\ Pricing/1.1.4.\ Spread\ &\ Fees.md) -Fee calculation
+- [Parametrization](../1.1.\ Pricing/1.1.7.\ Parametrization.md) -Parameter reference

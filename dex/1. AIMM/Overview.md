@@ -8,13 +8,13 @@
 
 AIMM is a multi-asset AMM designed for passive liquidity providers. Core components:
 
-- **Single-sided deposits** — LPs deposit one token, receive fungible LP tokens
-- **N-asset pooling** — Anchor tree topology enables any-to-any routing
-- **Inventory-based pricing** — Avellaneda-Stoikov inspired mid-price adjustment
-- **Coverage-aware ALM** — Reserves/liabilities separation (Wombat-style)
-- **Catmull-Rom spline profiles** — Algo-optimized, depth curves supporting non-uniform and multimodal distributions
-- **Internal TWAP oracle** — Multi-timeframe (eg. 5min/1hr) with support for external fallback, inherited directly by `Pool` (no separate module)
-- **Singleton contracts + EIP-1167 clones** — Each pool is a minimal-proxy clone of a single `Pool` impl. Governance / staking / rewards / flash are standalone singleton contracts shared across all pools.
+- **Single-sided deposits** -LPs deposit one token, receive fungible LP tokens
+- **N-asset pooling** -Anchor tree topology enables any-to-any routing
+- **Inventory-based pricing** -Avellaneda-Stoikov inspired mid-price adjustment
+- **Coverage-aware ALM** -Reserves/liabilities separation (Wombat-style)
+- **Catmull-Rom spline profiles** -Algo-optimized, depth curves supporting non-uniform and multimodal distributions
+- **Internal TWAP oracle** -Multi-timeframe (eg. 5min/1hr) with support for external fallback, inherited directly by `Pool` (no separate module)
+- **Singleton contracts + EIP-1167 clones** -Each pool is a minimal-proxy clone of a single `Pool` impl. Governance / staking / rewards / flash are standalone singleton contracts shared across all pools.
 
 ---
 
@@ -94,15 +94,15 @@ graph TB
 
 ### 4.2. Key Concepts
 
-- **Coverage Ratio**: `c = R / L` — measures asset health
+- **Coverage Ratio**: `c = R / L` -measures asset health
 - **Inventory Skew**: Linear Avellaneda-Stoikov adjustment (±100 range)
 - **Spread**: Volatility-based fee with toxic flow surcharge
 - **Spline Traversal**: Price impact via liquidity profile integration
 
 See:
-- [Inventory Management](/docs/1.1.1-inventory-management) — Coverage, skew, withdrawal haircuts
-- [Spread & Fees](/docs/1.1.4-spread-fees) — Fee calculation
-- [Liquidity Shaping](/docs/1.1.2-liquidity-shaping) — Spline profiles
+- [Inventory Management](/docs/1.1.1-inventory-management) -Coverage, skew, withdrawal haircuts
+- [Spread & Fees](/docs/1.1.4-spread-fees) -Fee calculation
+- [Liquidity Shaping](/docs/1.1.2-liquidity-shaping) -Spline profiles
 
 ---
 
@@ -196,7 +196,7 @@ Each singleton uses default Solidity storage (no ERC-7201 namespacing). Cross-po
 
 | Contract | Layout | Purpose |
 |---|---|---|
-| `Pool` (clone) | `PoolStorage` at slot 0 | Per-clone assets, reserves, config — set once via `initialize`. Append-only field order across reference-impl upgrades. |
+| `Pool` (clone) | `PoolStorage` at slot 0 | Per-clone assets, reserves, config -set once via `initialize`. Append-only field order across reference-impl upgrades. |
 | `Admin` | `pendingOps[keccak256(pool, opId)]`, `pendingData[...]` | Per-pool timelock queue. |
 | `Staking` | `mapping(pool, ...)` per-user and per-LP-token | Stakes, voting power. |
 | `Distributor` | `mapping(pool, campaignId, ...)` | Campaigns + cumulative claims. |
@@ -300,12 +300,12 @@ See: `contracts/src/interfaces/IErrors.sol`
 ### 14.1. Immutable Components
 
 - All AIMM library contracts (Pricing, PoolOracle, Spline, Maths, AnchorTree, etc.)
-- `Pool` clones (per-instance immutable — non-upgradeable post-deploy)
+- `Pool` clones (per-instance immutable -non-upgradeable post-deploy)
 - Singleton contracts: `Admin`, `Staking`, `Distributor`, `Flash` (new deployment for any change)
 
 ### 14.2. Replaceable via Factory Timelock
 
-- `Pool` reference impl — swappable via 7-day timelock at `PoolFactory`. New clones use the new impl; existing clones continue running their original impl.
+- `Pool` reference impl -swappable via 7-day timelock at `PoolFactory`. New clones use the new impl; existing clones continue running their original impl.
 
 ### 14.3. Upgradeable via UUPS
 
@@ -317,6 +317,6 @@ See: `contracts/src/interfaces/IErrors.sol`
 
 ## 15. Related Documentation
 
-- [Inventory Management](/docs/1.1.1-inventory-management) — Pricing mechanics
-- [Pool Contract](/docs/1.2.1-pool) — Module documentation
-- [Parametrization](/docs/1.1.7-parametrization) — Parameter reference
+- [Inventory Management](/docs/1.1.1-inventory-management) -Pricing mechanics
+- [Pool Contract](/docs/1.2.1-pool) -Module documentation
+- [Parametrization](/docs/1.1.7-parametrization) -Parameter reference

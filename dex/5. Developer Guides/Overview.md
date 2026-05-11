@@ -25,7 +25,7 @@ This section covers **protocol-wide integration** with the BTR Protocol. For AMM
 | Guide | Description |
 |-------|-------------|
 | [Treasury Integration](./5.1.\ Treasury\ Integration.md) | Protocol fee collection and treasury operations |
-| [Bridging](./5.2.\ Bridging.md) | Cross-chain token transfers via BridgeV1 |
+| [Bridging](./5.2.\ Bridging.md) | Cross-chain token transfers via Bridge |
 | [White Labelling](./5.3.\ White\ Labelling.md) | Deploying branded pool instances |
 
 ---
@@ -46,7 +46,7 @@ import { Pool, Treasury, Bridge } from '@btr-protocol/sdk';
 ### 3.2. Direct Solidity
 
 ```solidity
-import { IPoolV1, ITreasuryV1, IBridgeV1 } from '@btr/interfaces';
+import { IPool, ITreasury, IBridge } from '@btr/interfaces';
 ```
 
 **Recommended for**:
@@ -57,6 +57,6 @@ import { IPoolV1, ITreasuryV1, IBridgeV1 } from '@btr/interfaces';
 
 ## 4. Related Documentation
 
-- [Integration](../../1.\ AIMM/1.3.\ Integration/) — AMM-specific integration patterns
-- [Security Overview](../../3.\ Security/Overview.md) — Audit considerations
-- [Contributing](../../6.\ Contributing/) — Internal development practices
+- [Integration](../../1.\ AIMM/1.3.\ Integration/) -AMM-specific integration patterns
+- [Security Overview](../../3.\ Security/Overview.md) -Audit considerations
+- [Contributing](../../6.\ Contributing/) -Internal development practices

@@ -134,7 +134,7 @@ Frontend (signal update)
 | **Governance** | Parameter updates, voting | `propose()`, `vote()` |
 | **Security** | Emergency controls | `pause()`, `salvage()` |
 
-### Storage Patterns (post Phase 42H — no ERC-7201)
+### Storage Patterns (post Phase 42H -no ERC-7201)
 
 ```solidity
 // Each Pool clone keeps its own storage at slot 0 (no namespacing required because

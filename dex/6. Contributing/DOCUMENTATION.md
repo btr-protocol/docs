@@ -2,7 +2,7 @@
 
 **Focus**: DeFi Protocol Documentation + Developer Experience + Public Guides
 
-> **Architecture note (post Phase 42H)** — diagrams or snippets in this file that show `PoolProxy` / Diamond / ERC-7201 are illustrative examples of documentation patterns, not the BTR DEX's current architecture (which uses standalone singletons + EIP-1167 `Pool` clones).
+> **Architecture note (post Phase 42H)** -diagrams or snippets in this file that show `PoolProxy` / Diamond / ERC-7201 are illustrative examples of documentation patterns, not the BTR DEX's current architecture (which uses standalone singletons + EIP-1167 `Pool` clones).
 
 ---
 

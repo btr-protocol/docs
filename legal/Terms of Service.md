@@ -16,12 +16,12 @@ These terms of service (the "Terms") govern your ("you" or "your") use of the se
 
 BTR operates a front-end interface that allows interaction with two distinct on-chain product lines (collectively the "Protocol"):
 
-1. **AIMM DEX Protocol** — the Automated Inventory Market Maker, a multi-asset DEX with hub-and-spoke routing, dynamic fees, and coverage-ratio-based active liquidity management. Diamond-proxy upgradeable, deployed on Ethereum and compatible EVM chains.
-2. **BTR ALM (Active Liquidity Management) v1.x** — a hybrid ERC-4626 / ERC-7540 vault system that allocates user deposits across up to eight concentrated-liquidity adapters per vault. Each adapter wraps a third-party concentrated-liquidity pool (e.g., Uniswap v3 / v4, PancakeSwap V3 / Infinity, Aerodrome Slipstream, Algebra, Ramses) and may serve multiple holders share-weighted. Vaults route swaps and salvage flows through a chain-singleton Swapper that supports both LiFi atomic execution and ERC-7683 cross-chain intents.
+1. **AIMM DEX Protocol** -the Automated Inventory Market Maker, a multi-asset DEX with hub-and-spoke routing, dynamic fees, and coverage-ratio-based active liquidity management. Diamond-proxy upgradeable, deployed on Ethereum and compatible EVM chains.
+2. **BTR ALM (Automated Liquidity Management) v1.x** -a hybrid ERC-4626 / ERC-7540 vault system that allocates user deposits across up to eight concentrated-liquidity adapters per vault. Each adapter wraps a third-party concentrated-liquidity pool (e.g., Uniswap v3 / v4, PancakeSwap V3 / Infinity, Aerodrome Slipstream, Algebra, Ramses) and may serve multiple holders share-weighted. Vaults route swaps and salvage flows through a chain-singleton Swapper that supports both LiFi atomic execution and ERC-7683 cross-chain intents.
 
 BTR does not operate, control, or have custody over the underlying blockchains, third-party DEX pools, intent settlers, atomic-swap routers, oracles, or user assets. The smart contracts are decentralized infrastructure; BTR's role is limited to:
 - Maintaining the web interface for protocol interaction
-- Operating optional keeper bots for protocol health (oracle updates, circuit-breaker checks, ALM adapter rebalances, defensive-ratchet kills, intent settlement, late-refund processing)
+- Operating optional keeper bots for protocol health (oracle updates, circuit-breaker checks, Dex adapter rebalances, defensive-ratchet kills, intent settlement, late-refund processing)
 - Curating ALM vault configurations (adapter selection, fee tiers, tick ranges, deviation / heartbeat / slippage / interval defensive parameters) within the bounds enforced by the smart contracts
 - Providing documentation and specifications
 
@@ -361,7 +361,7 @@ The notice must be sent within thirty (30) days of your first use of the Service
 
 ### 20.1. Third-Party DEX Liquidity Provisioning
 
-ALM vault adapters allocate user deposits to external concentrated-liquidity pools operated by independent protocols (Uniswap v3 / v4, PancakeSwap V3 / Infinity, Aerodrome Slipstream, Algebra, Ramses, and additional integrations as added). You acknowledge and accept that:
+Dex adapters allocate user deposits to external concentrated-liquidity pools operated by independent protocols (Uniswap v3 / v4, PancakeSwap V3 / Infinity, Aerodrome Slipstream, Algebra, Ramses, and additional integrations as added). You acknowledge and accept that:
 
 - The composition, behavior, security, and continued availability of those external pools are entirely outside BTR's control.
 - Bugs, exploits, governance actions, fee-tier changes, hook misbehavior (V4 / Infinity), or shutdown of any underlying pool may result in partial or total loss of vault assets allocated to the affected adapter.
@@ -416,7 +416,7 @@ BTR plans to issue a governance token ("BTR token"). The eventual issuance, sche
 
 ### 20.8. No Fiduciary Relationship for ALM Depositors
 
-Depositing into a BTR ALM vault does *not* create a fiduciary, advisory, brokerage, custodial-trust, fund-management, or partnership relationship between you and BTR. Vault strategies, adapter selections, fee tiers, tick ranges, and risk parameters are published in code and on the Interface; you are deemed to have reviewed and accepted them by depositing. Nothing on the Interface, in documentation, in marketing materials, in social media posts, or in community channels constitutes financial, legal, tax, or investment advice or a guarantee of return. Past performance, simulated performance, and back-tested performance — if displayed — do not predict future results.
+Depositing into a BTR ALM vault does *not* create a fiduciary, advisory, brokerage, custodial-trust, fund-management, or partnership relationship between you and BTR. Vault strategies, adapter selections, fee tiers, tick ranges, and risk parameters are published in code and on the Interface; you are deemed to have reviewed and accepted them by depositing. Nothing on the Interface, in documentation, in marketing materials, in social media posts, or in community channels constitutes financial, legal, tax, or investment advice or a guarantee of return. Past performance, simulated performance, and back-tested performance -if displayed -do not predict future results.
 
 ### 20.9. Operator Location & Jurisdiction
 

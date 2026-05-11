@@ -23,9 +23,9 @@ Receipt token for staked BTR.
 | **Voting Power** | Used for governance proposals |
 | **Reward Boosting** | Required to earn full LP staking rewards |
 | **Cooldown** | Transfers trigger cooldown period (default 2 weeks) |
-| **Delegation** | Balance delegated to [StakingV1](/docs/1.2.4-Staking) |
+| **Delegation** | Balance delegated to [Staking](/docs/1.2.4-Staking) |
 
-The cooldown prevents vote buying and reward renting — voting and earning power are disabled during the cooldown period.
+The cooldown prevents vote buying and reward renting -voting and earning power are disabled during the cooldown period.
 
 ### 1.3. sLP (Staked LP)
 
@@ -33,7 +33,7 @@ Receipt token for staked LP positions.
 
 | Property | Description |
 |----------|-------------|
-| **Deployment** | CREATE2 by [StakingV1](/docs/1.2.4-Staking) for deterministic addresses |
+| **Deployment** | CREATE2 by [Staking](/docs/1.2.4-Staking) for deterministic addresses |
 | **Rewards** | Eligible for BTR and other token rewards |
 | **Composability** | Can be used as collateral or in other DeFi protocols |
 
@@ -60,18 +60,18 @@ This mechanism forces LPs to become stakeholders (acquire BTR) to maximize yield
 
 ### 2.2. Distributor
 
-The [DistributorV1](/docs/1.2.5-Distributor) module handles reward distribution:
+The [Distributor](/docs/1.2.5-Distributor) module handles reward distribution:
 
-- **Accumulator Pattern** — O(1) complexity per claim (like Aave/Sushi)
-- **Multi-token support** — Multiple reward tokens per pool
-- **Campaign-based** — Configurable reward periods and rates
+- **Accumulator Pattern** -O(1) complexity per claim (like Aave/Sushi)
+- **Multi-token support** -Multiple reward tokens per pool
+- **Campaign-based** -Configurable reward periods and rates
 
 ---
 
 ## 3. Related Documentation
 
-- [BTR Token](/docs/2.1-BTR-Token) — Token mechanics and distribution
-- [DAO Voting](/docs/2.2-DAO-Voting) — Voting mechanics and proposals
-- [DAO Treasury](/docs/2.3-DAO-Treasury) — Treasury management
-- [Liquid Staking](/docs/2.4-Liquid-Staking) — Staking mechanics
-- [Emission Control](/docs/2.5-Emission-Control) — Emission schedule
+- [BTR Token](/docs/2.1-BTR-Token) -Token mechanics and distribution
+- [DAO Voting](/docs/2.2-DAO-Voting) -Voting mechanics and proposals
+- [DAO Treasury](/docs/2.3-DAO-Treasury) -Treasury management
+- [Liquid Staking](/docs/2.4-Liquid-Staking) -Staking mechanics
+- [Emission Control](/docs/2.5-Emission-Control) -Emission schedule
