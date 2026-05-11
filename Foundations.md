@@ -34,7 +34,7 @@ where:
 - $sigma$ = price volatility
 - $tau$ = time remaining (T - t)
 
-When inventory $q > 0$ (long position), the reservation price shifts below market—the market maker is willing to sell at lower prices to reduce exposure. The converse applies for short positions.
+When inventory $q > 0$ (long position), the reservation price shifts below market, the market maker is willing to sell at lower prices to reduce exposure. The converse applies for short positions.
 
 ### 2.3. Optimal Spread
 
@@ -729,7 +729,7 @@ Cooperative Arbitrage balances permissionless trading with curated arbitrageur a
 5. **Rebate distribution**: `reputation = donations / rebates`; higher reputation → higher rebates (up to 80%)
 6. **Revocation**: Low reputation (<0.9) → loss of Cooperator status
 
-**Key distinction**: Cooperators use the same swap interface as everyone—they don't get execution privileges or off-chain access. The whitelist controls rebate eligibility, not trading access.
+**Key distinction**: Cooperators use the same swap interface as everyone, they don't get execution privileges or off-chain access. The whitelist controls rebate eligibility, not trading access.
 
 **Why whitelist?**:
 - **Quality control**: Ensure cooperators don't expose LP deposits to excessive CEX risk
@@ -781,10 +781,10 @@ AIMM builds on decades of research:
 
 ## 17. Further Reading
 
-- [AIMM Architecture](/docs/overview-aimm) — System architecture
-- [Manifesto](/docs/manifesto) — Vision and value proposition
-- [Spread & Fees](/docs/1.1.4-Spread-&-Fees) — Bi-factor fee model
-- [Oracles](/docs/3.5-Oracles) — Dual-window TWAP design
-- [Liquidity Shaping](/docs/1.1.2-Liquidity-Shaping) — Spline profiles
-- [Toxic Flow Mitigation](/docs/1.1.6-Toxic-Flow-Mitigation) — Defense mechanisms
+- [AIMM Architecture](/docs/overview-aimm), System architecture
+- [Manifesto](/docs/manifesto), Vision and value proposition
+- [Spread & Fees](/docs/1.1.4-Spread-&-Fees), Bi-factor fee model
+- [Oracles](/docs/3.5-Oracles), Dual-window TWAP design
+- [Liquidity Shaping](/docs/1.1.2-Liquidity-Shaping), Spline profiles
+- [Toxic Flow Mitigation](/docs/1.1.6-Toxic-Flow-Mitigation), Defense mechanisms
 

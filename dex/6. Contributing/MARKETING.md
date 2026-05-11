@@ -61,7 +61,7 @@
 | **Expert but accessible** | DeFi made simple, never dumbed down | "Capital efficiency for everyone: lower slippage through inventory-aware pricing" |
 | **Transparent** | Honest about risks, assumptions, limitations | "APY varies with volatility; historical 7-day return: X%, with Y% drawdown during Z event" |
 | **Innovative but grounded** | Forward-thinking with proven foundations | "Building on Avellaneda-Stoikov with ALM-based coverage management" |
-| **Community-first** | User-focused, not token-price focused | "Built by traders, for traders—LPs earn from cooperative arbitrage" |
+| **Community-first** | User-focused, not token-price focused | "Built by traders, for traders, LPs earn from cooperative arbitrage" |
 
 ### Tiered Messaging Stack
 
@@ -300,8 +300,8 @@ ambassador_tier_2:
 | Parameter | Value |
 |-----------|-------|
 | **Rate** | 10% of protocol trading fees from referred users |
-| **Tiers** | None — flat rate for everyone |
-| **Conditions** | None — no volume requirements, no retention gates |
+| **Tiers** | None, flat rate for everyone |
+| **Conditions** | None, no volume requirements, no retention gates |
 | **Payout** | Automatic, per claim cycle |
 
 **Philosophy**: Keep it minimal. No gamification, no tier jumping, no condition chasing. A referrer brings users, BTR pays 10% of fees those users generate. Simple is sustainable.
@@ -397,7 +397,7 @@ Team @ BTR
 
 | Topic | Key Message | Neutral Framing |
 |-------|-------------|-----------------|
-| **Impermanent Loss** | IL occurs when prices diverge | "Fees may offset IL but not always—historical breakdown at [link]" |
+| **Impermanent Loss** | IL occurs when prices diverge | "Fees may offset IL but not always, historical breakdown at [link]" |
 | **Coverage Ratio** | Assets vs liabilities determines health | "Ratio <100% = withdrawal haircut; >100% = premium withdrawal" |
 | **Yield Components** | Fees + co-op arbitrage + emissions | "Historical split: fees X%, co-op Y%, emissions Z%" |
 | **Risk Factors** | Oracle manipulation, smart contract risk | "Mitigations: dual-window TWAP, audits, timelocks" |

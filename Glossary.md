@@ -7,12 +7,12 @@
 ## A
 
 ### Agave
-Solana validator client maintained by Anza (formerly Solana Labs). Rust implementation providing standard execution and consensus (Tower BFT + Proof of History). The "vanilla" Solana client without MEV features—contrast with Jito-Solana which adds bundle auction capabilities. Most validators run Jito-Solana for MEV revenue, but Agave remains the reference implementation.
+Solana validator client maintained by Anza (formerly Solana Labs). Rust implementation providing standard execution and consensus (Tower BFT + Proof of History). The "vanilla" Solana client without MEV features, contrast with Jito-Solana which adds bundle auction capabilities. Most validators run Jito-Solana for MEV revenue, but Agave remains the reference implementation.
 
 **See**: [Jito](#jito), [Firedancer](#firedancer), [Consensus](#consensus).
 
 ### Adverse Selection
-Risk that counterparties possess superior information about fair value. In AMMs, informed traders extract value by trading against stale prices—whether from reserves (Uniswap), internal oracles (Curve v2), or external feeds. Adverse selection is the mechanism behind [LVR](#lvr-loss-versus-rebalancing), ranging from benign [Statistical Arbitrage](#statistical-arbitrage-stat-arb) to devastating [Informed Order Flow](#informed-order-flow-alpha-toxicity).
+Risk that counterparties possess superior information about fair value. In AMMs, informed traders extract value by trading against stale prices, whether from reserves (Uniswap), internal oracles (Curve v2), or external feeds. Adverse selection is the mechanism behind [LVR](#lvr-loss-versus-rebalancing), ranging from benign [Statistical Arbitrage](#statistical-arbitrage-stat-arb) to devastating [Informed Order Flow](#informed-order-flow-alpha-toxicity).
 
 **AIMM mitigation**: Directional fees charge more when trades worsen [Coverage Ratio](#coverage-ratio).
 
@@ -92,7 +92,7 @@ Multi-hop pricing architecture that routes asset swaps through a tree of anchor 
 The return on investment calculated over a one-year period, expressed as a percentage of the initial investment. Accounts for compounding effects, making it more accurate than simple APR for yield-bearing positions. Standard metric for staking yields, lending rates, and yield farming returns.
 
 ### Arbitrage
-**Master entry for extraction taxonomy.** Strategies exploiting price discrepancies or information advantages to extract value. AIMM's approach: doesn't distinguish by trader intent—only by **coverage impact** (beneficial vs harmful trades).
+**Master entry for extraction taxonomy.** Strategies exploiting price discrepancies or information advantages to extract value. AIMM's approach: doesn't distinguish by trader intent, only by **coverage impact** (beneficial vs harmful trades).
 
 **AIMM's Coverage-Based Model**:
 - **Coverage-improving trades** (beneficial): Rebalance inventory, pay only base spread
@@ -107,7 +107,7 @@ The return on investment calculated over a one-year period, expressed as a perce
 6. [JIT (Just-In-Time) Liquidity](#jit-just-in-time-liquidity) - Fee extraction via block-level timing. ~0.5-1% of DEX volume.
 
 #### Statistical Arbitrage (Stat Arb)
-Trading strategy exploiting temporary price discrepancies between correlated or identical assets across different venues (CEX vs DEX, L1 vs L2, or different blockchains). The arbitrageur observes that the asset trades at different prices across venues and simultaneously buys cheap and sells dear, capturing the spread. **Most common and least harmful form of [toxic flow](#order-flow-toxicity)**—it improves price consistency across markets and helps maintain pegs. Unlike [informed trading](#informed-order-flow-alpha-toxicity), stat arb relies solely on current price differences, not future information.
+Trading strategy exploiting temporary price discrepancies between correlated or identical assets across different venues (CEX vs DEX, L1 vs L2, or different blockchains). The arbitrageur observes that the asset trades at different prices across venues and simultaneously buys cheap and sells dear, capturing the spread. **Most common and least harmful form of [toxic flow](#order-flow-toxicity)**-it improves price consistency across markets and helps maintain pegs. Unlike [informed trading](#informed-order-flow-alpha-toxicity), stat arb relies solely on current price differences, not future information.
 
 **Examples**:
 - **CEX-DEX arb**: ETH at $2000 on Coinbase but $2010 on Uniswap → buy on Coinbase, sell on Uniswap
@@ -118,16 +118,16 @@ Trading strategy exploiting temporary price discrepancies between correlated or 
 
 **Broader category**: Stat arb is a subset of general **arbitrage**, which also includes MEV searchers (block-level extraction), HFT desks (latency-based), and medium-frequency traders (trend-following). See [Arbitrage](#arbitrage) for the full taxonomy.
 
-The DEX LP experiences stat arb as [adverse selection](#adverse-selection), but it's economically benign—markets become more efficient even as LPs are arbitraged. AIMM's oracle pricing and volatility-aware spreads reduce stat arb extractability by minimizing price staleness. Additionally, [Cooperative Arbitrage](#cooperative-arbitrage) aligns stat arb incentives with LP protection via reputation-based rebates.
+The DEX LP experiences stat arb as [adverse selection](#adverse-selection), but it's economically benign, markets become more efficient even as LPs are arbitraged. AIMM's oracle pricing and volatility-aware spreads reduce stat arb extractability by minimizing price staleness. Additionally, [Cooperative Arbitrage](#cooperative-arbitrage) aligns stat arb incentives with LP protection via reputation-based rebates.
 
 #### Latency Arbitrage
 Strategies that exploit speed advantages to trade ahead of slower participants when public information or quotes change. **Infrastructure-dependent form of [toxic flow](#order-flow-toxicity)**. Common across L1-L2 and cross-chain scenarios: when prices move on mainnet (L1), sequencers on L2s (Arbitrum, Optimism) are still processing old transactions, creating stale price windows. A bot observes the L1 price crash and sells on the stale-priced L2 AMM. Requires fast execution infrastructure and low-latency connections to exploit sequencer lag. More benign than [informed flow](#informed-order-flow-alpha-toxicity) (doesn't require secret information, just speed). See [Arbitrage](#arbitrage) for the toxicity hierarchy. Controversial for potential market fairness impacts.
 
 #### Informed Order Flow (Alpha Toxicity)
-Trading activity by participants possessing superior information about true fair value—insiders, arbitrageurs with news advantage, or those with fundamental alpha. Classic [adverse selection](#adverse-selection) problem from market microstructure theory (Glosten-Milgrom). **Rare but devastating form of [toxic flow](#order-flow-toxicity)**. Unlike [Statistical Arbitrage](#statistical-arbitrage-stat-arb) (which exploits price lags), informed flow trades *before* prices move. Example: A whale trading ahead of a forthcoming protocol hack or partnership announcement. The LP sells an underpriced asset just before the market reprices. This is pure adverse selection—the LP loses on both the up-move and down-move, making informed flow structurally unprofitable for passive LPs. Contrasts with [Flow Internalization](#flow-internalization-pfof---payment-for-order-flow) where flows are pre-selected. See [Arbitrage](#arbitrage) for the toxicity hierarchy. AIMM combats this via oracle-first pricing (reducing information asymmetry) and deviation-based surcharges on toxic flow.
+Trading activity by participants possessing superior information about true fair value, insiders, arbitrageurs with news advantage, or those with fundamental alpha. Classic [adverse selection](#adverse-selection) problem from market microstructure theory (Glosten-Milgrom). **Rare but devastating form of [toxic flow](#order-flow-toxicity)**. Unlike [Statistical Arbitrage](#statistical-arbitrage-stat-arb) (which exploits price lags), informed flow trades *before* prices move. Example: A whale trading ahead of a forthcoming protocol hack or partnership announcement. The LP sells an underpriced asset just before the market reprices. This is pure adverse selection, the LP loses on both the up-move and down-move, making informed flow structurally unprofitable for passive LPs. Contrasts with [Flow Internalization](#flow-internalization-pfof---payment-for-order-flow) where flows are pre-selected. See [Arbitrage](#arbitrage) for the toxicity hierarchy. AIMM combats this via oracle-first pricing (reducing information asymmetry) and deviation-based surcharges on toxic flow.
 
 #### Markout Toxicity (Winner's Curse)
-Loss LPs incur in trending markets even without direct arbitrage. In a sustained price trend (e.g., ETH rising), every trade against the pool becomes "toxic in hindsight"—LPs continuously sell the appreciating asset while missing upside. **Trend-driven form of [toxic flow](#order-flow-toxicity)** distinct from [information-based extraction](#informed-order-flow-alpha-toxicity). Markout toxicity is measured by comparing execution price to the asset's price 5-10 minutes after trade: if markout is consistently negative (price moved favorable to the taker), flow is toxic. High markout losses indicate LPs are systematically on the wrong side of trend moves. This is the "Winner's Curse"—by trading, the LP unknowingly bets against the winner. See [Arbitrage](#arbitrage) for the toxicity hierarchy. AIMM addresses this via oracle pricing that adjusts preemptively for trends and directional skew that charges trending trades more.
+Loss LPs incur in trending markets even without direct arbitrage. In a sustained price trend (e.g., ETH rising), every trade against the pool becomes "toxic in hindsight"-LPs continuously sell the appreciating asset while missing upside. **Trend-driven form of [toxic flow](#order-flow-toxicity)** distinct from [information-based extraction](#informed-order-flow-alpha-toxicity). Markout toxicity is measured by comparing execution price to the asset's price 5-10 minutes after trade: if markout is consistently negative (price moved favorable to the taker), flow is toxic. High markout losses indicate LPs are systematically on the wrong side of trend moves. This is the "Winner's Curse"-by trading, the LP unknowingly bets against the winner. See [Arbitrage](#arbitrage) for the toxicity hierarchy. AIMM addresses this via oracle pricing that adjusts preemptively for trends and directional skew that charges trending trades more.
 
 #### Flow Internalization (PFOF - Payment for Order Flow)
 Market structure where major wallets or aggregators (MetaMask Swaps, 1inch) use private mempools or intent systems, giving first look to market makers or solvers. **Structural market issue causing [adverse selection of flow](#adverse-selection)**, a distinct category in the [toxicity hierarchy](#arbitrage). Uninformed retail flow is filled by MMs at favorable terms; toxic or imbalanced flow is rejected and sent to public AMMs. Result: AMMs become "dumping grounds" for adversarial traders, receiving only the worst flows while missing benign retail trades. LPs on public AMMs experience structurally skewed flow composition compared to venues capturing both [informed](#informed-order-flow-alpha-toxicity) and uninformed order flow. Relates to [Latency Arbitrage](#latency-arbitrage) in that both exploit information/timing advantages, but PFOF is about flow routing rather than speed. See [Arbitrage](#arbitrage) for the toxicity hierarchy.
@@ -170,7 +170,7 @@ Compact 64-bit floating-point representation used for price storage:
 Enables efficient on-chain storage of prices with varying magnitudes and precision.
 
 ### Base Token (Numéraire)
-Root asset in a pool's anchor tree, typically a stablecoin (USDC, USDT), WETH, or WBTC. All other assets price relative to it—serves as the pool's accounting basis.
+Root asset in a pool's anchor tree, typically a stablecoin (USDC, USDT), WETH, or WBTC. All other assets price relative to it, serves as the pool's accounting basis.
 
 **AIMM config**: `PoolStorage.baseToken`.
 
@@ -211,7 +211,7 @@ Protocol infrastructure enabling asset or data transfer between independent bloc
 Bridges for moving digital assets between chains. Operates via lock-and-mint (lock source, mint wrapped on destination) or burn-and-release (burn wrapped, release from escrow). Canonical version typically on native chain.
 
 #### Messaging Bridge (Arbitrary Messaging Bridge - AMB)
-Bridges enabling arbitrary data and smart contract communication between chains. More flexible than asset bridges—enable cross-chain contract calls and governance execution.
+Bridges enabling arbitrary data and smart contract communication between chains. More flexible than asset bridges, enable cross-chain contract calls and governance execution.
 
 **Examples**: LayerZero, Wormhole, OP Stack bridges.
 
@@ -226,7 +226,7 @@ AIMM protocol governance token with fixed maximum supply. Used for voting and re
 Zero-knowledge proof system for range proofs without trusted setup. Used in Solana's Confidential Transfers to encrypt amounts while revealing sender/receiver. More efficient than SNARKs for specific range-proof use cases.
 
 ### Bundle
-Atomic sequence of transactions submitted as a unit (typically by MEV searchers). If any transaction fails, entire bundle reverts—atomicity is critical for coordinated front-running and back-running strategies. Submitted to builders or MEV relays.
+Atomic sequence of transactions submitted as a unit (typically by MEV searchers). If any transaction fails, entire bundle reverts, atomicity is critical for coordinated front-running and back-running strategies. Submitted to builders or MEV relays.
 
 **See**: [MEV](#mev-maximal-extractable-value), [Block Builder](#block-builder).
 
@@ -349,7 +349,7 @@ AIMM's **whitelisted, reputation-based rebate program** that transforms adversar
 5. **Revocation**: Low reputation (<0.9) → loss of Cooperator status
 6. **Cooldown claiming**: Rebates accrue per-swap, claimable after cooldown (default: 1 week)
 
-**Not MEV**: Targets **cross-exchange (CEX-DEX) statistical arbitrage**, not MEV (which manipulates block ordering). Cooperators are **arbitrageurs**—a broader term encompassing MEV searchers, HFT desks, and medium-frequency stat arb traders.
+**Not MEV**: Targets **cross-exchange (CEX-DEX) statistical arbitrage**, not MEV (which manipulates block ordering). Cooperators are **arbitrageurs**-a broader term encompassing MEV searchers, HFT desks, and medium-frequency stat arb traders.
 
 **How it fights LVR**:
 - Rebates lower profit threshold → cooperators arbitrage faster → smaller LVR window
@@ -374,7 +374,7 @@ See: [Toxic Flow Mitigation § Cooperative Arbitrage](/docs/1.1.6-Toxic-Flow-Mit
 ### Cooperator
 Whitelisted arbitrageur in AIMM's [Cooperative Arbitrage](#cooperative-arbitrage) program. Earns rebates proportional to reputation (`donations / rebates` ratio).
 
-**Terminology**: Cooperative Arbitrageur. **Not** "Coop MEV Searcher"—cooperators perform [Statistical Arbitrage](#statistical-arbitrage-stat-arb), not [MEV](#mev-maximal-extractable-value).
+**Terminology**: Cooperative Arbitrageur. **Not** "Coop MEV Searcher"-cooperators perform [Statistical Arbitrage](#statistical-arbitrage-stat-arb), not [MEV](#mev-maximal-extractable-value).
 
 **See**: [Cooperative Arbitrage](#cooperative-arbitrage), [Arbitrage](#arbitrage).
 
@@ -402,7 +402,7 @@ Whitelisted arbitrageur in AIMM's [Cooperative Arbitrage](#cooperative-arbitrage
 See [Coverage Ratio](#coverage-ratio), [Reserves](#reserves), [Liabilities](#liabilities), [Haircut](#haircut), [Liquidation](#liquidation).
 
 ### Coverage Ratio
-Core ALM metric measuring pool health as `reserves / liabilities`—how much actual token the pool holds per unit of LP claim.
+Core ALM metric measuring pool health as `reserves / liabilities`-how much actual token the pool holds per unit of LP claim.
 
 **States**:
 - **100% (= 1.0)**: Fully collateralized (equilibrium), zero skew
@@ -465,12 +465,12 @@ Polkadot's block production mechanism using VRF-based slot leader election. In e
 #### Bullshark
 [Consensus](#consensus) protocol for Sui that provides total ordering on top of [Narwhal](#narwhal)'s DAG-based data availability layer. A partially synchronous BFT protocol achieving deterministic finality with 2/3 honest stake assumption.
 
-**How it works**: Narwhal builds a DAG of transaction batches with availability certificates. Bullshark then interprets this DAG to determine a total order—validators "vote" on anchor points in the DAG, and commits happen when anchors gather enough support across rounds.
+**How it works**: Narwhal builds a DAG of transaction batches with availability certificates. Bullshark then interprets this DAG to determine a total order, validators "vote" on anchor points in the DAG, and commits happen when anchors gather enough support across rounds.
 
 **Properties**:
 - **Latency**: ~2-3 seconds to finality under good conditions
 - **Throughput**: Decoupled from consensus (Narwhal handles data dissemination)
-- **Safety**: Deterministic—no forks once committed if <1/3 Byzantine
+- **Safety**: Deterministic, no forks once committed if <1/3 Byzantine
 
 Sui has since evolved to [Mysticeti](#mysticeti) for improved latency. See [Narwhal](#narwhal), [Consensus](#consensus).
 
@@ -480,7 +480,7 @@ Ethereum's finality mechanism providing economic finality on top of [LMD-GHOST](
 
 **How it works**: Validators vote on checkpoint blocks (first block of each epoch, ~6.4 min). A checkpoint is **justified** when >2/3 of total stake votes for it. A justified checkpoint becomes **finalized** when the next checkpoint is also justified, creating a chain of supermajority attestations.
 
-**Security guarantee**: If two conflicting checkpoints are both finalized, at least 1/3 of total stake must have voted for both (equivocation), triggering [slashing](#slashing). This makes finality economically irreversible—reverting a finalized block requires burning ~$10B+ in stake.
+**Security guarantee**: If two conflicting checkpoints are both finalized, at least 1/3 of total stake must have voted for both (equivocation), triggering [slashing](#slashing). This makes finality economically irreversible, reverting a finalized block requires burning ~$10B+ in stake.
 
 **Finality timeline**:
 - Slot 0: Block proposed
@@ -584,7 +584,7 @@ Hyperliquid's [consensus](#consensus) protocol, a modified [HotStuff](#hotstuff)
 - **Pipelined throughput**: Multiple blocks in flight (prepare/pre-commit/commit)
 - **Validator rotation**: Round-robin leadership with stake-weighted selection
 
-**Security**: Standard BFT guarantees—safety if <1/3 of validator stake is Byzantine, with committed blocks irreversible. Requires known validator set and reasonable network synchrony.
+**Security**: Standard BFT guarantees, safety if <1/3 of validator stake is Byzantine, with committed blocks irreversible. Requires known validator set and reasonable network synchrony.
 
 **Architecture**: Shared between HyperCore (perpetuals engine) and HyperEVM (general EVM execution), providing unified ordering across both execution environments.
 
@@ -705,7 +705,7 @@ Foundational classical BFT [consensus](#consensus) protocol (1999, Castro & Lisk
 
 **Properties**:
 - **Deterministic finality**: Committed requests never reverted
-- **Quadratic complexity**: O(n²) messages per view—problematic for large validator sets
+- **Quadratic complexity**: O(n²) messages per view, problematic for large validator sets
 - **View changes**: Designated leader changes on timeout, incurring complexity
 
 **Successors**: [HotStuff](#hotstuff) (linear), [Tendermint](#tendermint--cometbft) (two-phase), [Baboon](#hashgraph) (gossip-based).
@@ -742,7 +742,7 @@ Solana's cryptographic clock providing timestamps and ordering before [Tower BFT
 **Properties**:
 - **Verifiable**: Anyone can verify the chain of hashes (deterministic)
 - **Order proof**: Timestamp proves transaction occurred between tick T and T+N
-- **Throughput**: Allows pipelining—validators can begin processing before consensus completes
+- **Throughput**: Allows pipelining, validators can begin processing before consensus completes
 
 **Not consensus**: PoH alone doesn't prevent double-spending; [Tower BFT](#tower-bft) provides finality.
 
@@ -792,7 +792,7 @@ Solana's [consensus](#consensus) protocol layered on top of [Proof of History](#
 **Assumptions**:
 - Tight network synchrony (validators see blocks within ~300ms of production)
 - Honest majority of block producers
-- Complex timing—deviations from assumptions can cause stalls
+- Complex timing, deviations from assumptions can cause stalls
 
 **Contrast**: [Gasper](#gasper) (Ethereum's hybrid approach) uses separate fork choice + finality; Tower BFT integrates both.
 
@@ -815,7 +815,7 @@ Private trading venue where transactions are hidden from public order book and m
 **See**: [MEV](#mev-maximal-extractable-value), [Encrypted Mempool](#encrypted-mempool).
 
 ### Data Availability (DA)
-In rollups and Layer 2s, the requirement that transaction data be published and retrievable from L1, enabling fraud proofs and preventing censorship. Critical for rollup security—without DA, users cannot verify state or recover funds.
+In rollups and Layer 2s, the requirement that transaction data be published and retrievable from L1, enabling fraud proofs and preventing censorship. Critical for rollup security, without DA, users cannot verify state or recover funds.
 
 **See**: [Rollup](#rollup), [Modular Blockchain](#modular-blockchain).
 
@@ -850,7 +850,7 @@ High deviation indicates price uncertainty, triggering wider spreads in AIMM.
 A Diamond-lite proxy pattern was used by AIMM prior to **Phase 42H**. Replaced by standalone singletons + EIP-1167 `Pool` clones (no `delegatecall`, no ERC-7201 namespacing, no module trust). Retained here only as a glossary marker for historical references in audit / decision records.
 
 ### Dispersion
-The price range over which liquidity is distributed in AIMM's liquidity profiles. Dispersion scales dynamically with volatility—higher volatility widens the curve, lower volatility tightens it. This is AIMM's core innovation for volatility-responsive depth.
+The price range over which liquidity is distributed in AIMM's liquidity profiles. Dispersion scales dynamically with volatility, higher volatility widens the curve, lower volatility tightens it. This is AIMM's core innovation for volatility-responsive depth.
 
 **Also known as**: range breadth, depth curve width. Sometimes described as "dynamic bonding curve" in comparison to traditional AMM invariant curves.
 
@@ -1051,7 +1051,7 @@ Next-generation Solana [validator client](#validator) developed by Jump Crypto i
 See [Agave](#agave), [Jito](#jito), [Consensus](#consensus), [Validator](#validator).
 
 ### FCFS / FIFO (First-Come-First-Served / First-In-First-Out)
-Transaction ordering policy where transactions are processed in the order they arrive at the [sequencer](#sequencer) or validator. Used by some rollup sequencers (original Arbitrum model) to provide fair ordering without explicit [MEV](#mev-maximal-extractable-value) auctions. **Limitations**: FCFS is vulnerable to latency games—actors with faster connections to the sequencer can still front-run by submitting transactions microseconds earlier. Many chains have moved to hybrid models combining FCFS with priority fees or explicit MEV auctions ([Timeboost](#timeboost)). Contrast with [price-time priority](#price-time-priority) (CLOB ordering) and [gas auction](#gas-auction) (Ethereum L1 ordering). See [Sequencer](#sequencer), [Mempool](#mempool).
+Transaction ordering policy where transactions are processed in the order they arrive at the [sequencer](#sequencer) or validator. Used by some rollup sequencers (original Arbitrum model) to provide fair ordering without explicit [MEV](#mev-maximal-extractable-value) auctions. **Limitations**: FCFS is vulnerable to latency games, actors with faster connections to the sequencer can still front-run by submitting transactions microseconds earlier. Many chains have moved to hybrid models combining FCFS with priority fees or explicit MEV auctions ([Timeboost](#timeboost)). Contrast with [price-time priority](#price-time-priority) (CLOB ordering) and [gas auction](#gas-auction) (Ethereum L1 ordering). See [Sequencer](#sequencer), [Mempool](#mempool).
 
 ### Flow Guard
 **Master entry for forbidden call flow protections.** Security mechanisms preventing illegitimate or malicious sequences of calls at transaction, block, or epoch level. Flow guards monitor and block call patterns that violate protocol invariants or enable attacks.
@@ -1098,12 +1098,12 @@ Per-asset sensitivity parameter controlling how aggressively pricing responds to
 **Economic role**: Gamma is the **risk aversion coefficient** from [Avellaneda-Stoikov](#avellaneda-stoikov-framework). Higher gamma means the pool is more risk-averse and charges steeper premiums for inventory imbalance. **Relation to LVR**: Higher gamma reduces [LVR](#lvr-loss-versus-rebalancing) by charging toxic flow more aggressively. See [Inventory Skew](#inventory-skew), [Vega (ν)](#vega-ν), [Lambda (λ)](#lambda-λ), and `docs/1. AIMM/1.2. Pricing/1.2.5. Parametrization.md` for implementation.
 
 ### Gas Auction
-Transaction ordering mechanism on Ethereum L1 where transactions compete for block inclusion based on gas price (priority fee). Higher gas prices result in earlier inclusion, creating an implicit auction for block space and ordering priority. This is how [MEV](#mev-maximal-extractable-value) extraction occurs on L1—[searchers](#mev-searcher) bid up gas prices to ensure their transactions land in favorable positions (e.g., before a victim's transaction for [front-running](#frontrunning)). **Contrast with**:
+Transaction ordering mechanism on Ethereum L1 where transactions compete for block inclusion based on gas price (priority fee). Higher gas prices result in earlier inclusion, creating an implicit auction for block space and ordering priority. This is how [MEV](#mev-maximal-extractable-value) extraction occurs on L1-[searchers](#mev-searcher) bid up gas prices to ensure their transactions land in favorable positions (e.g., before a victim's transaction for [front-running](#frontrunning)). **Contrast with**:
 - [FCFS/FIFO](#fcfs--fifo-first-come-first-served--first-in-first-out): Order by arrival time (some rollup sequencers)
 - [Timeboost](#timeboost): Explicit auction for express lane priority (Arbitrum)
 - [Price-Time Priority](#price-time-priority): CLOB ordering (exchanges)
 
-Gas auctions create an adversarial environment where sophisticated actors with better gas estimation and faster infrastructure can consistently outbid retail users. This is why [MEV-protected RPCs](#mev-protected-rpc) exist—to bypass the public gas auction entirely. See [Mempool](#mempool), [Block Builder](#block-builder).
+Gas auctions create an adversarial environment where sophisticated actors with better gas estimation and faster infrastructure can consistently outbid retail users. This is why [MEV-protected RPCs](#mev-protected-rpc) exist, to bypass the public gas auction entirely. See [Mempool](#mempool), [Block Builder](#block-builder).
 
 ### Gas Optimization
 Techniques to reduce transaction costs:
@@ -1208,7 +1208,7 @@ Controlled via bitmask flags per asset.
 ## I
 
 ### Impermanent Loss (IL)
-Loss LPs experience when asset prices diverge from deposit ratio, compared to simply holding the assets. Called "impermanent" because if prices return to original ratio, the loss disappears. IL is a fundamental property of AMMs that continuously rebalance—arbitrage merely realizes the loss by trading against the pool. AIMM's oracle pricing and coverage-based depth reduce IL exposure.
+Loss LPs experience when asset prices diverge from deposit ratio, compared to simply holding the assets. Called "impermanent" because if prices return to original ratio, the loss disappears. IL is a fundamental property of AMMs that continuously rebalance, arbitrage merely realizes the loss by trading against the pool. AIMM's oracle pricing and coverage-based depth reduce IL exposure.
 
 ### Internal Oracle
 AIMM's built-in price tracking system updated automatically on every swap. Uses dual-window TWAPs (5min/1hr) and volatility EMAs.
@@ -1244,7 +1244,7 @@ where:
 ## J
 
 ### Jito
-Solana's dominant MEV infrastructure, providing a modified validator client and bundle auction system. **Architecture**: Jito validators accept transaction bundles from [searchers](#mev-searcher), auction ordering priority, and share MEV revenue with stakers. Unlike Ethereum's [Flashbots](#block-builder) (which operates at the builder layer), Jito integrates directly into the validator client because Solana has no separate builder role—the slot leader is both proposer and builder.
+Solana's dominant MEV infrastructure, providing a modified validator client and bundle auction system. **Architecture**: Jito validators accept transaction bundles from [searchers](#mev-searcher), auction ordering priority, and share MEV revenue with stakers. Unlike Ethereum's [Flashbots](#block-builder) (which operates at the builder layer), Jito integrates directly into the validator client because Solana has no separate builder role, the slot leader is both proposer and builder.
 
 **Components**:
 - **Jito-Solana**: Modified validator client that accepts bundles
@@ -1330,7 +1330,7 @@ struct LiquidityProfile {
 Dynamic adjustment of [liquidity profile](#liquidity-profile) weights and offsets in response to market conditions, volatility, or trading activity. Enables pool operators or automated systems to concentrate liquidity where trading occurs most, improving capital efficiency and fee capture. Unlike static [bonding curves](#bonding-curve), liquidity shaping allows real-time rebalancing without modifying the [invariant](#invariant). Related to [Liquidity Bootstrapping Pool (LBP)](#liquidity-bootstrapping-pool-lbp) (time-weighted shaping) and [DLMM](#dlmm-dynamic-liquidity-market-maker) (bin-level dynamic fees).
 
 ### Bonding Curve
-Mathematical function defining the relationship between token supply and price. Traditional AMMs use fixed bonding curves (x·y=k for CPMMs, StableSwap invariant for Curve). AIMM replaces fixed invariant curves with spline-based [liquidity profiles](#liquidity-profile) that have dynamic [dispersion](#dispersion)—the curve shape responds to volatility rather than being static.
+Mathematical function defining the relationship between token supply and price. Traditional AMMs use fixed bonding curves (x·y=k for CPMMs, StableSwap invariant for Curve). AIMM replaces fixed invariant curves with spline-based [liquidity profiles](#liquidity-profile) that have dynamic [dispersion](#dispersion)-the curve shape responds to volatility rather than being static.
 
 **Traditional bonding curves**: [CPMM](#cpmm-constant-product-market-maker) (hyperbolic x·y=k), [CSMM](#csmm-constant-sum-market-maker) (linear), StableSwap (concentrated around peg).
 
@@ -1349,7 +1349,7 @@ Price interval within which an LP allocates concentrated liquidity in [concentra
 Fungible claim on deposited liquidity. AIMM tracks per-user, per-asset LP balances rather than pool-wide shares.
 
 ### LVR (Loss-Versus-Rebalancing)
-The difference between LP returns and a theoretical portfolio that rebalances continuously at true market prices. Unlike IL, LVR is **permanent**—it occurs because AMMs trade at stale prices between oracle updates. Arbitrageurs exploit this lag: when external price rises, they buy cheap from the pool; when it falls, they sell dear. Even if prices revert, the pool lost on both legs. Research shows 5-7% annual LP capital loss on major AMMs. AIMM addresses LVR via oracle-first pricing (reducing staleness) and directional fees (charging for toxic flow).
+The difference between LP returns and a theoretical portfolio that rebalances continuously at true market prices. Unlike IL, LVR is **permanent**-it occurs because AMMs trade at stale prices between oracle updates. Arbitrageurs exploit this lag: when external price rises, they buy cheap from the pool; when it falls, they sell dear. Even if prices revert, the pool lost on both legs. Research shows 5-7% annual LP capital loss on major AMMs. AIMM addresses LVR via oracle-first pricing (reducing staleness) and directional fees (charging for toxic flow).
 
 ---
 
@@ -1365,7 +1365,7 @@ Participant that continuously posts firm bid and ask quotes, standing ready to b
 See [Order Types](#order-types) → [Market Order](#market-order).
 
 ### Market Depth
-Measure of market's ability to absorb large buy or sell orders without significantly affecting price. Represented visually by the order book—deeper markets can handle larger orders with less impact. Critical metric for evaluating trading venue liquidity. Also called order book depth.
+Measure of market's ability to absorb large buy or sell orders without significantly affecting price. Represented visually by the order book, deeper markets can handle larger orders with less impact. Critical metric for evaluating trading venue liquidity. Also called order book depth.
 
 ### Maker-Taker Fees
 Fee schedule where liquidity providers (makers) receive rebates or pay lower fees, while liquidity takers pay higher fees per executed trade. Incentivizes passive liquidity provision over aggressive trading. Standard model on most CEXes and some DEXes.
@@ -1412,7 +1412,7 @@ Linearly weighted average with recent data prioritized. Weights decrease linearl
 **See**: [Moving Average](#moving-average), [EMA](#ema-exponential-moving-average).
 
 #### SMA (Simple Moving Average)
-Arithmetic mean over fixed window—all data points weighted equally.
+Arithmetic mean over fixed window, all data points weighted equally.
 
 **Formula**: `SMA = (P₁ + P₂ + ... + Pₙ) / n`
 
@@ -1437,7 +1437,7 @@ Accumulator-based average price over time window. Mathematically equivalent to S
 **See**: [Moving Average](#moving-average), [Internal Oracle](#internal-oracle).
 
 ### MEV (Maximal/Miner Extractable Value)
-The total profit a block producer can capture by strategically controlling transaction ordering, inclusion, or suppression within a block. MEV arises because transaction order confers informational advantage—actors can profit by reordering pending transactions. Different strategies carry different externalities: sandwich attacks harm users, frontrunning exploits information, and backrunning captures benign arbitrage. Encompasses multiple extraction types: [Frontrunning](#frontrunning) (harmful), [Sandwich Attacks](#sandwich-attack) (most harmful), [Backrunning](#backrun) (benign), and [MEV Spoofing](#mev-spoofing) (encrypted-mempool specific). Related to [Arbitrage](#arbitrage) taxonomy but focused on block-ordering control rather than market-structure exploitation. Measured as percentage of total block value and a significant source of LP losses in AMMs. See [MEV Searcher](#mev-searcher) for execution agents.
+The total profit a block producer can capture by strategically controlling transaction ordering, inclusion, or suppression within a block. MEV arises because transaction order confers informational advantage, actors can profit by reordering pending transactions. Different strategies carry different externalities: sandwich attacks harm users, frontrunning exploits information, and backrunning captures benign arbitrage. Encompasses multiple extraction types: [Frontrunning](#frontrunning) (harmful), [Sandwich Attacks](#sandwich-attack) (most harmful), [Backrunning](#backrun) (benign), and [MEV Spoofing](#mev-spoofing) (encrypted-mempool specific). Related to [Arbitrage](#arbitrage) taxonomy but focused on block-ordering control rather than market-structure exploitation. Measured as percentage of total block value and a significant source of LP losses in AMMs. See [MEV Searcher](#mev-searcher) for execution agents.
 
 ### MEV Strategies
 
@@ -1445,7 +1445,7 @@ The total profit a block producer can capture by strategically controlling trans
 [MEV](#mev-maximal-extractable-value) extraction where an attacker observes a high-value pending transaction and places their own transaction ahead of it. **Information-based extraction** (uses private information about mempool). Common on DEXes where buying an asset first increases slippage on the victim's swap. Extracts value from the victim's transaction impact at the victim's expense. Economically related to [Informed Order Flow](#informed-order-flow-alpha-toxicity) but operates at block-ordering level. See [Arbitrage](#arbitrage) for the broader extraction taxonomy.
 
 #### Back-running
-A [MEV](#mev-maximal-extractable-value) extraction strategy where a transaction is strategically placed after an existing transaction to capture arbitrage opportunities generated by price movements from that transaction. **Benign form of extraction** (no harm to the preceding transaction). Unlike [sandwich attacks](#sandwich-attack), backrunning simply capitalizes on market inefficiencies created by legitimate trading activity—it's economically equivalent to [Statistical Arbitrage](#statistical-arbitrage-stat-arb). Common in liquidation capture and DEX arbitrage. See [Arbitrage](#arbitrage) for the toxicity spectrum.
+A [MEV](#mev-maximal-extractable-value) extraction strategy where a transaction is strategically placed after an existing transaction to capture arbitrage opportunities generated by price movements from that transaction. **Benign form of extraction** (no harm to the preceding transaction). Unlike [sandwich attacks](#sandwich-attack), backrunning simply capitalizes on market inefficiencies created by legitimate trading activity, it's economically equivalent to [Statistical Arbitrage](#statistical-arbitrage-stat-arb). Common in liquidation capture and DEX arbitrage. See [Arbitrage](#arbitrage) for the toxicity spectrum.
 
 #### Sandwich Attack
 Coordinated [MEV](#mev-maximal-extractable-value) strategy involving transactions placed both before and after a victim's transaction. The attacker first moves the market to their advantage (buying an asset to raise its price), then the victim's transaction executes at worse price, then the attacker captures the spread by reversing position. **Most damaging MEV strategy for DEX users** (harmful to victims). Combines [frontrunning](#frontrunning) and [backrunning](#backrun) but with intentional adverse market movement. See [Arbitrage](#arbitrage) and [Order Flow Toxicity](#order-flow-toxicity) for extraction context.
@@ -1657,7 +1657,7 @@ Example: $10M volume × 0.05% fee = $5k daily revenue
 Blockchain architecture where consensus, data availability, and settlement are handled by separate layers or protocols. Enables horizontal scaling by specializing components. Contrasts with monolithic blockchains that handle all functions within a single layer.
 
 ### Monolithic Blockchain
-Blockchain architecture where all functions—consensus, transaction execution, and data availability—are handled by a single protocol layer. Examples: Bitcoin, original Ethereum. More coupled but simpler to reason about; scaling requires vertical optimization.
+Blockchain architecture where all functions, consensus, transaction execution, and data availability, are handled by a single protocol layer. Examples: Bitcoin, original Ethereum. More coupled but simpler to reason about; scaling requires vertical optimization.
 
 ### Makima Spline
 See [Spline (Cubic Interpolation)](#spline-cubic-interpolation).
@@ -1729,7 +1729,7 @@ Individual or entity running validator software to secure a Proof of Stake netwo
 See [Node Types](#node-types), [Validator](#validator).
 
 ### Nonce
-Number used once—in blockchain context, a transaction counter incremented with each transaction from an account to prevent replay attacks and ensure ordering. Also used in smart contracts (e.g., randomness) and as a proof-of-work parameter in mining.
+Number used once, in blockchain context, a transaction counter incremented with each transaction from an account to prevent replay attacks and ensure ordering. Also used in smart contracts (e.g., randomness) and as a proof-of-work parameter in mining.
 
 ### Nullifier
 Special hash of a secret commitment, sent with withdrawal requests in privacy protocols. Protocol checks that the nullifier has never been used before, preventing double-spending of the same commitment. Without nullifiers, users could withdraw multiple times from the same deposit. Critical security mechanism in mixers and private transaction systems.
@@ -2005,7 +2005,7 @@ See [Execution Client](#execution-client) for comparison table.
 
 | Metric | Definition | Use Case | AIMM Application |
 |--------|-----------|----------|------------------|
-| **[Volatility (σ)](#volatility-σ)** | Annualized standard deviation of returns | Measure price uncertainty | Base [vega](#vega-ν) parameter—higher volatility → wider spread |
+| **[Volatility (σ)](#volatility-σ)** | Annualized standard deviation of returns | Measure price uncertainty | Base [vega](#vega-ν) parameter, higher volatility → wider spread |
 | **[Standard Deviation](#standard-deviation)** | Square root of variance (consistency measure) | Basis for volatility calculations | Compute from 20-day rolling window of price changes |
 | **[Variance / Covariance](#variance--covariance)** | Squared deviation from mean / joint variation | Portfolio risk aggregation | Correlate asset price movements (not used directly, foundation) |
 | **[Value at Risk (VaR)](#value-at-risk-var)** | Max loss at X% confidence over Y period | Regulatory and risk thresholds | Monitor loss bounds under extreme scenarios |
@@ -2080,7 +2080,7 @@ COV(X,Y) = mean((X - μ_x)(Y - μ_y))
 
 **Portfolio context**: Multi-asset portfolios require covariance matrix to compute aggregate risk. If two assets are highly correlated (COV > 0.9), diversification benefit is minimal.
 
-**AIMM context**: Multi-token pools benefit from low correlation—when one asset drops, others may rise, reducing IL.
+**AIMM context**: Multi-token pools benefit from low correlation, when one asset drops, others may rise, reducing IL.
 
 See [Risk & Volatility Metrics](#risk-adjusted-performance-metrics).
 
@@ -2316,7 +2316,7 @@ X_t = α + β × X_{t-1} + ε_t
 
 
 ### Conditional VaR (Expected Shortfall)
-**Average loss in the worst X% of outcomes.** If VaR is the threshold, CVaR is the mean loss beyond that threshold—captures tail risk.
+**Average loss in the worst X% of outcomes.** If VaR is the threshold, CVaR is the mean loss beyond that threshold, captures tail risk.
 
 **Formula**:
 ```
@@ -2343,7 +2343,7 @@ See [Value at Risk (VaR)](#value-at-risk-var), [Risk & Volatility Metrics](#risk
 | **[Principal Component Analysis (PCA)](#principal-component-analysis-pca)** | Dimensionality reduction | Large correlation matrix | Linearly independent components | Simplify multi-asset risk analysis |
 
 **Key Insights**:
-- **Efficient frontier**: No portfolio is better than all others on the frontier—only trade-offs
+- **Efficient frontier**: No portfolio is better than all others on the frontier, only trade-offs
 - **Diversification benefit**: Depends on correlation; uncorrelated assets reduce portfolio volatility
 - **Cointegration pairs**: Long-short pairs that earn return from spread mean-reversion
 - **PCA components**: First PC captures most variance; subsequent PCs capture residual patterns
@@ -2370,7 +2370,7 @@ Subject to: VAR[R_p] = Σ(w_i² × VAR[R_i]) + Σ(2 × w_i × w_j × COV[R_i, R_
 See [Efficient Frontier](#efficient-frontier), [Portfolio Optimization](#portfolio-optimization).
 
 ### Efficient Frontier
-**Curve representing the set of optimal portfolios that maximize return for each level of risk (or minimize risk for each level of return).** All portfolios on the frontier are equally desirable—choices depend on risk tolerance.
+**Curve representing the set of optimal portfolios that maximize return for each level of risk (or minimize risk for each level of return).** All portfolios on the frontier are equally desirable, choices depend on risk tolerance.
 
 **Properties**:
 - **Points below**: Inefficient (can achieve same return with less risk elsewhere)
@@ -2383,7 +2383,7 @@ Efficient Frontier portfolios for stocks:
 - Portfolio A: 100% bonds, return 3%, volatility 2%
 - Portfolio B: 70% stocks/30% bonds, return 8%, volatility 8%
 - Portfolio C: 100% stocks, return 12%, volatility 18%
-All on frontier; no portfolio is "best"—choice depends on risk appetite.
+All on frontier; no portfolio is "best"-choice depends on risk appetite.
 ```
 
 **AIMM context**: Multi-token pool selection moves along the efficient frontier as volatility changes. Tight spreads assume low-risk conditions (left side); wide spreads for high-volatility (right side).
@@ -2423,7 +2423,7 @@ See [Correlation](#correlation), [Efficient Frontier](#efficient-frontier).
 
 **Test**: Johansen cointegration test detects whether two series are cointegrated.
 
-**DeFi context**: Stablecoin pairs (USDC-USDT-DAI) are cointegrated—they can diverge (0.99-1.01) but always revert. LP spreads can be tighter for cointegrated pairs (less unpredictable divergence).
+**DeFi context**: Stablecoin pairs (USDC-USDT-DAI) are cointegrated, they can diverge (0.99-1.01) but always revert. LP spreads can be tighter for cointegrated pairs (less unpredictable divergence).
 
 **Related**: [Stationarity](#stationarity), [Correlation](#correlation).
 
@@ -2443,7 +2443,7 @@ See [Correlation](#correlation), [Efficient Frontier](#efficient-frontier).
 - **PC2** (sector risk): Style factor differentiating asset classes
 - **PC3+** (residual): Idiosyncratic risks
 
-**AIMM context**: Simplify multi-token pool analysis. If pool has 20 tokens, PCA might show that 3 principal components explain 95% of risk—focus hedging/allocation on those 3.
+**AIMM context**: Simplify multi-token pool analysis. If pool has 20 tokens, PCA might show that 3 principal components explain 95% of risk, focus hedging/allocation on those 3.
 
 **Related**: [Variance / Covariance](#variance--covariance), [Correlation](#correlation).
 
@@ -2542,7 +2542,7 @@ The difference between a quoted/expected price and the actual execution price of
 
 **Slippage can be positive or negative**: If the market moves favorably between quote and execution, the trader receives *positive slippage* (better price than expected). This is rare on public [mempools](#mempool) due to MEV extraction.
 
-**AIMM Protection**: The `minAmountOut` parameter in `swap()` enforces maximum acceptable slippage—if execution price would result in less than `minAmountOut`, the transaction reverts:
+**AIMM Protection**: The `minAmountOut` parameter in `swap()` enforces maximum acceptable slippage, if execution price would result in less than `minAmountOut`, the transaction reverts:
 ```solidity
 if (finalAmountOut < minAmountOut) revert ThresholdViolation(finalAmountOut, minAmountOut);
 ```
@@ -2568,23 +2568,23 @@ See [Price Impact](#price-impact), [Spread](#spread), [MEV](#mev-maximal-extract
 | **[Density Analysis](#density-analysis)** | Measure concentration of observations around center | Liquidity density profiling using TWAP-weighted distribution | Shape spline weights based on where most trading volume clusters |
 
 **Key Insights**:
-- **Monotonicity**: Critical for spline stability—non-monotonic depth creates negative liquidity
+- **Monotonicity**: Critical for spline stability, non-monotonic depth creates negative liquidity
 - **Linearity violations**: Price-depth relationship is curved due to AMM properties and [price impact](#price-impact)
-- **Stationarity**: Assumes market behavior is consistent—violations trigger oracle [circuit breakers](#circuit-breaker)
+- **Stationarity**: Assumes market behavior is consistent, violations trigger oracle [circuit breakers](#circuit-breaker)
 - **Normalization vs Standardization**: Both rescale data; normalization bounds values [0,1], standardization centers on mean with unit variance
 - **Density analysis**: Identifies where liquidity should concentrate (high-volume price zones need tighter depth shaping)
 
 **Related**: [Volatility](#volatility-σ), [Price Impact](#price-impact), [Liquidity Profile](#liquidity-profile), [Catmull-Rom Spline](#catmull-rom-spline), [Makima Spline](#makima-spline).
 
 ### Monotonicity
-Mathematical property where a function is always non-decreasing or non-increasing over its domain. In trading, **monotonic depth** means liquidity gets consistently deeper (or shallower) as you move away from market price—never reverses. Critical for spline-based profiles to prevent "dips" where a shallower price zone lies between deeper ones (which would create arbitrage opportunities).
+Mathematical property where a function is always non-decreasing or non-increasing over its domain. In trading, **monotonic depth** means liquidity gets consistently deeper (or shallower) as you move away from market price, never reverses. Critical for spline-based profiles to prevent "dips" where a shallower price zone lies between deeper ones (which would create arbitrage opportunities).
 
 **AIMM context**: Spline weights must be arranged so that depth increases monotonically from center outward. Violation causes pricing inconsistency.
 
 See [Statistical Concepts](#statistical-concepts), [Spline (Cubic Interpolation)](#spline-cubic-interpolation).
 
 ### Linearity
-In statistics: proportional relationship where doubling input doubles output (f(2x) = 2f(x)). In blockchain/trading: the **assumption is false**—price depth relationship is non-linear due to [price impact](#price-impact) and curve characteristics.
+In statistics: proportional relationship where doubling input doubles output (f(2x) = 2f(x)). In blockchain/trading: the **assumption is false**-price depth relationship is non-linear due to [price impact](#price-impact) and curve characteristics.
 
 **Statistical definition**: f(ax + by) = af(x) + bf(y) (superposition property)
 
@@ -2681,7 +2681,7 @@ Results: 5th percentile = -40% (5% chance of >40% loss)
          95th percentile = +35% (5% chance of >35% gain)
 ```
 
-**AIMM context**: Stress-test coverage ratio under extreme market scenarios. Monte Carlo reveals: "Under 1-in-100-day volatility scenario, coverage ratio drops to 45%—need safety buffer."
+**AIMM context**: Stress-test coverage ratio under extreme market scenarios. Monte Carlo reveals: "Under 1-in-100-day volatility scenario, coverage ratio drops to 45%-need safety buffer."
 
 **Limitations**: Assumes parameters are stationary (fails during regime changes).
 
@@ -2880,7 +2880,7 @@ Order that becomes a market order when an asset's price falls to a specified sto
 Conditional order combining a stop price and limit price. When the stop price is reached, the order becomes a limit order (not a market order), offering price control but no guaranteed execution if price moves past the limit.
 
 ### Take-Profit Order
-Order that becomes a market order when an asset's price rises to a specified threshold, automatically executing a sale to lock in gains. Inverse of [stop-loss](#stop-loss-order)—protects profits rather than limits losses.
+Order that becomes a market order when an asset's price rises to a specified threshold, automatically executing a sale to lock in gains. Inverse of [stop-loss](#stop-loss-order)-protects profits rather than limits losses.
 
 **Use case**: Trader buys at $100, sets take-profit at $110. When price reaches $110, position automatically sells at current market price (may be $110 or higher). Ensures gains are captured but can miss further upside if market continues rising.
 
@@ -2922,7 +2922,7 @@ See [Stop Orders](#stop-orders), [Stop-Loss Order](#stop-loss-order), [Price Imp
 ## T
 
 ### Tick
-Discrete price point in concentrated liquidity AMMs (Uniswap v3/v4). AIMM doesn't use ticks—prices are continuous via splines.
+Discrete price point in concentrated liquidity AMMs (Uniswap v3/v4). AIMM doesn't use ticks, prices are continuous via splines.
 
 ### Threshold Encryption
 Cryptographic scheme where a secret (encryption key, signature) is split among multiple parties using threshold cryptography (k-of-n scheme). Any k parties can collaborate to decrypt/sign, but fewer than k cannot. Used in encrypted mempools to hide transaction content until after ordering, with block proposers holding key shares released only when ordering is final. Prevents MEV attacks but introduces complexity and potential MEV spoofing risks.
@@ -3024,7 +3024,7 @@ Solana [light client](#light-node) implementation verifying the [Proof of Histor
 - Off-chain applications needing trustless Solana state
 - Embedded systems with limited bandwidth
 
-**Trust model**: Same as full node—trusts that majority of validators are honest (>2/3 stake).
+**Trust model**: Same as full node, trusts that majority of validators are honest (>2/3 stake).
 
 See [Light Node](#light-node), [Proof of History](#proof-of-history), [Gulf Stream](#gulf-stream).
 
@@ -3039,7 +3039,7 @@ Delay before sensitive operations execute:
 Specialized infrastructure routing transactions from users to appropriate endpoints for execution. TRPs provide MEV protection by sending transactions to private mempools or MEV-resistant RPC providers instead of public mempools where searchers observe them. Examples include MEV-resistant relays that encrypt transaction details until block inclusion.
 
 ### Toxic Flow
-Trades exploiting information asymmetry—the counterparty knows something the pool doesn't. Toxic flow is unidirectional, driven by CEX price leads, and extracts value even if prices revert (the pool loses on both the up-move and the down-move). Contrast with **rebalancing arbitrage**, which brings pool prices back to market and is net-positive for liquidity. AIMM charges deviation surcharge on coverage-worsening trades during high oracle disagreement, making toxic flow expensive while keeping rebalancing cheap.
+Trades exploiting information asymmetry, the counterparty knows something the pool doesn't. Toxic flow is unidirectional, driven by CEX price leads, and extracts value even if prices revert (the pool loses on both the up-move and the down-move). Contrast with **rebalancing arbitrage**, which brings pool prices back to market and is net-positive for liquidity. AIMM charges deviation surcharge on coverage-worsening trades during high oracle disagreement, making toxic flow expensive while keeping rebalancing cheap.
 
 ### Transient Storage
 See [EIP-1153](#eip-1153-transient-storage).
@@ -3164,7 +3164,7 @@ Technique using zero-knowledge proofs to compress blockchain state, significantl
 > Definitions specific to BTR Vaults (`alm/evm/`). Cross-references to the dedicated docs in `/7. Vaults/`.
 
 ### ALM (Adaptive Liquidity Management)
-BTR product surface that allocates single-asset deposits to external concentrated-liquidity pools (UniV3/V4, PancakeV3/Infinity, Algebra, Ramses, Aerodrome Slipstream) — and, forward-looking, BTR's own AIMM pools. Implemented in `alm/evm/src/`. Distinct from the existing TradFi-borrowed [ALM (Asset-Liability Management)](#alm-asset-liability-management) entry which describes the Platypus-style accounting framework. See [Vaults Overview](/docs/7-Vaults).
+BTR product surface that allocates single-asset deposits to external concentrated-liquidity pools (UniV3/V4, PancakeV3/Infinity, Algebra, Ramses, Aerodrome Slipstream), and, forward-looking, BTR's own AIMM pools. Implemented in `alm/evm/src/`. Distinct from the existing TradFi-borrowed [ALM (Asset-Liability Management)](#alm-asset-liability-management) entry which describes the Platypus-style accounting framework. See [Vaults Overview](/docs/7-Vaults).
 
 ### HWM (High-Water Mark)
 Vault-level pair `(hwmAssets, hwmSupply)` against which performance is measured. Updated **only** in `harvestPerformance()` (`Vault.sol:442`); never in `_accrue`. Equivalent to comparing share prices `ta/sup > hwmAssets/hwmSupply` while preserving integer-math precision via the cross-multiplied form `ta × hS > hA × sup`. Performance fee is charged on the strictly positive `gain = ta − hwmAssets × sup / hS`.
@@ -3179,19 +3179,19 @@ Divergence between holding LP shares and holding the deposit asset directly when
 NAV / `assetValue` rule used by every Dex adapter. Given LP-implied amounts `(amt0, amt1)`, the side opposite the requested denomination is converted via **`min(oracle, pool)`**. Closes both JIT-pool-pump and stale-oracle attack surfaces simultaneously. See `Dex.assetValue` (`Dex.sol:356`) and [NAV & Fees §1](/docs/7.3-NAV-Fees).
 
 ### TDWAP (Time-Decayed Weighted Average Price)
-Internal mid-price construction used by AIMM's [Internal Oracle](#internal-oracle). Distinct from the Vault's pessimistic worst-of mark — the Vault uses external Chainlink USD feeds (`PriceProvider`) plus the live pool `slot0()`, not TDWAP.
+Internal mid-price construction used by AIMM's [Internal Oracle](#internal-oracle). Distinct from the Vault's pessimistic worst-of mark, the Vault uses external Chainlink USD feeds (`PriceProvider`) plus the live pool `slot0()`, not TDWAP.
 
 ### principalOf-as-Shares
 Semantics of the `Dex.principalOf[holder]` mapping: the value is the holder's **internal LP-share balance** in the adapter, not raw cost basis. `pull` mints shares pro-rata to current marked NAV; `withdraw` burns shares rounded up. This makes late-joiners non-dilutive to incumbent PnL. See `Dex.sol:92–93`, `:258`, `:288`.
 
 ### Intent (ERC-7683)
-A swap order escrowed at a settler contract that fills asynchronously off-chain and settles back via `settleIntent`. Used by `Dex.rebalance` for routes whose immediate execution would be too costly. While an intent is open on `tokenIn` or `tokenOut`, the adapter is treated as transient-frozen — share-mint paths gate (`Dex._checkLive`), the vault's sync deposit/redeem disable, and the async ticket path remains open.
+A swap order escrowed at a settler contract that fills asynchronously off-chain and settles back via `settleIntent`. Used by `Dex.rebalance` for routes whose immediate execution would be too costly. While an intent is open on `tokenIn` or `tokenOut`, the adapter is treated as transient-frozen, share-mint paths gate (`Dex._checkLive`), the vault's sync deposit/redeem disable, and the async ticket path remains open.
 
 ### Atomic Route
-A swap route executed synchronously through the Swapper's pinned LiFi router within a single transaction. Contrasts with **Intent** routes. The post-mint `maxSlipBps` envelope only applies when **all** routes in a `rebalance` call are atomic — mixed sets defer to per-route `minOut` + per-intent enforcement at settle. See `Dex.sol:343`.
+A swap route executed synchronously through the Swapper's pinned LiFi router within a single transaction. Contrasts with **Intent** routes. The post-mint `maxSlipBps` envelope only applies when **all** routes in a `rebalance` call are atomic, mixed sets defer to per-route `minOut` + per-intent enforcement at settle. See `Dex.sol:343`.
 
 ### ERC-4626
-Vault standard for tokenized yield-bearing shares. BTR Vault is strict-ERC-4626 on the deposit / mint / sync withdraw / sync redeem surface. `withdraw` reverts `WithdrawAsync` rather than queue a ticket — for strict integrators (Pendle, Morpho, Euler).
+Vault standard for tokenized yield-bearing shares. BTR Vault is strict-ERC-4626 on the deposit / mint / sync withdraw / sync redeem surface. `withdraw` reverts `WithdrawAsync` rather than queue a ticket, for strict integrators (Pendle, Morpho, Euler).
 
 ### ERC-7540
 Async-redeem extension to ERC-4626. BTR Vault implements it as the **fallback** for `redeem` when the vault is unhealthy or idle is insufficient: `requestRedeem` enqueues a controller-keyed ticket; `processWithdrawals(controllers[])` settles the cohort with a uniform haircut; `claimRedeem(controller, receiver)` pays out. ERC-7540 operator approvals (`isOperator`) are first-class.
@@ -3203,13 +3203,13 @@ Invariant `exitPip ≥ 1.2 × max_i(deviationBps_i + heartbeatDriftBps_i)` (in p
 Fee unit used by the Vault. `PIP_BASE = 100_000`, so `100 pip = 0.1%`, `1 bps = 10 pip`. Applies to `exitPip`, `mgmtPip`, `perfPip`. Allows 0.001% precision; max representable is 65.535%.
 
 ### Cohort (Async Redeem)
-Batch of pending ERC-7540 redeem tickets settled together by `processWithdrawals(controllers[])`. The cohort is summed, idle is checked, and each ticket is haircut by a uniform `hcBps`. Controllers must be passed sorted ascending (uniqueness enforced — `Vault.sol:316`) so duplicate-controller `needed` cannot inflate.
+Batch of pending ERC-7540 redeem tickets settled together by `processWithdrawals(controllers[])`. The cohort is summed, idle is checked, and each ticket is haircut by a uniform `hcBps`. Controllers must be passed sorted ascending (uniqueness enforced, `Vault.sol:316`) so duplicate-controller `needed` cannot inflate.
 
 ### Claim-by-Balance Haircut
 Final per-claim cap at `claimRedeem` time: when the vault contract balance is below `claimableAssets` (e.g., due to a competing cohort), the per-claim payout is further capped at `bal × cl.assets / claimableAssets`. Combined with the cohort `hcBps`, produces fair regime-stable settlement (`Vault.sol:373`).
 
 ### Defensive Ratchet
-Pattern for keeper-permitted parameter direction: keeper can only move a knob in the safer direction — `Vault.depositCap` ↓ only (≥ totalAssets), `Dex.maxSlipBps` ↓ only, `Dex.minIntervalSecs` ↑ only (capped at `+1 day` per call). Owner is the only authority that can loosen.
+Pattern for keeper-permitted parameter direction: keeper can only move a knob in the safer direction, `Vault.depositCap` ↓ only (≥ totalAssets), `Dex.maxSlipBps` ↓ only, `Dex.minIntervalSecs` ↑ only (capped at `+1 day` per call). Owner is the only authority that can loosen.
 
 ### Kill Switch (per adapter)
 Per-adapter `killed` flag (`Dex.sol:60`). Owner kill is instant + revertible only via `queueUnkill` + `executeUnkill` (`FREEZE_TIMELOCK = 1 day`). Keeper kill is rate-limited to 1/h per adapter and charged against `AccessControl.KEEPER_KILL_DAILY_CAP = 2` (cluster-wide UTC-day cap). Once killed, `assetValue` reverts and vault `_healthy()` is false.
@@ -3218,7 +3218,7 @@ Per-adapter `killed` flag (`Dex.sol:60`). Owner kill is instant + revertible onl
 `PriceProvider._checkSequencer()` consults the Chainlink L2 sequencer-up feed. Sequencer down OR within `SEQ_GRACE = 1 hour` of recovery ⇒ all `getPrice` calls revert ⇒ adapters report frozen ⇒ vault gates sync deposit / redeem. See [Risk Model §4](/docs/7.4-Risk-Model).
 
 ### Adapter Deregistration
-Owner-only `AccessControl.deregisterAdapter(a)` flips `isAdapter[a]` off. Vaults using that adapter become unhealthy on the next `_healthy()` check. The owner subsequently calls `Vault.removeAdapter(a)` to drain accounting state — permitted because the deregistered status overrides the `lastReported != 0` busy check. The escape hatch for a compromised or buggy adapter clone (`Vault.sol:487`).
+Owner-only `AccessControl.deregisterAdapter(a)` flips `isAdapter[a]` off. Vaults using that adapter become unhealthy on the next `_healthy()` check. The owner subsequently calls `Vault.removeAdapter(a)` to drain accounting state, permitted because the deregistered status overrides the `lastReported != 0` busy check. The escape hatch for a compromised or buggy adapter clone (`Vault.sol:487`).
 
 ### Two-Step Ownership
 `AccessControl` overrides Solady's 1-step `transferOwnership` and `renounceOwnership` to revert. Handover requires `requestOwnershipHandover` then `completeOwnershipHandover` with a non-zero pending owner. Closes the back-door renounce vector (`AccessControl.sol:60–67`).

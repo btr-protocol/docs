@@ -147,7 +147,7 @@ If the protocol fails or is exploited during the 21-day unlock window, staked fu
 - Large mint events dilute existing BTR holders
 - No hard cap on BTR supply is enforced by code
 
-**Soulbound Limitations**: sLP and sBTR tokens are soulbound—they cannot be sold, transferred, or traded. Users must unstake and wait 21 days to access liquidity, creating opportunity costs and trapping funds during emergencies.
+**Soulbound Limitations**: sLP and sBTR tokens are soulbound, they cannot be sold, transferred, or traded. Users must unstake and wait 21 days to access liquidity, creating opportunity costs and trapping funds during emergencies.
 
 **Voting Centralization**: BTR governance uses token-weighted voting. Large BTR holders (whales, Treasury, early adopters) can unilaterally pass proposals, including those that may be detrimental to smaller users. Governance power is proportional to BTR holdings, not user count.
 
@@ -192,7 +192,7 @@ If operators are unavailable during a crisis, circuit breakers may not trigger i
 
 #### 2.10. Counterparty and Custody Risks
 
-BTR does not act as a counterparty, broker, or custodian. All transactions occur peer-to-contract. You retain custody of your wallet and keys—lost or compromised keys result in permanent, irreversible loss of funds. Transactions on blockchains are final and irreversible.
+BTR does not act as a counterparty, broker, or custodian. All transactions occur peer-to-contract. You retain custody of your wallet and keys, lost or compromised keys result in permanent, irreversible loss of funds. Transactions on blockchains are final and irreversible.
 
 ---
 
@@ -303,7 +303,7 @@ While these risks are currently theoretical and distant, they represent a long-t
 
 #### 5.1. Frontend and Interface Risks
 
-The web interface at [https://btr.supply](https://btr.supply) is a convenience layer—you can interact with smart contracts directly if the interface is unavailable.
+The web interface at [https://btr.supply](https://btr.supply) is a convenience layer, you can interact with smart contracts directly if the interface is unavailable.
 
 **Frontend Downtime**: If the web interface goes offline due to:
 - Server failures
@@ -429,7 +429,7 @@ The protocol operates on Ethereum and other EVM-compatible blockchains. You ackn
 
 - **51% Attacks**: Theoretical attacks on blockchain consensus mechanisms could result in transaction reversals, double-spending, or other security compromises. While rare, you acknowledge this risk.
 
-- **Irreversibility**: Blockchain transactions are irreversible—errors cannot be corrected. BTR cannot reverse or refund any transaction once it has been confirmed on-chain.
+- **Irreversibility**: Blockchain transactions are irreversible, errors cannot be corrected. BTR cannot reverse or refund any transaction once it has been confirmed on-chain.
 
 #### 7.3. External Oracle Risks (Optional Integrations)
 
@@ -461,11 +461,11 @@ The protocol does not endorse or guarantee the safety of any listed token. Users
 
 ALM Dex adapters wrap external concentrated-liquidity pools whose code, governance, and operational state are entirely outside BTR's control. Each integrated DEX family carries distinct risk characteristics that you accept by depositing into vaults that allocate to that family:
 
-- **Uniswap v3**: Battle-tested but historically vulnerable to fee-tier mispricing and tick-range exit drag during volatile transitions. Fee-tier and tick-spacing immutability per pool — vault adapter cannot adjust these post-deployment without reallocation.
-- **Uniswap v4**: Hooks introduce arbitrary on-chain code paths during pool operations. Hook bugs, malicious hook upgrades (where applicable), or hook-induced reverts can degrade or freeze vault adapters allocated to v4 pools. The v4 StateView dependency (`sv` in code) introduces an additional indirection — staleness or misconfiguration of StateView could mis-mark NAV.
+- **Uniswap v3**: Battle-tested but historically vulnerable to fee-tier mispricing and tick-range exit drag during volatile transitions. Fee-tier and tick-spacing immutability per pool, vault adapter cannot adjust these post-deployment without reallocation.
+- **Uniswap v4**: Hooks introduce arbitrary on-chain code paths during pool operations. Hook bugs, malicious hook upgrades (where applicable), or hook-induced reverts can degrade or freeze vault adapters allocated to v4 pools. The v4 StateView dependency (`sv` in code) introduces an additional indirection, staleness or misconfiguration of StateView could mis-mark NAV.
 - **PancakeSwap V3 / Infinity**: Inherit Uniswap v3 / v4 risk classes plus PancakeSwap-specific governance and operator decisions.
 - **Aerodrome Slipstream**: Inherits ve(3,3) governance dynamics; fee tier and emission incentives depend on vote outcomes outside BTR control.
-- **Algebra / Ramses / others**: Each integration carries the integrating DEX's specific risk profile — adaptive fees, hook behavior, oracle integration, and governance.
+- **Algebra / Ramses / others**: Each integration carries the integrating DEX's specific risk profile, adaptive fees, hook behavior, oracle integration, and governance.
 
 #### Concentrated-Liquidity Specific Risks
 
@@ -551,7 +551,7 @@ The BTR governance token is forward-looking. If issued, additional risks apply:
 For both AIMM DEX and ALM vault deposits, governance participation, intent submission, swap execution, and any other interaction with the Protocol:
 - BTR is not your fiduciary, advisor, broker, asset manager, or investment company.
 - Nothing on the Interface, in documentation, in marketing materials, in social posts, in community channels, or in keeper / contributor public communications constitutes financial, legal, tax, regulatory, accounting, or investment advice.
-- No backtest, simulation, or historical performance — including yields displayed on the Interface — predicts future results.
+- No backtest, simulation, or historical performance, including yields displayed on the Interface, predicts future results.
 - BTR makes no guarantee of vault performance, no guarantee of redemption-on-demand within any specific timeframe (subject to the vault's redemption mechanics), no guarantee of intent fill, and no guarantee of token price.
 
 ### 8. USER RESPONSIBILITIES AND ACKNOWLEDGMENT
