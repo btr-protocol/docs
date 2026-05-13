@@ -101,9 +101,7 @@ Parkinson (1980) volatility is used throughout the pipeline as the canonical vol
 
 The Parkinson estimator uses the high-low range of each bar:
 
-```
-sigma_P = sqrt( mean(ln(H/L)^2) / (4 * ln(2)) )
-```
+$$\sigma_P = \sqrt{\frac{\operatorname{mean}(\ln(H/L)^2)}{4 \ln 2}}$$
 
 This is 5.2x more statistically efficient than the standard close-to-close estimator (Parkinson 1980, Garman & Klass 1980). The constant `1/(4*ln2) ~ 0.3607` is the scaling factor that makes the estimator unbiased under geometric Brownian motion.
 
@@ -123,9 +121,7 @@ The sqrt(t) scaling property is critical: it lets us express all thresholds in s
 
 Rolling circular-buffer computation, O(1) per bar:
 
-```
-sigma_P[i] = sqrt( sum(ln(H[j]/L[j])^2 for j in [i-lookback..i]) * INV_4_LN2 / n_valid )
-```
+$$\sigma_P[i] = \sqrt{\frac{\sum_{j=i-\text{lookback}}^{i} \ln(H[j]/L[j])^2 \cdot \text{INV\_4\_LN2}}{n_{\text{valid}}}}$$
 
 Default lookback: 50 bars (`config.yml: ml.parkinson_lookback`).
 
@@ -133,9 +129,7 @@ Default lookback: 50 bars (`config.yml: ml.parkinson_lookback`).
 
 Forward returns are normalized by local Parkinson volatility to make predictions scale-invariant across volatility regimes (Lopez de Prado 2018):
 
-```
-y[i] = (close[i+H] / close[i] - 1) / (sigma_P[i] * sqrt(H))
-```
+$$y[i] = \frac{\text{close}[i+H] / \text{close}[i] - 1}{\sigma_P[i] \cdot \sqrt{H}}$$
 
 This means a prediction of +1.0 represents a one-sigma move, regardless of whether absolute volatility is 0.5% or 5%. Labels are clamped to [-5, 5] to bound outliers.
 
@@ -206,10 +200,7 @@ All trading rules are deterministic functions of the GBM prediction and Parkinso
 ### Stop Loss (Risk-Budget)
 
 **Rule:**
-```
-SL_distance = max_loss_per_trade_pct / (leverage * position_size_pct)
-SL_clamped  = clamp(SL_distance / sigma_H, sl_min_sigma, sl_max_sigma) * sigma_H
-```
+$$\begin{aligned} \text{SL}_{\text{distance}} &= \frac{\text{max\_loss\_per\_trade\_pct}}{\text{leverage} \cdot \text{position\_size\_pct}} \\ \text{SL}_{\text{clamped}} &= \operatorname{clamp}\!\left(\frac{\text{SL}_{\text{distance}}}{\sigma_H},\; \text{sl\_min\_sigma},\; \text{sl\_max\_sigma}\right) \cdot \sigma_H \end{aligned}$$
 
 Where `sigma_H = sigma_P * sqrt(H)` is the horizon-scaled Parkinson volatility.
 
@@ -230,9 +221,7 @@ Where `sigma_H = sigma_P * sqrt(H)` is the horizon-scaled Parkinson volatility.
 ### Take Profit (Prediction + Sigma Adaptive)
 
 **Rule:**
-```
-TP_distance = |prediction_in_price_space| + tp_sigma_mult * sigma_H
-```
+$$\text{TP}_{\text{distance}} = |\text{prediction\_in\_price\_space}| + \text{tp\_sigma\_mult} \cdot \sigma_H$$
 
 Where `prediction_in_price_space = prediction_sigma * sigma_H` for regression mode.
 
@@ -317,9 +306,7 @@ Based on expert synthesis from quantitative finance literature (Pardo 2008, Kauf
 
 ### Score Components
 
-```
-Fitness = Product(component_i ^ weight_i) * confidence_discount
-```
+$$\text{Fitness} = \left(\prod_i \text{component}_i^{w_i}\right) \cdot \text{confidence\_discount}$$
 
 | Component | Weight | Formula | Interpretation |
 |-----------|--------|---------|----------------|
@@ -376,9 +363,7 @@ Manages LP positions in Uniswap V3-style concentrated liquidity pools. ML model 
 
 Based on Milionis et al. (2022) Loss-Versus-Rebalancing framework:
 
-```
-LVR_rate = sigma^2 * sqrt(P) / (8 * LP_value)
-```
+$$\text{LVR}_{\text{rate}} = \frac{\sigma^2 \cdot \sqrt{P}}{8 \cdot \text{LP\_value}}$$
 
 Where sigma is bar-level Parkinson volatility with dampening factor 0.75.
 
@@ -386,10 +371,7 @@ Where sigma is bar-level Parkinson volatility with dampening factor 0.75.
 
 Determines the fee premium/discount based on realized vol relative to reference:
 
-```
-ref_sigma = REF_SIGMA * sqrt(35064 / bars_per_year)
-vol_fee_mult = sigma / ref_sigma
-```
+$$\begin{aligned} \sigma_{\text{ref}} &= \text{REF\_SIGMA} \cdot \sqrt{35064 / \text{bars\_per\_year}} \\ \text{vol\_fee\_mult} &= \sigma / \sigma_{\text{ref}} \end{aligned}$$
 
 `REF_SIGMA = 0.0013` is calibrated for M15 bars (96 bars/day, 35064 bars/year). The scaling factor adjusts for different bar cadences.
 
@@ -407,12 +389,7 @@ The equity curve includes adverse mark-to-market points within each bar's SL/TP 
 
 ### Fee Model
 
-```
-fee_rate = fee_rate_bps / 10000   (default: 3 bps = 0.03% per leg)
-entry_fee = size * fee_rate
-exit_fee  = size * max(0, 1 + pnl_pct / leverage) * fee_rate
-net_pnl   = size * pnl_pct - entry_fee - exit_fee
-```
+$$\begin{aligned} \text{fee\_rate} &= \text{fee\_rate\_bps} / 10000 \quad \text{(default: 3 bps = 0.03\% per leg)} \\ \text{entry\_fee} &= \text{size} \cdot \text{fee\_rate} \\ \text{exit\_fee} &= \text{size} \cdot \max(0,\; 1 + \text{pnl\_pct} / \text{leverage}) \cdot \text{fee\_rate} \\ \text{net\_pnl} &= \text{size} \cdot \text{pnl\_pct} - \text{entry\_fee} - \text{exit\_fee} \end{aligned}$$
 
 Exit fee scales with PnL because the notional position value changes with profit/loss.
 

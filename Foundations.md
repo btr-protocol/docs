@@ -24,15 +24,15 @@ The key insight: a market maker holding excess inventory faces directional expos
 
 Avellaneda-Stoikov introduces the **reservation price**:
 
-$$r = s - q * gamma * sigma^2 * tau$$
+$$r = s - q \cdot \gamma \cdot \sigma^2 \cdot \tau$$
 
 where:
 - $r$ = reservation price
 - $s$ = mid-market price
 - $q$ = inventory quantity (positive = long, negative = short)
-- $gamma$ = risk aversion parameter
-- $sigma$ = price volatility
-- $tau$ = time remaining (T - t)
+- $\gamma$ = risk aversion parameter
+- $\sigma$ = price volatility
+- $\tau$ = time remaining (T - t)
 
 When inventory $q > 0$ (long position), the reservation price shifts below market, the market maker is willing to sell at lower prices to reduce exposure. The converse applies for short positions.
 
@@ -40,11 +40,11 @@ When inventory $q > 0$ (long position), the reservation price shifts below marke
 
 The optimal bid-ask spread depends on volatility, order arrival intensity, and risk aversion:
 
-$$Delta = gamma * sigma^2 * tau + {2}/{gamma} * ln(1 + gamma/k)$$
+$$\Delta = \gamma \cdot \sigma^2 \cdot \tau + \frac{2}{\gamma} \cdot \ln\left(1 + \frac{\gamma}{k}\right)$$
 
 where:
-- $Delta$ = optimal bid-ask spread
-- $tau$ = time remaining (T - t)
+- $\Delta$ = optimal bid-ask spread
+- $\tau$ = time remaining (T - t)
 - $k$ = order arrival intensity parameter
 
 Higher volatility or risk aversion widens the spread; more frequent order flow tightens it.
@@ -56,8 +56,8 @@ AIMM translates these continuous-time concepts to discrete blockchain execution:
 | Avellaneda-Stoikov | AIMM Analog |
 |--------------------|-------------|
 | Inventory $q$ | Coverage ratio deviation from target |
-| Volatility $sigma$ | Oracle `fastVolEMA` + `slowVolEMA` |
-| Risk aversion $gamma$ | Per-asset `vega` and `lambda` parameters |
+| Volatility $\sigma$ | Oracle `fastVolEMA` + `slowVolEMA` |
+| Risk aversion $\gamma$ | Per-asset `vega` and `lambda` parameters |
 | Order intensity $k$ | Implicit in spline depth calibration |
 
 The pricing model implements inventory-aware market making:
@@ -142,7 +142,7 @@ This directly influenced AIMM's volatility band $S_v$.
 
 Swaap's constant geometric mean product enables multi-asset pools where each asset maintains target weight:
 
-$$prod_i x_i^{w_i} = k$$
+$$\prod_i x_i^{w_i} = k$$
 
 where:
 - $x_i$ = quantity of asset i
@@ -234,9 +234,9 @@ See [Oracles](/docs/3.5-Oracles) for dual-window TWAP design.
 > "Elliptic CLPs allow trading along the curve of an ellipse. Similar to other CLPs, E-CLPs are designed to concentrate liquidity within price bounds."
 
 The ellipse is formed by transforming a circle:
-- **Stretch** ($lambda$): Elongates the curve
-- **Rotation** ($phi$): Tilts the concentration
-- **Displacement** ($alpha$, $beta$): Shifts price bounds
+- **Stretch** ($\lambda$): Elongates the curve
+- **Rotation** ($\phi$): Tilts the concentration
+- **Displacement** ($\alpha$, $\beta$): Shifts price bounds
 
 ### 6.2. Capital Efficiency
 
@@ -307,19 +307,19 @@ Surge pricing compensates LPs during periods of maximum adverse selection:
 
 AIMM's volatility band directly implements surge pricing concepts:
 
-$$S_v = 100 + (sigma_p * nu)/(100M)$$
+$$S_v = 100 + \frac{\sigma_p \cdot \nu}{100M}$$
 
 where:
 - $S_v$ = volatility band (basis points)
-- $sigma_p$ = pair volatility
-- $nu$ = vega sensitivity
+- $\sigma_p$ = pair volatility
+- $\nu$ = vega sensitivity
 - $M$ = multiplier base (10000)
 
 Key differences:
 
 | Aspect | LFJ v2 | AIMM |
 |--------|--------|------|
-| **Volatility measurement** | Bin crossings (VA) | Oracle EMA ($sigma$) |
+| **Volatility measurement** | Bin crossings (VA) | Oracle EMA ($\sigma$) |
 | **Fee components** | Base + variable | Base + volatility + inventory |
 | **Inventory awareness** | No | Yes (directional surcharge) |
 | **Multi-hop aggregation** | Per-hop | Path-level max |
@@ -392,7 +392,7 @@ Multi-asset pools face combinatorial explosion: N tokens require N(N-1)/2 pairs 
 
 **Approach 2: Base currency routing** (Traditional FX)
 - All quotes relative to base (USD)
-- A�B trades route through A�USD�B
+- $A \to B$ trades route through $A \to \text{USD} \to B$
 - Standard in foreign exchange markets
 
 **Approach 3: Graph-based routing** (DEX aggregators)
@@ -413,8 +413,8 @@ AIMM uses a **hub-and-spoke anchor tree** where a base token (typically stableco
 ```
 
 All swaps route through the anchor:
-- ETH � BTC routes as ETH � USDC � BTC
-- WSTETH � DAI routes as WSTETH � ETH � USDC � DAI
+- $\text{ETH} \to \text{BTC}$ routes as $\text{ETH} \to \text{USDC} \to \text{BTC}$
+- $\text{WSTETH} \to \text{DAI}$ routes as $\text{WSTETH} \to \text{ETH} \to \text{USDC} \to \text{DAI}$
 
 ### 9.3. Precedents
 
@@ -423,13 +423,13 @@ This structure mirrors traditional finance:
 - **Equity markets**: Market makers quote against cash
 - **Crypto exchanges**: BTC or USDT as base pairs
 
-The innovation is on-chain implementation with **Least Common Ancestor (LCA) pathfinding** mathematically optimal routing with O(log N) computation.
+The innovation is on-chain implementation with **Least Common Ancestor (LCA) pathfinding** mathematically optimal routing with $O(\log N)$ computation.
 
 ### 9.4. Benefits
 
 | Aspect | All-Pairs | Anchor Tree |
 |--------|-----------|-------------|
-| **Pair count** | O(N�) | O(N) |
+| **Pair count** | $O(N^2)$ | $O(N)$ |
 | **Capital efficiency** | Diluted | Concentrated at anchor |
 | **Gas cost** | Per-pair depth | Single traversal |
 | **Adding tokens** | N new pairs | 1 new edge |
@@ -496,7 +496,7 @@ AIMM's spline-based liquidity profiles appear to be **novel** in DeFi AMM design
 > "Catmull-Rom is an interpolating cubic spline with built-in C1 continuity."
 
 Properties relevant to AMM design:
-- **Passes through control points**: LP-intuitive (price�depth mapping exact at knots)
+- **Passes through control points**: LP-intuitive (price$\to$depth mapping exact at knots)
 - **C1 continuous**: No discontinuous jumps in liquidity
 - **Local control**: Moving one knot doesn't affect distant regions
 - **Centripetal variant**: Avoids self-intersections and cusps
@@ -529,7 +529,7 @@ For query price p:
   3. Return interpolated depth
 ```
 
-Gas cost: O(log k) where k = number of knots (typically 3-7).
+Gas cost: $O(\log k)$ where $k$ = number of knots (typically 3-7).
 
 See [Liquidity Shaping](/docs/1.1.2-Liquidity-Shaping) for spline mathematics.
 
@@ -560,7 +560,7 @@ AIMM's original contributions:
 2. **Spline-based liquidity profiles**: First known AMM using interpolating splines
 3. **Dual-window TWAP with offset encoding**: Compact representation of fast/slow divergence
 4. **Coverage-aware asymmetric fees**: Avellaneda-Stoikov inventory adjustment via fee mechanics
-5. **Anchor tree + LCA pathfinding**: Efficient multi-asset routing without N� pairs
+5. **Anchor tree + LCA pathfinding**: Efficient multi-asset routing without $N^2$ pairs
 
 ### 12.3. Design Philosophy
 
@@ -759,7 +759,7 @@ AIMM builds on decades of research:
 
 **Academic Foundations**:
 - Avellaneda & Stoikov (2008): [High-Frequency Trading in a Limit Order Book](https://people.orie.cornell.edu/sfs33/LimitOrderBook.pdf)
-- Gu�ant, Lehalle & Fernandez-Tapia (2012): [Optimal Portfolio Liquidation with Limit Orders](https://arxiv.org/abs/1206.4810)
+- Guéant, Lehalle & Fernandez-Tapia (2012): [Optimal Portfolio Liquidation with Limit Orders](https://arxiv.org/abs/1206.4810)
 - Catmull & Rom (1974): A Class of Local Interpolating Splines
 
 **DeFi Protocols**:
