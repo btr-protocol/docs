@@ -609,19 +609,19 @@ function ResponsiveChart({ data }: ChartProps) {
 
 ## 7. Build-Time Compilation
 
-**Zero runtime deps for content: markdown → HTML, AsciiMath → MathML, Mermaid → SVG at build time**
+**Zero runtime deps for content: markdown → HTML, LaTeX → MathML, Mermaid → SVG (client-side) at build time**
 
 ### Markdown Compilation
 
-- **Script**: `scripts/precompile-markdown.ts` (backend only)
+- **Service**: `back/services/docs/` (renderer)
 - **Process**:
-  - Parses markdown with `marked`
-  - Syntax highlights with `prismjs` (JS/TS/JSX/TSX/JSON/Bash/SQL/Markdown/Solidity)
-  - Converts inline math ($...$) and block math ($$...$$) to MathML using `asciimath2ml`
-  - Renders mermaid diagrams to themed SVG (light/dark) via Playwright
-  - Generates heading anchors with IDs
-- **Output**: `/front/public/compiled-docs/docs.json` (pre-rendered HTML)
-- **Frontend**: Uses `MarkdownRenderer` component that loads pre-compiled HTML from JSON (NO parsing)
+  - Parses markdown with Bun's built-in `Bun.markdown.html` (no `marked` dep)
+  - Syntax highlights with `prismjs` (build time, server-side)
+  - Converts inline math ($...$) and block math ($$...$$) to MathML using **`temml`** (LaTeX → MathML, sync, zero deps)
+  - Emits mermaid blocks as `<pre class="mermaid">` placeholders; front lazy-loads mermaid ESM client-side
+  - Generates heading anchors with IDs via inlined utils
+- **Output**: `back/services/docs/data/docs.json` (pre-rendered HTML, gzipped)
+- **Frontend**: `MarkdownRenderer` component fetches compiled HTML from `/docs-api/*` (NO parsing in browser)
 
 ### Frontend Markdown Usage
 
@@ -633,49 +633,58 @@ function ResponsiveChart({ data }: ChartProps) {
 <MarkdownRenderer content="<p>...</p>" />
 ```
 
-**Key**: Frontend has ZERO markdown dependencies (`marked`, `prismjs`, `asciimath2ml`, `mermaid` only in backend)
+**Key**: Frontend has ZERO markdown deps. `mermaid` is the only client-side renderer (lazy-loaded only on doc pages w/ diagrams).
 
 ### Search Index
 
-- **Script**: `scripts/build-search-index.ts`
-- **What**: Extracts frontmatter, strips markdown, builds full-text search index
-- **Output**: Searchable JSON metadata
+- **Script**: `back/services/docs/build/build-search-index.ts`
+- **What**: Walks markdown, strips formatting, builds minisearch index w/ headings + content
+- **Output**: `back/services/docs/data/search-index.json{,.gz}`
 
 ### Build Chain
 
 ```bash
-bun run build
-# Runs: build:markdown → build:search-index → vite build
+cd back/services/docs && bun run build:data
+# Runs: build:index → build:markdown
 ```
 
-**Dependencies**:
-- ✅ Backend (`package.json`): marked, prismjs, asciimath2ml, playwright, mermaid
-- ❌ Frontend (`front/package.json`): NONE of the above (pre-compiled only)
+**Dependencies (renderer service):**
+- ✅ Backend (`back/services/docs/package.json`): `temml`, `prismjs`, `minisearch` (3 total)
+- ❌ Dropped in Phase 42K.1: `asciimath2ml`, `marked`, `playwright`, `@btr-protocol/sdk`
+- 🟢 Frontend (`front/package.json`): `mermaid` (client-side render, lazy-loaded on doc pages)
 
-### AsciiMath Syntax Guidelines
+### LaTeX Math Syntax Guidelines
 
 **Basic Syntax**:
-- Inline: `$expression$`
-- Block: `$$expression$$`
-- Use `*` for center dot (·), `xx` for cross (×)
+- Inline: `$\sigma \cdot \nu$` (single dollar)
+- Block: `$$\Delta = \gamma \sigma^2 \tau$$` (double dollar)
+- Code-fenced: ` ```math `
 
-**Brackets & Grouping**:
-- **Visible parentheses**: `(` `)` -always rendered
-- **Invisible grouping**: `{` `}` -grouping only, not rendered
-- **Visible curly braces**: `{:` `:}` -rendered as curly braces
-- Use invisible grouping for fraction numerators/denominators: `{numerator}/{denominator}`
+**Greek letters** (use backslash): `\alpha \beta \gamma \delta \sigma \tau \lambda \mu \nu \phi \psi \rho \kappa \eta \pi \epsilon \Delta \Sigma \Gamma \Omega`
 
-**Symbol Naming**:
-- Prefer single-letter variables: `S`, `U`, `c`
-- Use subscripts for variants: `S_v`, `S_f`, `phi_i`, `phi_o`
-- Avoid verbose strings: ~~`S_"final"`~~ → `S_f`
+**Operators**:
+- Multiplication: `\cdot` (·) or just space; `\times` (×) for cross product
+- Division: `\frac{numerator}{denominator}`  (NOT AsciiMath `{a}/{b}`)
+- Comparison: `\le \ge \neq \approx`
+- Logic: `\forall \exists \wedge \vee \in \subset`
+- Arrows: `\to \leftarrow \Rightarrow \implies`
+
+**Subscripts/Superscripts**: `x_i`, `x^2`, `x_{ij}^{abc}` (braces for multi-char)
 
 **Fractions**:
-$$Simple:         a/b$$
+```latex
+Simple:    \frac{a}{b}
+Complex:   \frac{x + y}{z - w}
+Inline:    \tfrac{...} (text-style, smaller)
+```
 
-$$Complex:        {x + y}/{z - w}$$
-
-$$Multi-term:     {sigma * nu}/{100M}$$
+**Annotated braces**: `\overbrace{x}^{\text{label}}`, `\underbrace{x}_{\text{label}}`
+**Floor/ceil**: `\lfloor x \rfloor`, `\lceil x \rceil`
+**Sums/products**: `\sum_{i=0}^N`, `\prod_i x_i`, `\int_a^b f(x)\,dx`
+**Aligned blocks**: `\begin{aligned} a &= b \\ c &= d \end{aligned}`
+**Cases**: `\begin{cases} x & \text{if } y > 0 \\ 0 & \text{otherwise} \end{cases}`
+**Text in math**: `\text{label}`, `\operatorname{sign}(x)`
+**Percent**: `4\%` (must escape inside math)
 
 ---
 
