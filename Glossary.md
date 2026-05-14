@@ -3167,7 +3167,7 @@ Technique using zero-knowledge proofs to compress blockchain state, significantl
 BTR product surface that allocates single-asset deposits to external concentrated-liquidity pools (UniV3/V4, PancakeV3/Infinity, Algebra, Ramses, Aerodrome Slipstream), and, forward-looking, BTR's own AIMM pools. Implemented in `alm/evm/src/`. Distinct from the existing TradFi-borrowed [ALM (Asset-Liability Management)](#alm-asset-liability-management) entry which describes the Platypus-style accounting framework. See [Vaults Overview](/docs/7-Vaults).
 
 ### HWM (High-Water Mark)
-Vault-level pair `(hwmAssets, hwmSupply)` against which performance is measured. Updated **only** in `harvestPerformance()` (`Vault.sol:442`); never in `_accrue`. Equivalent to comparing share prices `ta/sup > hwmAssets/hwmSupply` while preserving integer-math precision via the cross-multiplied form `ta × hS > hA × sup`. Performance fee is charged on the strictly positive `gain = ta − hwmAssets × sup / hS`.
+Vault-level pair `(hwmAssets, hwmSupply)` against which performance is measured. Updated **only** in `harvestPerformance()` (`Vault.sol:harvestPerformance`, ≈ L441); never in `_accrue`. Equivalent to comparing share prices `ta/sup > hwmAssets/hwmSupply` while preserving integer-math precision via the cross-multiplied form `ta × hS > hA × sup`. Performance fee is charged on the strictly positive `gain = ta − hwmAssets × sup / hS`.
 
 ### LVR (Loss Versus Rebalancing)
 Structural shortfall of a passive AMM LP relative to a perfectly-rebalanced book that quotes the same prices. Approximation: `LVR_rate ≈ (σ² / 8) × L_active` per unit time. Drives most of the unmanaged-LP underperformance; BTR Vaults attack it via tighter ranges, adaptive rebalances, and worst-of marks. See [Risk Model §2](/docs/7.4-Risk-Model).
@@ -3176,19 +3176,19 @@ Structural shortfall of a passive AMM LP relative to a perfectly-rebalanced book
 Divergence between holding LP shares and holding the deposit asset directly when price moves through (or out of) the position range. CLMM-specific: out-of-range crystallizes IL into a single-sided holding at the boundary tick. BTR Vaults do not eliminate IL; they bound and surface it through pessimistic share price.
 
 ### Pessimistic Worst-Of Mark
-NAV / `assetValue` rule used by every Dex adapter. Given LP-implied amounts `(amt0, amt1)`, the side opposite the requested denomination is converted via **`min(oracle, pool)`**. Closes both JIT-pool-pump and stale-oracle attack surfaces simultaneously. See `Dex.assetValue` (`Dex.sol:356`) and [NAV & Fees §1](/docs/7.3-NAV-Fees).
+NAV / `assetValue` rule used by every Dex adapter. Given LP-implied amounts `(amt0, amt1)`, the side opposite the requested denomination is converted via **`min(oracle, pool)`**. Closes both JIT-pool-pump and stale-oracle attack surfaces simultaneously. See `Dex.assetValue` (`Dex.sol:assetValue`, ≈ L454) and [NAV & Fees §1](/docs/7.3-NAV-Fees).
 
 ### TDWAP (Time-Decayed Weighted Average Price)
 Internal mid-price construction used by AIMM's [Internal Oracle](#internal-oracle). Distinct from the Vault's pessimistic worst-of mark, the Vault uses external Chainlink USD feeds (`PriceProvider`) plus the live pool `slot0()`, not TDWAP.
 
 ### principalOf-as-Shares
-Semantics of the `Dex.principalOf[holder]` mapping: the value is the holder's **internal LP-share balance** in the adapter, not raw cost basis. `pull` mints shares pro-rata to current marked NAV; `withdraw` burns shares rounded up. This makes late-joiners non-dilutive to incumbent PnL. See `Dex.sol:92–93`, `:258`, `:288`.
+Semantics of the `Dex.principalOf[holder]` mapping: the value is the holder's **internal LP-share balance** in the adapter, not raw cost basis. `pull` mints shares pro-rata to current marked NAV; `withdraw` burns shares rounded up. This makes late-joiners non-dilutive to incumbent PnL. See `Dex.sol:principalOf` ≈ L121, `:pull` ≈ L355, `:withdraw` ≈ L380.
 
 ### Intent (ERC-7683)
 A swap order escrowed at a settler contract that fills asynchronously off-chain and settles back via `settleIntent`. Used by `Dex.rebalance` for routes whose immediate execution would be too costly. While an intent is open on `tokenIn` or `tokenOut`, the adapter is treated as transient-frozen, share-mint paths gate (`Dex._checkLive`), the vault's sync deposit/redeem disable, and the async ticket path remains open.
 
 ### Atomic Route
-A swap route executed synchronously through the Swapper's pinned LiFi router within a single transaction. Contrasts with **Intent** routes. The post-mint `maxSlipBps` envelope only applies when **all** routes in a `rebalance` call are atomic, mixed sets defer to per-route `minOut` + per-intent enforcement at settle. See `Dex.sol:343`.
+A swap route executed synchronously through the Swapper's pinned LiFi router within a single transaction. Contrasts with **Intent** routes. The post-mint `maxSlipBps` envelope only applies when **all** routes in a `rebalance` call are atomic, mixed sets defer to per-route `minOut` + per-intent enforcement at settle. See `Dex.sol:rebalance` (atomic-vs-intent branch), ≈ L402.
 
 ### ERC-4626
 Vault standard for tokenized yield-bearing shares. BTR Vault is strict-ERC-4626 on the deposit / mint / sync withdraw / sync redeem surface. `withdraw` reverts `WithdrawAsync` rather than queue a ticket, for strict integrators (Pendle, Morpho, Euler).
@@ -3197,31 +3197,37 @@ Vault standard for tokenized yield-bearing shares. BTR Vault is strict-ERC-4626 
 Async-redeem extension to ERC-4626. BTR Vault implements it as the **fallback** for `redeem` when the vault is unhealthy or idle is insufficient: `requestRedeem` enqueues a controller-keyed ticket; `processWithdrawals(controllers[])` settles the cohort with a uniform haircut; `claimRedeem(controller, receiver)` pays out. ERC-7540 operator approvals (`isOperator`) are first-class.
 
 ### Exit-Fee Floor
-Invariant `exitPip ≥ 1.2 × max_i(deviationBps_i + heartbeatDriftBps_i)` (in pip; `1 bps = 10 pip`). Enforced at `Vault.setFees` write time via `_exitFloor()` (`Vault.sol:574`). Prevents an MEV searcher from extracting up to `(deviation + heartbeat-drift)` bps of free value through a deviating exit window. The 1.2× factor leaves a 20% margin.
+Invariant `exitPip ≥ 1.2 × max_i(deviationBps_i + heartbeatDriftBps_i)` (in pip; `1 bps = 10 pip`). Enforced at `Vault.setFees` write time via `_exitFloor()` (`Vault.sol:_exitFloor`, ≈ L650; floor body @ `VaultAux.sol:exitFloor`). Prevents an MEV searcher from extracting up to `(deviation + heartbeat-drift)` bps of free value through a deviating exit window. The 1.2× factor leaves a 20% margin.
 
 ### Pip (Vault fees)
 Fee unit used by the Vault. `PIP_BASE = 100_000`, so `100 pip = 0.1%`, `1 bps = 10 pip`. Applies to `exitPip`, `mgmtPip`, `perfPip`. Allows 0.001% precision; max representable is 65.535%.
 
 ### Cohort (Async Redeem)
-Batch of pending ERC-7540 redeem tickets settled together by `processWithdrawals(controllers[])`. The cohort is summed, idle is checked, and each ticket is haircut by a uniform `hcBps`. Controllers must be passed sorted ascending (uniqueness enforced, `Vault.sol:316`) so duplicate-controller `needed` cannot inflate.
+Batch of pending ERC-7540 redeem tickets settled together by `processWithdrawals(controllers[])`. The cohort is summed, idle is checked, and each ticket is haircut by a uniform `hcBps`. Controllers must be passed sorted ascending (uniqueness enforced, `VaultAux.sol:processWithdrawals`, ≈ L45) so duplicate-controller `needed` cannot inflate.
 
 ### Claim-by-Balance Haircut
-Final per-claim cap at `claimRedeem` time: when the vault contract balance is below `claimableAssets` (e.g., due to a competing cohort), the per-claim payout is further capped at `bal × cl.assets / claimableAssets`. Combined with the cohort `hcBps`, produces fair regime-stable settlement (`Vault.sol:373`).
+Final per-claim cap at `claimRedeem` time: when the vault contract balance is below `claimableAssets` (e.g., due to a competing cohort), the per-claim payout is further capped at `bal × cl.assets / claimableAssets`. Combined with the cohort `hcBps`, produces fair regime-stable settlement (`VaultAux.sol:claimRedeemBody`, ≈ L91; `Vault.sol:claimRedeem` ≈ L363).
 
 ### Defensive Ratchet
-Pattern for keeper-permitted parameter direction: keeper can only move a knob in the safer direction, `Vault.depositCap` ↓ only (≥ totalAssets), `Dex.maxSlipBps` ↓ only, `Dex.minIntervalSecs` ↑ only (capped at `+1 day` per call). Owner is the only authority that can loosen.
+Pattern for keeper-permitted parameter direction: keeper can only move a knob in the safer direction, `Vault.depositCap` ↓ only (≥ totalAssets), `Dex.maxSlipBps` ↓ only, `Dex.minIntervalSecs` ↑ only (capped at `+1 day` per call). Owner is the only authority that can loosen. Owner-loosen of `maxSlipBps` is timelocked (1 day) via `queueSlip` since Pass-13 P13-7; owner cannot bypass via `setConfig` since Pass-15 P15-1 (instant `setConfig` widen now reverts; only narrow path remains instant). Pass-19 P19-1 tightened the adapter-side `queueSlip` cap from 900 bps to 700 bps (`ADAPTER_SLIP_CAP_BPS = JOINT_SLIP_CAP_BPS - ADAPTER_SLIP_HEADROOM_BPS`), sizing the 300 bps headroom to cover `Vault.MAX_EXIT_PIP = 3_000 pip = 300 bps = 3%` (Pass-21 P21-1 corrected the constant value from `30_000` → `3_000`; the prior value was off by 10× and would have soft-DoS'd `Vault._assertJointSlip` for any owner-permitted `exitPip > 700`) so no owner-permitted `exitPip` can soft-DoS `Vault._assertJointSlip`.
 
 ### Kill Switch (per adapter)
-Per-adapter `killed` flag (`Dex.sol:60`). Owner kill is instant + revertible only via `queueUnkill` + `executeUnkill` (`FREEZE_TIMELOCK = 1 day`). Keeper kill is rate-limited to 1/h per adapter and charged against `AccessControl.KEEPER_KILL_DAILY_CAP = 2` (cluster-wide UTC-day cap). Once killed, `assetValue` reverts and vault `_healthy()` is false.
+Per-adapter `killed` flag (`Dex.sol:killed` ≈ L81). Owner kill is instant + revertible only via `queueUnkill` + `executeUnkill` (`FREEZE_TIMELOCK = 1 day`, hoisted to `Constants.sol:FREEZE_TIMELOCK` in Pass-29 P29-1). Keeper kill is rate-limited to 1/h per adapter and charged against `AccessControl.KEEPER_KILL_DAILY_CAP = 2` (cluster-wide UTC-day cap). Once killed, `assetValue` reverts and vault `_healthy()` is false. Symmetric across `BtrPoolAdapter.sol` (queueUnkill/executeUnkill + Pass-9 P9-3 unkillEta-zeroing; Pass-11 P11-1 gates the wipe to owner-only on Dex.sol to prevent compromised-keeper grief). Pass-13 P13-7 adds timelocked owner-loosening of `maxSlipBps` via `queueSlip`/`executeSlip` on both adapters; keeper ratchet-down via `setConfig` unchanged. Pass-15 P15-1 removed the owner-widen path from `setConfig` entirely (any widen reverts NotAuth and must be staged through `queueSlip`); Pass-15 P15-2 mirrors `JOINT_SLIP_CAP_BPS` adapter-side so a queued value can never exceed the runtime joint-slip cap. Pass-19 P19-1 tightened the adapter-side `queueSlip` cap from 900 to 700 bps to cover `Vault.MAX_EXIT_PIP = 3_000 pip = 300 bps` headroom (Pass-21 P21-1 corrected the constant `30_000` → `3_000`); also fixed `BtrPoolAdapter.executeSlip` which still compared against `JOINT_SLIP_CAP_BPS` (now mirrors `Dex.sol` and uses `ADAPTER_SLIP_CAP_BPS`).
 
 ### Sequencer Guard
 `PriceProvider._checkSequencer()` consults the Chainlink L2 sequencer-up feed. Sequencer down OR within `SEQ_GRACE = 1 hour` of recovery ⇒ all `getPrice` calls revert ⇒ adapters report frozen ⇒ vault gates sync deposit / redeem. See [Risk Model §4](/docs/7.4-Risk-Model).
 
 ### Adapter Deregistration
-Owner-only `AccessControl.deregisterAdapter(a)` flips `isAdapter[a]` off. Vaults using that adapter become unhealthy on the next `_healthy()` check. The owner subsequently calls `Vault.removeAdapter(a)` to drain accounting state, permitted because the deregistered status overrides the `lastReported != 0` busy check. The escape hatch for a compromised or buggy adapter clone (`Vault.sol:487`).
+Owner-only `AccessControl.deregisterAdapter(a)` (`AccessControl.sol:deregisterAdapter` ≈ L105) flips `isAdapter[a]` off. Vaults using that adapter become unhealthy on the next `_healthy()` check. The owner subsequently calls `Vault.removeAdapter(a)` to drain accounting state, permitted because the deregistered status overrides the `lastReported != 0` busy check. The escape hatch for a compromised or buggy adapter clone (`Vault.sol:removeAdapter`, ≈ L503).
 
 ### Two-Step Ownership
-`AccessControl` overrides Solady's 1-step `transferOwnership` and `renounceOwnership` to revert. Handover requires `requestOwnershipHandover` then `completeOwnershipHandover` with a non-zero pending owner. Closes the back-door renounce vector (`AccessControl.sol:60–67`).
+`AccessControl` overrides Solady's 1-step `transferOwnership` and `renounceOwnership` to revert. Handover requires `requestOwnershipHandover` then `completeOwnershipHandover` with a non-zero pending owner. Closes the back-door renounce vector (`AccessControl.sol:transferOwnership` ≈ L68, `:renounceOwnership` ≈ L69, `:completeOwnershipHandover` ≈ L72).
+
+### Wedge (setFees)
+Forward-compat hazard where `Vault.setFees` has an **empty admissible range** for `exitPip`. Triggered when adapter risk knobs satisfy `(deviationBps + heartbeatDriftBps) × 12 > MAX_EXIT_PIP = 3_000`. Cause: `_exitFloor()` returns a value above `MAX_EXIT_PIP`, so the simultaneous bounds `exitPip ≥ floor` AND `exitPip ≤ MAX_EXIT_PIP` are unsatisfiable; every `setFees` call reverts `ThresholdViolation` until knobs are tightened. Aggregate cap therefore: `(dev + hb) ≤ 250 bps`. Recovery: `queueRisk` lower `deviationBps`/`heartbeatDriftBps` on the offending adapter(s) (timelocked 1 day), or coordinated protocol upgrade raising `Constants.MAX_EXIT_PIP` (with matching `Constants.ADAPTER_SLIP_HEADROOM_BPS` bump per the headroom invariant). Cite Pass-23 P23-5.
+
+### Exact-fit (P21-1 headroom)
+Tight equality `Constants.ADAPTER_SLIP_HEADROOM_BPS = MAX_EXIT_PIP / 10 = 300 bps`. Equivalent to `ADAPTER_SLIP_CAP_BPS + MAX_EXIT_PIP / 10 = JOINT_SLIP_CAP_BPS` (`700 + 300 = 1000`). The 300 bps adapter-side headroom is **exactly** the worst-case `exitBps` term so the joint envelope `adapter.maxSlipBps + exitPip/10 ≤ JOINT_SLIP_CAP_BPS` is saturable but not loose. Before Pass-21 P21-1, `MAX_EXIT_PIP` was the typo'd `30_000` (10× over) which left headroom 10× under-sized and would have soft-DoS'd `Vault._assertJointSlip` for any reasonable `exitPip`. Pass-19 P19-1 sized the headroom; Pass-21 P21-1 corrected the constant; Pass-29 P29-4 added compile-time invariant guards (`_GUARD_HEADROOM`, `_GUARD_CAP`) in `Constants.sol` that fail-compile if either invariant is ever broken.
 
 ### Worst-Of (alias)
 Synonym for [Pessimistic Worst-Of Mark](#pessimistic-worst-of-mark) when used as an adjective ("worst-of price", "worst-of NAV").

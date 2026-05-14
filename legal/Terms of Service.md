@@ -92,7 +92,7 @@ You are solely responsible for paying all fees, charges, and costs associated wi
 - **Protocol Fees**: The AIMM protocol may charge protocol fees on certain transactions, such as swaps or liquidity operations. These fees, if any, are transparently displayed before transaction submission and are automatically deducted from transaction amounts.
 
 - **ALM Vault Fees**: BTR ALM vaults charge three categories of fees, each parameter-bounded in the smart contract code (denominated in `pip`, base 1e5):
-  - **Exit fee** (`exitPip`): floor scales with adapter risk parameters per the on-chain rule `exitPip ≥ 1.2 × max_i(deviationBps + heartbeatDriftBps) × 10`, hard-floored at 50 pip (0.05%) and capped at 30 000 pip (30%). Exit fees protect remaining holders against arbitrageur extraction at vault redemption boundaries; they are *not* refundable.
+  - **Exit fee** (`exitPip`): floor scales with adapter risk parameters per the on-chain rule `exitPip ≥ 1.2 × max_i(deviationBps + heartbeatDriftBps) × 10`, hard-floored at 50 pip (0.05%) and capped at 3 000 pip (3%)[^p21-1]. Exit fees protect remaining holders against arbitrageur extraction at vault redemption boundaries; they are *not* refundable.
   - **Management fee** (`mgmtPip`): annualized, accrues continuously, capped at 50 000 pip (50%) per year. Crystallized on each fee-bearing operation by minting shares to the treasury.
   - **Performance fee** (`perfPip`): high-water-mark (HWM) based, capped at 20 000 pip (20%). Crystallizes only when (assets, supply) jointly exceed the previous HWM pair, computed against the pessimistic worst-of(pool, oracle) NAV.
 
@@ -438,3 +438,5 @@ In addition to any other terms and conditions within these Terms, please be awar
 ---
 
 **By using the Services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.**
+
+[^p21-1]: Audit Pass-21 finding P21-1 corrected the on-chain `MAX_EXIT_PIP` from 30 000 pip (30%) to 3 000 pip (3%) to restore the adapter slip-headroom invariant (`MAX_EXIT_PIP / 10 ≤ ADAPTER_SLIP_HEADROOM_BPS = 300 bps`). Pass-23 P23-1 propagated this correction here.
