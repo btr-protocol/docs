@@ -4,7 +4,7 @@
 
 ---
 
-> **See also**: [Foundations](/docs/Foundations) -Theoretical lineage and prior art: Avellaneda-Stoikov, Platypus/Wombat ALM, Swaap MMM, Curve v2.
+> **See also**: [Foundations](/docs/Foundations) -Theoretical lineage and prior art: Avellaneda-Stoikov, Platypus/Wombat ALM, Swaap MMM, Curve v2. · [AMM Landscape](/docs/AMM-Landscape) -Side-by-side comparison vs Uniswap V2/V3/V4, Curve V1/V2, Balancer, DODO, Maverick, Trader Joe LB, Platypus, Wombat, OrbSwap.
 
 ---
 
@@ -225,6 +225,31 @@ Both Platypus and Wombat demonstrated the viability of the ALM model for stables
 
 > For a deeper analysis of ALM mechanics and how AIMM extends them, see [Foundations § Asset-Liability Management](/docs/Foundations#3-asset-liability-management-platypus--wombat).
 
+### 4.2. The PMM Lineage (DODO)
+
+**DODO's Proactive Market Maker (PMM)** independently introduced **coverage-skew quote adjustment** for AMMs. Where Avellaneda-Stoikov frames inventory skew as a continuous-time optimal-control problem (utility-maximizing reservation price), DODO's PMM is the discrete, on-chain instantiation: an explicit `R = base / target` coverage ratio that pushes the mid-price away from the depleted side. Platypus and Wombat later generalised this into a full asset-liability framework; AIMM's `computeInventorySkew` is a **direct descendant of DODO's PMM via Platypus** — same coverage-aware mid-price logic, but with the spline depth profile and oracle reference price layered on top, and decoupled from a strict invariant.
+
+### 4.3. Internal Price Discovery via Bin/Tick State (Earth Finance / Trader Joe LB)
+
+**Trader Joe v2 Liquidity Book** (and the broader DLMM family) demonstrated that an AMM can perform **internal price discovery from its own bin/tick state**, without an external oracle — each swap shifts the active bin, which is itself a price signal that subsequent trades and fee logic can consume. **Earth Finance** carried similar ideas into the stableswap / pegged-asset regime, treating the AMM's own state as the reference for TWAP-like smoothing. AIMM's `PoolOracle` — the dual-window (5min fast / 1hr slow) internal accumulator that updates on every swap — is a conceptual descendant of this lineage: internal-state-as-oracle, with TWAP smoothing replacing raw active-bin reads.
+
+### 4.4. Consolidated Heritage
+
+BTR DEX is not a clean-room invention; it is an explicit synthesis. Single source of truth on the protocol's intellectual debts:
+
+| AIMM component | Direct ancestor | What we inherit | What we change |
+|---|---|---|---|
+| Asset-Liability / coverage ratio | Platypus, Wombat | Single-sided deposits, coverage as health metric | Decoupled from strict invariant; coverage only sets skew, spline sets depth |
+| Coverage-skew mid-price | DODO PMM (via Platypus) | Mid-price shifts with `R = base / target` | Skew is bounded ±100, oracle-anchored, not the sole price driver |
+| Internal oracle from pool state | Earth Finance, Trader Joe LB | TWAP / active-state as price reference | Dual-window EMA (5min/1hr) instead of active-bin or single accumulator |
+| EMA-based price + amplification | Curve V2 (CryptoSwap) | Internal price oracle, concentration parameter | Spline replaces amplification + γ; admin-mutable not encoded in invariant |
+| Inventory-aware quoting | Avellaneda-Stoikov | Reservation-price framework | Discrete on-chain implementation, fee-side via vol + momentum |
+| Singleton multi-asset | Balancer, Curve V2, Uniswap V4 | One contract, many assets | Anchor-tree pricing (LCA routing) + shared inventory accounting per asset |
+| Spline depth profile | None (novel in DeFi AMM) | — | Monotone cubic Hermite, admin-mutable, data-not-code policy substrate |
+| Concentrated multi-asset, pegged-only | CCMM / OrbSwap (Paradigm Orbital) | (Sibling, not ancestor) | Different domain — pegged-only sphere vs mixed-volatility anchor-tree |
+
+This is the load-bearing lineage. Everything else is integration plumbing.
+
 ---
 
 ## 5. Our Solution: AIMM
@@ -264,7 +289,7 @@ AIMM pools contain **any number of tokens** routed through an anchor tree topolo
 **Important distinction**: Swaps don't all path through a single hub token. The first **common anchor** is used for pricing, and swaps are accounted in the pool's "base token" (numéraire). Two swaps might not share any anchor, but all anchors connect to the tree root (base token), enabling unified accounting and risk management.
 
 **Why this matters:**
-- **O(1) scaling**: Unlike pairwise designs (Curve v2 CryptoSwap, Wombat) where N-asset pools require N² compute for oracle upkeep, pool configuration, and invariant solving, our anchor-tree design scales linearly. This matches the compute efficiency of CCMMs (aka Orbital AMM)-the only two AMM designs reasonably scalable beyond 10-asset pools.
+- **O(1) scaling**: Unlike pairwise designs (Curve v2 CryptoSwap, Wombat) where N-asset pools require N² compute for oracle upkeep, pool configuration, and invariant solving, our anchor-tree design scales linearly. The two AMM families reasonably scalable beyond 10-asset pools are anchor-tree (BTR AIMM) and CCMM/Orbital (Paradigm's research, implemented by [OrbSwap](https://orbswap.org) with a sphere/superellipse invariant). The two are **complementary, not competing**: OrbSwap wins **pegged-only** deployments through intrinsic geometric risk isolation (the sphere drains a depegged asset asymmetrically without needing an oracle), reporting 15-150× Curve capital efficiency for stables at 0.90-0.99 depeg thresholds; BTR wins **mixed-volatility** baskets (stables + LSTs + majors) where no peg constraint applies and regime-adaptive splines + inventory skew are required. See [Foundations §10](/docs/Foundations) for the sphere invariant and polar-tick mathematics, and [AMM Landscape](/docs/AMM-Landscape) for the full side-by-side comparison.
 - **Triangulated quoting**: All assets quote vs anchors, not directly against each other. This reduces mispricing arbitrage surface and provides robustness against market fragmentation and price manipulation.
 - **Capital consolidation**: One pool depth serves all pairs, eliminating fragmentation.
 
@@ -331,7 +356,7 @@ Cooperators are **arbitrageurs**-encompassing MEV searchers, HFT desks, and medi
 
 **The Emergent Advantage**: Any cooperator can compete on equal terms, but those who donate more earn better rebates. A DAO-run bot that donates 100% of arbitrage proceeds naturally achieves top reputation and front-runs adversarial extractors, returning all LVR to LPs.
 
-The result: LVR mitigation comparable to oracle-based AMMs (UAMM, DODO, Swaap) and manager auctions (am-AMM), without oracle fragility or manager centralization.
+The result: LVR mitigation comparable to oracle-based AMMs (UAMM, Swaap) and manager auctions (am-AMM), without oracle fragility or manager centralization. (DODO is listed separately above as a PMM-lineage ancestor for coverage-skew mid-price, distinct from the oracle-pricing family.)
 
 We call these participants **"Cooperators"** or **"Cooperative Arbitrageurs"**.
 
@@ -581,11 +606,15 @@ AIMM requires:
 
 These are fundamentally different designs. Uniswap could build AIMM, but it would be a new protocol, not a v5 upgrade.
 
-### 12.2. Unforkable Advantages
+### 12.2. Structural Differentiators
 
-1. **Network effects in multi-asset pools** -More assets = deeper liquidity = better execution = more assets
-2. **Operational expertise** -Profile optimization requires market-making knowledge, not just code
-3. **Integrated incentive design** -Token model aligned with LP success, not governance extraction
+We are not claiming "unforkable". The Solidity is open and the design is documented; a serious team could replicate the architecture. What we claim is a coherent combination of three load-bearing pieces that no other shipping AMM combines today:
+
+1. **Regime-adaptive policy substrate** — the spline depth profile is admin-mutable on-chain *data*, not hard-coded *code*. Concentration, asymmetry, and per-asset shape can be re-fit from on-chain trade-density analysis without a contract upgrade. Curve's `A` and Gyroscope's `λ` are immutable per-pool parameters; AIMM's spline is the policy itself.
+2. **Shared-inventory multiplier** — a hub asset's reserves simultaneously back its `N-1` pair markets (see [Capital Efficiency](/docs/Capital-Efficiency)). Realistic 4× V3-equivalent depth at `N=5`, 7-8× at `N=10`, with an honest contention discount `γ ∈ [0.5, 1.0]`. UniV4's singleton is a storage optimisation; AIMM's singleton is a liquidity-sharing geometry.
+3. **Hybrid oracle (internal TWAP + external depeg halt)** — internal dual-window TWAP drives all quoting (Earth/TJ-LB lineage); an optional external Chainlink feed on the *base token* triggers a circuit-breaker halt when |basePrice − 1e18| / 1e18 > `BASE_DEPEG_HALT_BPS` (default 500 bps). Quoting is decentralised; tail-risk gating is delegated to an external feed where it belongs. See [DEX Oracle System](/docs/dex/3.5-Oracles) and [Depeg Halt](/docs/dex/3.6-Depeg-Halt).
+
+**Honest tagline**: *Liquidity for blue-chip multi-hop. Curated, regime-adaptive, oracle-synced.* We are class-leading for curated 5-15-asset blue-chip baskets. We are not a category killer for stable-stable in-peg flow (Curve V1 wins on that), and we are not a long-tail TAM play (UniV3/V4 win on permissionless pair creation).
 
 ---
 

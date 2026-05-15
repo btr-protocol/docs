@@ -71,7 +71,7 @@ CFMM where LP liquidity is allocated to user-chosen price ranges via ticks rathe
 AMM where liquidity is organized into discrete price "bins" (rather than continuous [ticks](#tick)) with dynamic fee adjustments and liquidity repositioning. **Architecture**: Unlike [CLMM](#clmm-concentrated-liquidity-market-maker) where ranges of N ticks act as local [CPMM](#cpmm-constant-product-market-maker) between endpoints, each DLMM bin acts as independent [CSMM](#csmm-constant-sum-market-maker) with near-zero slippage inside the bin. LP positions are **fungible** per bin (not per individual tick). Volatility-linked fees raise spreads in volatile regimes. **Implementations**: [Liquidity Book](#liquidity-book) (Trader Joe LFJ V2, Avalanche), Meteora (Solana), Cetus (Sui/Aptos), Saros (Solana). See [Liquidity Range](#liquidity-range) for CLMM-DLMM comparison and [Concentrated Liquidity](#concentrated-liquidity) for architecture context.
 
 #### CCMM (Circular/Orbital Constant Market Maker)
-Advanced AMM design for multi-asset stablecoin pools (2 to 10,000+ assets), using n-dimensional spherical geometry to concentrate liquidity around the peg. Improves capital efficiency by bending liquidity into a torus shape around fair value. Enables high-dimensional concentrated liquidity. Pioneered by Paradigm's research and Orbswap DEX.
+Advanced AMM design for **pegged-asset-only** multi-asset pools (2 to 10,000+ assets), using n-dimensional spherical geometry to concentrate liquidity around the peg. Sphere invariant: $\sum_{i=1}^{n}(r - x_i)^2 = r^2$. Polar ticks are hyperplanes $\vec{x}\cdot\vec{v} = k$ along the equal-price diagonal $\vec{v} = \frac{1}{\sqrt{n}}(1,\dots,1)$; combining interior and boundary ticks yields a torus invariant. Marginal price $\partial x_i/\partial x_j = (r-x_j)/(r-x_i)$. Reported capital efficiency vs Curve: ~15× at 0.90 depeg threshold, ~150× at 0.99 (n=5). **Intrinsic risk isolation**: sphere geometry asymmetrically drains a depegged asset rather than propagating loss to the rest of the pool — a depegged coin "becomes worthless much faster than a traditional AMM curve" while others keep trading at efficient prices. **Limitation**: invariant assumes correlated/pegged assets; cannot price volatile-vs-pegged pairs. Pioneered by Paradigm's Orbital research and implemented by [Orbswap](https://orbswap.org) (superellipse extension with tunable concentration). Direct competitor to Curve StableSwap for stables-only deployments; complementary to (not competing with) BTR AIMM for mixed-volatility pools. See [Foundations §10](/docs/Foundations) for the sphere invariant, polar-tick math, and torus extension.
 
 #### AIMM (Adaptive Inventory Market Maker)
 BTR's [AMM](#amms-automated-market-makers) design that combines internal or external oracle mid-pricing, inventory-based mid-price adjustment, and spline-defined liquidity depth for market impact calculation. No pool-wide reserves/price invariant unlike strict invariant-based AMMs like Uniswap or Curve.
@@ -3236,6 +3236,9 @@ Synonym for [Pessimistic Worst-Of Mark](#pessimistic-worst-of-mark) when used as
 
 ## Related Documentation
 
+- [AMM Landscape](/docs/AMM-Landscape) -BTR DEX vs peer AMM comparison (Uniswap V2/V3/V4, Curve V1/V2, Balancer, DODO, Maverick, LFJ LB, Platypus, Wombat, OrbSwap)
+- [Capital Efficiency](/docs/Capital-Efficiency) -Shared-inventory multiplier (VCR, `N-1`× hub-pair depth, contention discount γ)
+- [Foundations §10 OrbSwap](/docs/Foundations) -Sphere invariant, polar-tick mathematics, torus extension
 - [Architecture Overview](/docs/overview-aimm)
 - [Inventory Management](/docs/1.1.1-Inventory-Management)
 - [Spread & Fees](/docs/1.1.4-Spread-&-Fees)

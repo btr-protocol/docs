@@ -442,17 +442,27 @@ See [Anchor Path Pricing](/docs/1.1.3-Anchor-Path-Pricing) for implementation.
 
 ### 10.1. Polar Coordinate AMMs
 
-Recent research explores AMMs using polar coordinates. [Paradigm's Orbital](https://www.paradigm.xyz/2025/06/orbital) and academic work on [Concentrated Circular Market Makers (CCMM)](https://arxiv.org/abs/2510.05428) represent this direction:
+Recent research explores AMMs using polar coordinates on an n-dimensional sphere. [Paradigm's Orbital](https://www.paradigm.xyz/2025/06/orbital), the implementing DEX [Orbswap](https://orbswap.org/lite-paper), and academic work on [Concentrated Circular Market Makers (CCMM)](https://arxiv.org/abs/2510.05428) represent this direction.
 
-> "This research expands on n-dimensional automated market makers for stablecoins by showing a way to build concentrated liquidity positions with ticks in polar coordinates."
+**Sphere invariant** (n stablecoins, reserves $x_i$, radius $r$):
+
+$$\sum_{i=1}^{n}(r - x_i)^2 = r^2$$
+
+The equal-price point sits at $q = r(1 - 1/\sqrt{n})$ along the diagonal $\vec{v} = \frac{1}{\sqrt{n}}(1,\dots,1)$. Any reserve vector decomposes as $\vec{x} = \alpha\vec{v} + \vec{w}$ with $\vec{w} \perp \vec{v}$, giving the constraint $r^2 = (\alpha - r\sqrt{n})^2 + \|\vec{w}\|^2$. Instantaneous marginal price between assets $i, j$:
+
+$$\frac{\partial x_i}{\partial x_j} = \frac{r - x_j}{r - x_i}$$
+
+**Polar ticks** are hyperplanes $\vec{x}\cdot\vec{v} = k$. On a tick boundary the pool degenerates to a lower-dimensional sphere of radius $s = \sqrt{r^2 - (k - r\sqrt{n})^2}$. Orbswap's litepaper extends this to a **superellipse** invariant for tunable concentration; v1 introduces "superellipse ticks for concentrated liquidity."
 
 ### 10.2. The Torus Model
 
-Orbital extends to N dimensions using toroidal geometry:
+Combining an interior spherical tick with a lower-dimensional boundary sphere yields a torus:
 
-> "Logically speaking, we are now dealing with one spherical AMM and one circular AMM. By rotating the sphere around the circle, we obtain a single torus, or donut shape."
+$$r_{int}^2 = (\vec{x}\cdot\vec{v} - k_{bound} - r_{int}\sqrt{n})^2 + (\|\vec{x} - (\vec{x}\cdot\vec{v})\vec{v}\| - \sqrt{r_{bound}^2 - (k_{bound} - r_{bound}\sqrt{n})^2})^2$$
 
-This enables N-asset stablecoin pools with concentrated liquidity.
+> "By rotating the sphere around the circle, we obtain a single torus, or donut shape."
+
+Reported capital efficiency vs Curve for n=5 stables: ~15× at a 0.90 depeg threshold, ~150× at 0.99. Risk-isolation claim (Orbswap litepaper): *"if one of the stablecoins depegs, the others can all trade at efficient prices, while the depegged one will become worthless much faster than a traditional AMM curve."* This is structural: the sphere geometry penalizes any single coordinate diverging far from the diagonal, so a depeg asymmetrically drains the bad asset rather than dragging the pool.
 
 ### 10.3. Why AIMM Didn't Pursue This
 
@@ -479,7 +489,20 @@ Despite theoretical elegance, circular/orbital approaches face practical challen
 - Direct price/depth correspondence
 - Easier visualization and debugging
 
-For N-asset stablecoins specifically, Orbital may be superior. For general multi-asset pools with varying volatility, AIMM's anchor tree + spline approach provides more flexibility.
+**Honest positioning**: Orbital/Orbswap and AIMM occupy adjacent-but-distinct niches.
+
+| Dimension | Orbital / Orbswap (CCMM) | AIMM (BTR) |
+|---|---|---|
+| **Asset scope** | Pegged only (stables, can extend to LSTs at matching pegs) | Any volatility profile, mixed pools |
+| **Risk isolation** | Intrinsic via sphere geometry — depeg drains the bad asset | Via anchor-tree topology — bad branch isolated, but shares oracle path |
+| **Capital efficiency (stables)** | ~15-150× Curve at near-peg ticks | Spline-shaped, comparable near peg, broader off-peg |
+| **Capital efficiency (mixed-vol)** | N/A (invariant breaks for volatile pairs) | Native via anchor-path pricing |
+| **Multi-hop / N-asset routing** | Implicit through n-sphere | Explicit O(log N) LCA pathfinding |
+| **Oracle dependency** | None (curve-derived prices) | Yes (oracle mid + inventory skew) |
+| **Math elegance** | High — closed-form invariant | Lower — Catmull-Rom + Avellaneda-Stoikov composite |
+| **Asymmetric depth** | Hard (sphere is symmetric) | Native (per-knot spline control) |
+
+For a pure stables / pure LST pool, Orbital is likely the better technical primitive. For mixed-volatility deployments (USDC + WBTC + WETH + LSTs together), AIMM is the only viable design here — the spherical invariant cannot price volatile-vs-pegged. Where the two **do** compete is BTR's stables-pool deployments; there Orbswap has a real edge on intrinsic depeg isolation, and AIMM compensates via oracle-sync, inventory feedback, and regime-adaptive fees rather than via geometry.
 
 ---
 
