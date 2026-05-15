@@ -1,3 +1,14 @@
+---
+title: "Security Overview"
+description: "Defense-in-depth architecture for AIMM protocol security"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Security Overview
 
 > Defense-in-depth architecture for AIMM protocol security

@@ -1,12 +1,25 @@
+---
+title: "AIMM System Architecture"
+description: "Technical overview of the Adaptive Inventory Market Maker protocol"
+audience: tech
+type: explanation
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # AIMM System Architecture
 
 > Technical overview of the Adaptive Inventory Market Maker protocol
+
+> **Status: Phase 2.** BTR DEX ships after BTR Supply (ALM, Phase 1). On launch, BTR DEX becomes an additional adapter target alongside UniV3, UniV4, PancakeV3, PancakeInfinity, Algebra, Ramses in Supply vaults.
 
 ---
 
 ## 1. Overview
 
-AIMM is a multi-asset AMM designed for passive liquidity providers. Core components:
+AIMM (Phase 2, not yet deployed) is a multi-asset AMM designed for passive liquidity providers. Core components:
 
 - **Single-sided deposits** -LPs deposit one token, receive fungible LP tokens
 - **N-asset pooling** -Anchor tree topology enables any-to-any routing

@@ -1,3 +1,14 @@
+---
+title: "BTR Prime - Documentation Index"
+description: "ML-driven trading platform for crypto spot + concentrated liquidity. Consumes Bar streams from NX Rates."
+audience: tech
+type: reference
+status: live
+phase: n/a
+order: 99
+lang: en
+publish: false
+---
 # BTR Prime - Documentation Index
 
 ML-driven trading platform for crypto spot + concentrated liquidity. Consumes Bar streams from [NX Rates](../../nx/nx-rates/docs/architecture.md).

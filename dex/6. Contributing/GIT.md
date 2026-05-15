@@ -1,3 +1,14 @@
+---
+title: "GIT Version Control"
+description: "## Monorepo Structure"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # GIT Version Control
 
 ## Monorepo Structure

@@ -1,3 +1,14 @@
+---
+title: "Integration Overview"
+description: "AMM-specific integration patterns for pools, swaps, and liquidity"
+audience: tech
+type: explanation
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Integration Overview
 
 > AMM-specific integration patterns for pools, swaps, and liquidity

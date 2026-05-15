@@ -1,0 +1,24 @@
+# Convention: front-end theme template injects a site-wide footer linking:
+# - /legal/risk-disclaimer.md
+# - /legal/terms-of-service.md
+# - /legal/privacy-policy.md
+# - /legal/acknowledgement.md
+# (Defer template implementation to Phase 42S FE wiring.)
+
+# Phase 42P doc rename Wave 2
+/supply/*    /vaults/:splat    301
+/Manifesto    /concepts/manifesto    301
+/Foundations    /concepts/foundations    301
+/Capital-Efficiency    /concepts/capital-efficiency    301
+/AMM-Landscape    /concepts/amm-landscape    301
+/Glossary    /concepts/glossary    301
+/Overview    /concepts/overview    301
+# Anchor targets (back-compat)
+/supply    /vaults    301
+
+# Wave 1 A2 legal rename (Title-Cased → kebab-case)
+/legal/Acknowledgement    /legal/acknowledgement    301
+/legal/Cookie%20Policy    /legal/cookie-policy    301
+/legal/Privacy%20Policy    /legal/privacy-policy    301
+/legal/Risk%20Disclaimer    /legal/risk-disclaimer    301
+/legal/Terms%20of%20Service    /legal/terms-of-service    301

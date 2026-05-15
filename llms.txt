@@ -1,0 +1,34 @@
+# BTR Protocol
+
+> BTR is a multi-surface DeFi protocol. **BTR Supply (ALM Vaults)** — single-asset yield-bearing ERC-4626/7540 vaults allocating across concentrated-liquidity DEX pools (UniV3, UniV4, PancakeV3, PancakeInfinity, Algebra, Ramses) — is **live (Phase 1)**. **BTR Swap** — off-chain meta-aggregator fanning out across LiFi, Socket, 1inch, 0x, ParaSwap, Odos, KyberSwap, and others for mono- and cross-chain swaps — is **live**. **BTR DEX (AIMM)** — the protocol's own adaptive-inventory AMM with anchor-path pricing — is **Phase 2 (planned)**. Multi-chain via LayerZero.
+
+## Docs sections
+
+- [Vaults](vaults/01.%20Overview.md): ALM single-asset vaults — live.
+- [Swap](swap/01.%20Overview.md): Off-chain meta-aggregator — live.
+- [DEX (AIMM)](dex/1.%20AIMM/Overview.md): BTR's own AMM — Phase 2 (planned).
+- [Protocol](protocol/01.%20Overview.md): Cross-surface infra (AccessControl, Treasury, Staking, Distributor, Bridge, Governance, BTR Token, Emissions).
+- [Getting Started](getting-started/what-is-btr.md): User onboarding stubs (placeholder until screenshots).
+- [Security](security/overview.md): Audits, bug bounty, pause + emergency, roles + timelock, contract addresses.
+- [Reference](reference/glossary.md): Glossary, contract addresses, SDK, API.
+- [Legal](legal/terms-of-service.md): Terms, Privacy, Cookies, Risk Disclaimer, Acknowledgement, BTR Token Notice, MiCA, Bug Bounty, Audit Reports, Governance Participation, Geofencing, Conflicts, Wind-Down.
+
+## Concepts
+
+- [Manifesto](concepts/manifesto.md)
+- [Overview](concepts/overview.md)
+- [Foundations](concepts/foundations.md)
+- [Capital Efficiency](concepts/capital-efficiency.md)
+- [AMM Landscape](concepts/amm-landscape.md)
+- [Glossary](concepts/glossary.md)
+
+## Optional
+
+- [btr-protocol/alm](https://github.com/btr-protocol/alm)
+- [btr-protocol/dex](https://github.com/btr-protocol/dex)
+- [btr-protocol/shared](https://github.com/btr-protocol/shared)
+- [btr-protocol/sdk](https://github.com/btr-protocol/sdk)
+- [btr-protocol/swap](https://github.com/btr-protocol/swap)
+- [btr-protocol/back](https://github.com/btr-protocol/back)
+- [btr-protocol/front](https://github.com/btr-protocol/front)
+- [btr-protocol/docs](https://github.com/btr-protocol/docs)

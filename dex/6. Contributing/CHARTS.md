@@ -1,3 +1,14 @@
+---
+title: "Charts in Markdown"
+description: "This document explains how to embed charts in documentation using Chartist.js chart components."
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Charts in Markdown
 
 This document explains how to embed charts in documentation using Chartist.js chart components.

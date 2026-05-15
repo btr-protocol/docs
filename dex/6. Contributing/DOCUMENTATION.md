@@ -1,3 +1,14 @@
+---
+title: "Technical Documentation Best Practices"
+description: "Architecture note (post Phase 42H) -diagrams or snippets in this file that show PoolProxy / Diamond / ERC-7201 are illustrative examples of documentation"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Technical Documentation Best Practices
 
 **Focus**: DeFi Protocol Documentation + Developer Experience + Public Guides

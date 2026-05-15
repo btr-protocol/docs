@@ -1,3 +1,14 @@
+---
+title: "Back-End Developer Best Practices"
+description: "## Quick Reference"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Back-End Developer Best Practices
 
 **Tech Stack**: Bun + TypeScript + SQLite + Bash/Zig Scripts + Docker + Caddy

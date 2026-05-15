@@ -1,3 +1,14 @@
+---
+title: "Marketing & Community Best Practices"
+description: "Protocol Phase: Guarded Mainnet (post-audit) Positioning: Trust-first + Performance-based (not vampire/mercenary)"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Marketing & Community Best Practices
 
 **Focus**: DeFi Protocol Marketing + Community Building + Content Strategy

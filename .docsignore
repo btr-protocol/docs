@@ -1,0 +1,5 @@
+# Engineering artifacts — exclude from public build
+shared/
+prime/
+.git/
+README.md

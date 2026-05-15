@@ -1,3 +1,14 @@
+---
+title: "Front-End Developer Best Practices"
+description: "## Quick Reference"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Front-End Developer Best Practices
 
 **Tech Stack**: Preact (native) + Tailwind CSS + TradingView Lightweight Charts + Custom Router + Preact Signals + Atomic Components

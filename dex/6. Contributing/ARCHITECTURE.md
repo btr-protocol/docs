@@ -1,3 +1,14 @@
+---
+title: "Software Architecture Best Practices"
+description: "## Quick Reference"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Software Architecture Best Practices
 
 **Focus**: DeFi Protocol Architecture + System Design + Modularity

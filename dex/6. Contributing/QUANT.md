@@ -1,3 +1,14 @@
+---
+title: "Quant / Researcher Best Practices"
+description: "## Quick Reference"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Quant / Researcher Best Practices
 
 **Focus**: Market Making + DeFi AMMs + Linear Algebra + ML + Python (UV) + Zig

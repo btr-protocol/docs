@@ -1,3 +1,14 @@
+---
+title: "Security & Audit Best Practices"
+description: "Note: BTR currently deploys on EVM chains only. SVM (Solana) and MoveVM (Aptos/Sui) sections are included for future cross-chain expansion reference."
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Security & Audit Best Practices
 
 **Focus**: BTR AIMM Protocol -EVM (Solidity) smart contract security
@@ -339,7 +350,7 @@ function totalSupply() public view override returns (uint256) {
 
 ```solidity
 // ✅ Multi-tier timelock (LibTimelock)
-uint16 private constant CRITICAL_TIMELOCK = 7 days;   // Base token migration
+uint48 internal constant CRITICAL_TIMELOCK = 7 days;   // Base token migration
 uint16 private constant HIGH_TIMELOCK = 3 days;        // Ownership transfer, bridge update
 uint16 private constant MEDIUM_TIMELOCK = 2 days;      // Staking/distribution changes
 uint16 private constant BASE_TIMELOCK = 1 day;         // Oracle changes
@@ -540,7 +551,7 @@ uint32 private constant FAST_WINDOW = 300;   // 5 minutes
 uint32 private constant SLOW_WINDOW = 3600;  // 1 hour
 
 // CRITICAL-7 FIX: Staleness threshold prevents accumulator corruption
-uint256 private constant MAX_STALENESS = 604800;  // 7 days
+uint256 private constant MAX_FEED_HB = 604800;  // 7 days (matches shared Constants.sol:27)
 
 function _updateFeeds(...) private {
     uint256 dt = currentTime - acc.lastUpdate;
@@ -1159,7 +1170,7 @@ function recoverFailedMessage(bytes32 guid) external onlyOwner nonReentrant {
 2. ✅ Test files (test/)
 3. ✅ Deployment scripts (scripts/)
 4. ✅ NatSpec documentation (inline comments)
-5. ✅ Architecture overview (docs/Foundations.md)
+5. ✅ Architecture overview (docs/concepts/foundations.md)
 6. ✅ Previous audits (if any)
 7. ⚠️ Threat model document (this file)
 8. ⚠️ Known issues list (audit findings)
@@ -1278,7 +1289,7 @@ function recoverFailedMessage(bytes32 guid) external onlyOwner nonReentrant {
 
 ## Internal References
 
-- [`Foundations.md`](../Foundations.md) - Intellectual lineage and design choices
+- [`Foundations`](../../concepts/foundations.md) - Intellectual lineage and design choices
 - [`GIT.md`](./GIT.md) - Commit conventions
 - [`FRONTEND.md`](./FRONTEND.md) - Frontend development
 - [`BACKEND.md`](./BACKEND.md) - Backend development

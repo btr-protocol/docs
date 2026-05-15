@@ -1,0 +1,60 @@
+# BTR Protocol
+
+> BTR is a multi-surface DeFi protocol. **BTR Supply (ALM Vaults)** — single-asset yield-bearing ERC-4626/7540 vaults allocating across concentrated-liquidity DEX pools (UniV3, UniV4, PancakeV3, PancakeInfinity, Algebra, Ramses) — is **live (Phase 1)**. **BTR Swap** — off-chain meta-aggregator fanning out across LiFi, Socket, 1inch, 0x, ParaSwap, Odos, KyberSwap, and others for mono- and cross-chain swaps — is **live**. **BTR DEX (AIMM)** — the protocol's own adaptive-inventory AMM with anchor-path pricing — is **Phase 2 (planned)**. Multi-chain via LayerZero.
+
+## Docs sections
+
+- [Vaults](vaults/01.%20Overview.md)
+  Phase 1, live. Automated Liquidity Management: users deposit a single asset, the vault routes capital across CL-DEX adapters (UniV3, UniV4, PancakeV3, PancakeInfinity, Algebra, Ramses; Aerodrome Slipstream via the UniV3 adapter) and rebalances per strategy. Covers architecture, adapters, NAV & fees, risk model, lifecycle, operator doctrine, and forward-looking cross-chain & token plans.
+
+- [Swap](swap/01.%20Overview.md)
+  Live. Off-chain swap-aggregation surface — a meta-aggregator fanning a single swap request across LiFi, Socket, Squid, Rango, Unizen, 1inch, 0x, ParaSwap, Odos, KyberSwap, OpenOcean, Firebird. Returns the best route for mono- or cross-chain swaps with built-in rate limiting and routing logic.
+
+- [DEX (AIMM)](dex/1.%20AIMM/Overview.md)
+  Phase 2, planned. BTR's own Adaptive Inventory Market Maker: anchor-path pricing, inventory-aware quoting, liquidity shaping, toxic-flow mitigation. Modules: Pool, Internal Oracle, Admin, Staking, Distributor, Flash. Includes governance, security, and user/developer guides.
+
+- [Protocol](protocol/01.%20Overview.md)
+  Cross-surface protocol infrastructure shared by Vaults, Swap, and DEX. Covers AccessControl, Treasury, Staking, Distributor, Bridge (LayerZero), Governance, BTR Token, and Emissions.
+
+- [Getting Started](getting-started/what-is-btr.md)
+  User onboarding entry point: what is BTR, connect wallet, first deposit, bridging & gas, why BTR (positioning). Placeholder stubs pending screenshots.
+
+- [Security](security/overview.md)
+  Top-level trust surface: audits index, bug bounty, pause & emergency procedures, roles & timelock parameters, contract addresses per chain.
+
+- [Reference](reference/glossary.md)
+  Glossary (pointer to /concepts/), contract addresses table, SDK pointer, API pointer.
+
+- [Legal](legal/terms-of-service.md)
+  Terms of Service, Privacy Policy, Cookie Policy, Risk Disclaimer, Acknowledgement (ALM Phase-1), AIMM Acknowledgement (Phase-2), BTR Token Notice, MiCA & EU User Notice, Bug Bounty, Audit Reports, Governance Participation Notice, Geofencing & Sanctions Screening, Conflicts & Operator Disclosure, Wind-Down & Termination.
+
+## Concepts
+
+- [Manifesto](concepts/manifesto.md)
+  ALM-first, AIMM-next thesis. Why concentrated liquidity + order-book intelligence on-chain.
+
+- [Overview](concepts/overview.md)
+  Top-level docs landing covering all surfaces: Vaults, Swap, DEX, Protocol; phase status; key concepts.
+
+- [Foundations](concepts/foundations.md)
+  Theoretical underpinnings: market microstructure, inventory risk, and pricing primitives behind BTR's surfaces.
+
+- [Capital Efficiency](concepts/capital-efficiency.md)
+  How BTR's surfaces achieve higher capital efficiency than passive AMMs and what trade-offs that introduces.
+
+- [AMM Landscape](concepts/amm-landscape.md)
+  Comparative survey of AMM designs (Uniswap V2/V3/V4, Curve, Balancer, Algebra, Ramses, Pancake) and BTR's position in the design space.
+
+- [Glossary](concepts/glossary.md)
+  Definitions for all protocol-specific and DeFi-general terms used across the docs.
+
+## Optional
+
+- [btr-protocol/alm](https://github.com/btr-protocol/alm) — Supply (ALM Vaults) Solidity contracts + keepers.
+- [btr-protocol/dex](https://github.com/btr-protocol/dex) — AIMM DEX Solidity contracts + keepers.
+- [btr-protocol/shared](https://github.com/btr-protocol/shared) — Shared Solidity libraries / abstracts across alm + dex.
+- [btr-protocol/sdk](https://github.com/btr-protocol/sdk) — TS SDK: ABIs + RPC client + shared types.
+- [btr-protocol/swap](https://github.com/btr-protocol/swap) — BTR Swap aggregator SDK (standalone).
+- [btr-protocol/back](https://github.com/btr-protocol/back) — Bun monorepo backend: swap, collector, agents services.
+- [btr-protocol/front](https://github.com/btr-protocol/front) — Preact + Vite SPA frontend.
+- [btr-protocol/docs](https://github.com/btr-protocol/docs) — This documentation set.

@@ -1,3 +1,14 @@
+---
+title: "Smart Contract Developer Best Practices"
+description: "Architecture note (post Phase 42H) -code samples below that reference PoolProxy, the Diamond pattern, ERC-7201 namespaced storage, or delegatecall-based module"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Smart Contract Developer Best Practices
 
 **Tech Stack**: EVM (Solidity) + SVM (Rust) + MoveVM (Move)

@@ -1,3 +1,14 @@
+---
+title: "Developer Guides"
+description: "Protocol-level integration guides for external developers"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Developer Guides
 
 > Protocol-level integration guides for external developers

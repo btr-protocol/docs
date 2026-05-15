@@ -1,3 +1,14 @@
+---
+title: "Headless Tables - Quick Reference"
+description: "## Quick Syntax"
+audience: tech
+type: reference
+status: planned
+phase: 2
+order: 99
+lang: en
+publish: true
+---
 # Headless Tables - Quick Reference
 
 **Markdown tables without visible headers** for compact, context-aware data presentation.
