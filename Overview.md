@@ -22,10 +22,12 @@ BTR's AIMM protocol introduces several breakthrough innovations:
 |---------|---------------------|
 | **AIMM** | Adaptive Inventory Market Maker -dynamically manages inventory risk through coverage ratios and skew-aware pricing |
 | **Anchor Path Pricing** | Multi-asset routing via LCA (Lowest Common Ancestor) algorithm on an anchor tree topology |
-| **Asset-Specific Liquidity Profiling** | Liquidity can be extremely concentrated around historical price density using Catmull-Rom spline profiles |
+| **Asset-Specific Liquidity Profiling** | Liquidity can be extremely concentrated around historical price density using Fritsch-Carlson monotone cubic Hermite spline profiles |
 | **N-Asset Pooling** | No limit to the number of assets in a single pool -any-to-any swaps via anchor tree routing |
 | **Coverage-Based IL Protection** | Reserves and liabilities tracked separately; LPs withdraw the same token count deposited |
-| **Cooperative Arbitrage** | Whitelisted arbitrageurs compete for rebates, proceeds donated to LPs |
+| **Cooperative Arbitrage** 🚧 | *Roadmap (not yet shipped)* — whitelisted arbitrageurs compete for rebates, proceeds donated to LPs |
+
+> 🚧 **FUTURE WORK — NOT YET IMPLEMENTED.** Cooperative Arbitrage is a designed feature on the BTR DEX roadmap, not yet shipped on-chain. No Solidity implementation exists in the current release. Feature target: post-mainnet, phase TBD. All Cooperative Arbitrage references in this document describe the proposed design.
 
 Unlike traditional AMMs that use pair-based pools (Uniswap) or stablecoin-specific curves (Curve), BTR's anchor tree allows unlimited assets with capital efficiency that scales with liquidity depth.
 
@@ -46,7 +48,7 @@ Unlike traditional AMMs that use pair-based pools (Uniswap) or stablecoin-specif
 | | |
 |---|---|
 | [**Inventory Management**](/docs/1.1.1-Inventory-Management) | Coverage ratios, skew calculation, ALM mechanics |
-| [**Liquidity Shaping**](/docs/1.1.2-Liquidity-Shaping) | Catmull-Rom spline profiles, depth curves |
+| [**Liquidity Shaping**](/docs/1.1.2-Liquidity-Shaping) | Fritsch-Carlson monotone cubic Hermite spline profiles, depth curves |
 | [**Spread & Fees**](/docs/1.1.4-Spread-&-Fees) | Bi-factor dynamic fees (volatility band + deviation surcharge) |
 | [**Toxic Flow Mitigation**](/docs/1.1.6-Toxic-Flow-Mitigation) | Adverse selection protection, Cooperative Arbitrage |
 | [**Internal Oracle**](/docs/1.2.2-Internal-Oracle) | Dual-window TWAP, volatility EMAs |
@@ -63,7 +65,7 @@ AIMM introduces several innovations not found in existing AMMs:
 | **N-asset pooling** | Anchor tree topology routes any-to-any swaps through common ancestors |
 | **Algo-optimized profiles** | Liquidity concentration based on historical price density |
 | **Coverage-based IL protection** | Reserves and liabilities tracked separately; LPs withdraw same token count |
-| **Cooperative Arbitrage** | Whitelisted arbitrageurs compete for rebates, donate proceeds to LPs |
+| **Cooperative Arbitrage** 🚧 | *Roadmap (not yet shipped)* — whitelisted arbitrageurs compete for rebates, donate proceeds to LPs |
 
 ---
 

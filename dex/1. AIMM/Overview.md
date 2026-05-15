@@ -12,7 +12,7 @@ AIMM is a multi-asset AMM designed for passive liquidity providers. Core compone
 - **N-asset pooling** -Anchor tree topology enables any-to-any routing
 - **Inventory-based pricing** -Avellaneda-Stoikov inspired mid-price adjustment
 - **Coverage-aware ALM** -Reserves/liabilities separation (Wombat-style)
-- **Catmull-Rom spline profiles** -Algo-optimized, depth curves supporting non-uniform and multimodal distributions
+- **Fritsch-Carlson monotone cubic Hermite spline profiles** -Algo-optimized, depth curves supporting non-uniform and multimodal distributions (Fritsch & Carlson 1980, *SIAM J. Numer. Anal.* 17(2))
 - **Internal TWAP oracle** -Multi-timeframe (eg. 5min/1hr) with support for external fallback, inherited directly by `Pool` (no separate module)
 - **Singleton contracts + EIP-1167 clones** -Each pool is a minimal-proxy clone of a single `Pool` impl. Governance / staking / rewards / flash are standalone singleton contracts shared across all pools.
 
@@ -178,7 +178,7 @@ See: [Inventory Management](/docs/1.1.1-inventory-management) for formulas and d
 
 ## 8. Liquidity Profiles
 
-Catmull-Rom spline profiles define liquidity distribution across the depth curve:
+Fritsch-Carlson monotone cubic Hermite spline profiles define liquidity distribution across the depth curve:
 
 - **1-16 weight segments** with monotone cubic interpolation
 - **Exact analytical integration** for price impact calculation

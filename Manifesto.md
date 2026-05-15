@@ -4,7 +4,7 @@
 
 ---
 
-> **See also**: [Foundations](/docs/Foundations) -Theoretical lineage and prior art: Avellaneda-Stoikov, Platypus/Wombat ALM, Swaap MMM, Curve v2. · [AMM Landscape](/docs/AMM-Landscape) -Side-by-side comparison vs Uniswap V2/V3/V4, Curve V1/V2, Balancer, DODO, Maverick, Trader Joe LB, Platypus, Wombat, OrbSwap.
+> **See also**: [Foundations](/docs/Foundations) -Theoretical inspiration and prior art: Avellaneda-Stoikov, Platypus/Wombat ALM, Swaap MMM, Curve v2. · [AMM Landscape](/docs/AMM-Landscape) -Side-by-side comparison vs Uniswap V2/V3/V4, Curve V1/V2, Balancer, DODO, Maverick, Trader Joe LB, Platypus, Wombat, OrbSwap.
 
 ---
 
@@ -96,7 +96,7 @@ Here's what CLOB proponents miss: **these same advances supercharge AMMs even mo
 | **Sub-second blocks** | Near real-time quotes | Near real-time TWAP updates → **minimal price lag** |
 | **Cheap gas** | Affordable order placement | Affordable dynamic compute **and storage** → volatility tracking, dynamic fees |
 | **Low latency finality** | Competitive execution | Block-scoped MEV window shrinks → **organic MEV protection** |
-| **High throughput** | More orders per second | More swaps feeding internal oracle → better price accuracy; affordable [Cooperative Arbitrage](/docs/1.1.6-Toxic-Flow-Mitigation#36-cooperative-arbitrage) to repeg price vs external markets |
+| **High throughput** | More orders per second | More swaps feeding internal oracle → better price accuracy; (roadmap) [Cooperative Arbitrage](/docs/1.1.6-Toxic-Flow-Mitigation#36-cooperative-arbitrage) **would** offer affordable repegging vs external markets |
 
 **The MEV surface shrinks dramatically on fast chains:**
 - Block time drops from 12s → as low as 10ms on the fastest L2s/alt-L1s = **1000× smaller MEV window**
@@ -105,7 +105,7 @@ Here's what CLOB proponents miss: **these same advances supercharge AMMs even mo
 - JIT attacks become unprofitable (must predict sub-second flow)
 
 **Dynamic compute is now viable everywhere:**
-- Since early 2025, L1 Ethereum base fees have dropped by more than 90%, making on-chain volatility tracking and dynamic fee computation economically viable, especially when combined with efficient compute and data storage like we implement. Swapping on AIMM costs the same as Uniswap V4 (<$0.50 at median gas levels), while providing smarter pricing and increased capital efficiency.
+- Since early 2025, L1 Ethereum base fees have dropped by more than 90%, making on-chain volatility tracking and dynamic fee computation economically viable, especially when combined with efficient compute and data storage like we implement. Swap gas on AIMM is within the same order of magnitude as Uniswap V4 on L2s; expected median user cost is under $1 in typical conditions, while providing smarter pricing and increased capital efficiency.
 - On modern L2s (Base, Arbitrum) and alt-L1s (Monad, MegaETH, HyperEVM): basically free.
 
 The irony: **fast chains don't just enable CLOBs, they make AMMs competitive with CLOBs** by eliminating most of their historical weaknesses (lag, static fees, MEV vulnerability). Not all, but enough to compete.
@@ -227,26 +227,26 @@ Both Platypus and Wombat demonstrated the viability of the ALM model for stables
 
 ### 4.2. The PMM Lineage (DODO)
 
-**DODO's Proactive Market Maker (PMM)** independently introduced **coverage-skew quote adjustment** for AMMs. Where Avellaneda-Stoikov frames inventory skew as a continuous-time optimal-control problem (utility-maximizing reservation price), DODO's PMM is the discrete, on-chain instantiation: an explicit `R = base / target` coverage ratio that pushes the mid-price away from the depleted side. Platypus and Wombat later generalised this into a full asset-liability framework; AIMM's `computeInventorySkew` is a **direct descendant of DODO's PMM via Platypus** — same coverage-aware mid-price logic, but with the spline depth profile and oracle reference price layered on top, and decoupled from a strict invariant.
+**DODO's Proactive Market Maker (PMM)** introduced **oracle-anchored, inventory-aware quote adjustment** for AMMs (an `i` mid-anchor and a `k` slippage coefficient that pushes the mid-price away from the depleted side). Separately, **Platypus** introduced the explicit **coverage-ratio** (`assets / liabilities`) framing as a pool-health metric driving slippage. AIMM's `computeInventorySkew` is **inspired by both intuitions**: it borrows DODO's inventory-aware mid-price shift and Platypus's coverage-ratio framing, but is decoupled from a strict invariant and layered with a spline depth profile and an oracle reference price. Avellaneda-Stoikov frames the same idea as a continuous-time optimal-control problem (utility-maximizing reservation price); AIMM is the discrete, on-chain instantiation of that family.
 
-### 4.3. Internal Price Discovery via Bin/Tick State (Earth Finance / Trader Joe LB)
+### 4.3. Internal Price Discovery via Bin/Tick State (Trader Joe LB, Bancor, Curve V2)
 
-**Trader Joe v2 Liquidity Book** (and the broader DLMM family) demonstrated that an AMM can perform **internal price discovery from its own bin/tick state**, without an external oracle — each swap shifts the active bin, which is itself a price signal that subsequent trades and fee logic can consume. **Earth Finance** carried similar ideas into the stableswap / pegged-asset regime, treating the AMM's own state as the reference for TWAP-like smoothing. AIMM's `PoolOracle` — the dual-window (5min fast / 1hr slow) internal accumulator that updates on every swap — is a conceptual descendant of this lineage: internal-state-as-oracle, with TWAP smoothing replacing raw active-bin reads.
+**Trader Joe v2 Liquidity Book** (and the broader DLMM family) demonstrated that an AMM can perform **internal price discovery from its own bin/tick state**, without an external oracle — each swap shifts the active bin, which is itself a price signal that subsequent trades and fee logic can consume. **Bancor** and **Curve V2** independently pioneered EMA-smoothed internal price oracles derived from the pool's own trade stream. AIMM's `PoolOracle` — the dual-window (5min fast / 1hr slow) internal accumulator that updates on every swap — is **inspired by** this prior art: internal-state-as-oracle, with dual-timeframe TWAP smoothing.
 
 ### 4.4. Consolidated Heritage
 
 BTR DEX is not a clean-room invention; it is an explicit synthesis. Single source of truth on the protocol's intellectual debts:
 
-| AIMM component | Direct ancestor | What we inherit | What we change |
+| AIMM component | Inspiration / prior art | What we inherit | What we change |
 |---|---|---|---|
 | Asset-Liability / coverage ratio | Platypus, Wombat | Single-sided deposits, coverage as health metric | Decoupled from strict invariant; coverage only sets skew, spline sets depth |
-| Coverage-skew mid-price | DODO PMM (via Platypus) | Mid-price shifts with `R = base / target` | Skew is bounded ±100, oracle-anchored, not the sole price driver |
-| Internal oracle from pool state | Earth Finance, Trader Joe LB | TWAP / active-state as price reference | Dual-window EMA (5min/1hr) instead of active-bin or single accumulator |
+| Inventory-aware mid-price | DODO PMM + Platypus coverage | Mid-price shifts with inventory imbalance | Skew is bounded ±100, oracle-anchored, not the sole price driver |
+| Internal oracle from pool state | Trader Joe LB, Bancor, Curve V2 | TWAP / active-state as price reference | Dual-window EMA (5min/1hr) instead of active-bin or single accumulator |
 | EMA-based price + amplification | Curve V2 (CryptoSwap) | Internal price oracle, concentration parameter | Spline replaces amplification + γ; admin-mutable not encoded in invariant |
 | Inventory-aware quoting | Avellaneda-Stoikov | Reservation-price framework | Discrete on-chain implementation, fee-side via vol + momentum |
 | Singleton multi-asset | Balancer, Curve V2, Uniswap V4 | One contract, many assets | Anchor-tree pricing (LCA routing) + shared inventory accounting per asset |
-| Spline depth profile | None (novel in DeFi AMM) | — | Monotone cubic Hermite, admin-mutable, data-not-code policy substrate |
-| Concentrated multi-asset, pegged-only | CCMM / OrbSwap (Paradigm Orbital) | (Sibling, not ancestor) | Different domain — pegged-only sphere vs mixed-volatility anchor-tree |
+| Spline depth profile | None known (novel in DeFi AMM) | — | Monotone cubic Hermite, admin-mutable, data-not-code policy substrate |
+| Concentrated multi-asset, pegged-only | Paradigm Orbital paper, CCMM | Structural similarity, different domain | Pegged-only sphere vs mixed-volatility anchor-tree |
 
 This is the load-bearing lineage. Everything else is integration plumbing.
 
@@ -266,9 +266,9 @@ Instead of invariant formulas, AIMM uses:
 2. **Multi-timeframe Volatility EMAs** -Real-time σ tracking for dynamic spread adjustment
 3. **Customizable Spline Profiles** -Monotone cubic Hermite interpolation defining liquidity depth at any price point
 
-By default, we use the internal oracle for TWAP. But by design, we support external oracles with fallback. A pool can therefore be:
-- **Fully permissionless and autonomous** -relying only on internal oracle
-- **Oracle-integrated** -for institutional market makers wanting to run advanced strategies with their own price feeds, or RWA issuers pegging illiquid tokens to off-chain assets with minimal slippage
+The default and recommended config is **hybrid**: internal TWAP drives all quoting (primary), and Chainlink is consulted **only** on the base token as a depeg circuit-breaker (not a primary price source). Optional extended modes:
+- **Fully permissionless and autonomous** -relying only on internal oracle, no external feeds (acceptable for pools where operator accepts base-token depeg risk)
+- **Oracle-integrated extended** -institutional market makers may opt in to additional external feeds for advanced strategies; RWA issuers may peg illiquid tokens to off-chain references. These are pool-specific opt-ins, not the default.
 
 **Liquidity profiles are infinitely flexible:**
 - Concentrate liquidity around expected price ranges
@@ -289,7 +289,7 @@ AIMM pools contain **any number of tokens** routed through an anchor tree topolo
 **Important distinction**: Swaps don't all path through a single hub token. The first **common anchor** is used for pricing, and swaps are accounted in the pool's "base token" (numéraire). Two swaps might not share any anchor, but all anchors connect to the tree root (base token), enabling unified accounting and risk management.
 
 **Why this matters:**
-- **O(1) scaling**: Unlike pairwise designs (Curve v2 CryptoSwap, Wombat) where N-asset pools require N² compute for oracle upkeep, pool configuration, and invariant solving, our anchor-tree design scales linearly. The two AMM families reasonably scalable beyond 10-asset pools are anchor-tree (BTR AIMM) and CCMM/Orbital (Paradigm's research, implemented by [OrbSwap](https://orbswap.org) with a sphere/superellipse invariant). The two are **complementary, not competing**: OrbSwap wins **pegged-only** deployments through intrinsic geometric risk isolation (the sphere drains a depegged asset asymmetrically without needing an oracle), reporting 15-150× Curve capital efficiency for stables at 0.90-0.99 depeg thresholds; BTR wins **mixed-volatility** baskets (stables + LSTs + majors) where no peg constraint applies and regime-adaptive splines + inventory skew are required. See [Foundations §10](/docs/Foundations) for the sphere invariant and polar-tick mathematics, and [AMM Landscape](/docs/AMM-Landscape) for the full side-by-side comparison.
+- **O(1) scaling**: Unlike pairwise designs (Curve v2 CryptoSwap, Wombat) where N-asset pools require N² compute for oracle upkeep, pool configuration, and invariant solving, our anchor-tree design scales linearly. The two AMM families reasonably scalable beyond 10-asset pools are anchor-tree (BTR AIMM) and CCMM/Orbital ([Paradigm's Orbital research](https://www.paradigm.xyz/2024/06/orbital), with a sphere/superellipse invariant; OrbSwap is one implementation). The two are **complementary, not competing**: Orbital wins **pegged-only** deployments through intrinsic geometric risk isolation (the sphere drains a depegged asset asymmetrically without needing an oracle), with the Paradigm Orbital paper reporting 15-150× Curve capital efficiency for stables at 0.90-0.99 depeg thresholds; BTR wins **mixed-volatility** baskets (stables + LSTs + majors) where no peg constraint applies and regime-adaptive splines + inventory skew are required. See [Foundations §10](/docs/Foundations) for the sphere invariant and polar-tick mathematics, and [AMM Landscape](/docs/AMM-Landscape) for the full side-by-side comparison.
 - **Triangulated quoting**: All assets quote vs anchors, not directly against each other. This reduces mispricing arbitrage surface and provides robustness against market fragmentation and price manipulation.
 - **Capital consolidation**: One pool depth serves all pairs, eliminating fragmentation.
 
@@ -331,32 +331,36 @@ The pool behaves less like a "free option seller" and more like an informed coun
 
 ### 5.4. Cooperative Arbitrage
 
+> 🚧 **FUTURE WORK — NOT YET IMPLEMENTED.** Cooperative Arbitrage is a designed feature on the BTR DEX roadmap, not yet shipped on-chain. No Solidity implementation (cooperators, rebates, reputation) exists in the current release. The parameters below (20% start, 80% cap, <0.9 revocation, ~50 cooperator cap) are proposed initial values pending on-chain verification and DAO ratification, not active protocol constants. Feature target: post-mainnet, phase TBD.
+
 The remaining challenge with reactive AMM pricing: **lagged prices** relative to external markets. Traditional solutions add centralization:
 - High-frequency oracles (single point of failure)
 - am-AMM style auctions (single manager, complex, and centralized)
 - RFQ systems (whitelisted solvers, off-chain matching)
 
-AIMM solves this through **Cooperative Arbitrage**-a whitelisted, reputation-based rebate program:
+AIMM **would** solve this (roadmap) through **Cooperative Arbitrage** — a proposed whitelisted, reputation-based rebate program:
 
-1. **Anonymous application**: Any stat-arb trader can apply to become a Cooperator at [btr.supply/coop](https://btr.supply/coop)
-2. **All cooperators start equal** with the same rebate tier (e.g., 20%)
-3. **Reputation = donations / rebates**: Higher reputation → higher rebate percentage (up to 80% max)
-4. **Competition among cooperators** keeps prices tight and inventory balanced
-5. **Low reputation (<0.9) → revocation**: Only aligned arbitrageurs remain
+1. **Anonymous application**: Any stat-arb trader **would** be able to apply to become a Cooperator at [btr.supply/coop](https://btr.supply/coop)
+2. **All cooperators would start equal** with the same starting rebate tier (indicative initial value: 20%, governance-adjustable)
+3. **Reputation = donations / rebates**: Higher reputation → higher rebate percentage (indicative cap: 80%, governance-adjustable)
+4. **Competition among cooperators** would keep prices tight and inventory balanced
+5. **Low reputation (indicative threshold: <0.9) → revocation**: Only aligned arbitrageurs would remain
 
-Cooperators are **arbitrageurs**-encompassing MEV searchers, HFT desks, and medium-frequency stat arb traders. There's overlap between MEV and statistical arbitrage; we don't distinguish.
+> The 20% / 80% / <0.9 / 50-cap values above are **indicative initial parameters** pending on-chain verification and governance ratification, not load-bearing protocol constants.
 
-**Why it works**:
-- Rebates lower cooperators' profit threshold → they front-run unknown arbitrageurs → smaller LVR window
-- High-reputation cooperators donate proceeds back → LPs recover LVR losses (internalization of LVR)
-- Cooperators donate as much as they want while remaining profitable, but compete to top the reputation leaderboard for more rebates → virtuous cycle incentivizing maximum donations relative to rebates claimed
-- DAO can run its own bot with 100% donation rate → maximal reputation → closes LVR loop
-- Whitelisted but competitive, up to 50 cooperators at launch (governance-adjustable) race to rebalance
+Cooperators **would be** arbitrageurs — encompassing MEV searchers, HFT desks, and medium-frequency stat arb traders. Overlap between MEV and statistical arbitrage exists; we don't distinguish.
+
+**Why it would work** (proposed mechanism):
+- Rebates would lower cooperators' profit threshold → they would front-run unknown arbitrageurs → smaller LVR window
+- High-reputation cooperators would donate proceeds back → LPs would recover LVR losses (internalization of LVR)
+- Cooperators would donate as much as profitable, but compete to top the reputation leaderboard for more rebates → virtuous cycle incentivizing maximum donations relative to rebates claimed
+- DAO could run its own bot with 100% donation rate → maximal reputation → closes LVR loop
+- Whitelisted but competitive, indicative cap of ~50 cooperators at launch (governance-adjustable) would race to rebalance
 - No oracle dependency, no builder dependency, no manager trust risk
 
-**The Emergent Advantage**: Any cooperator can compete on equal terms, but those who donate more earn better rebates. A DAO-run bot that donates 100% of arbitrage proceeds naturally achieves top reputation and front-runs adversarial extractors, returning all LVR to LPs.
+**The Emergent Advantage** (proposed): Any cooperator would compete on equal terms, but those who donate more would earn better rebates. A DAO-run bot that donates 100% of arbitrage proceeds **would** naturally achieve top reputation and front-run adversarial extractors, returning all LVR to LPs.
 
-The result: LVR mitigation comparable to oracle-based AMMs (UAMM, Swaap) and manager auctions (am-AMM), without oracle fragility or manager centralization. (DODO is listed separately above as a PMM-lineage ancestor for coverage-skew mid-price, distinct from the oracle-pricing family.)
+The expected result: LVR mitigation comparable to oracle-based AMMs (UAMM, Swaap) and manager auctions (am-AMM), without oracle fragility or manager centralization. (DODO is listed separately above as prior art for inventory-aware mid-price adjustment, distinct from the oracle-pricing family.)
 
 We call these participants **"Cooperators"** or **"Cooperative Arbitrageurs"**.
 
@@ -437,12 +441,12 @@ Building on Wombat's foundation, AIMM implements:
 - Same-block update rejection prevents flash loan attacks
 - Volatility EMAs detect abnormal price movement
 
-**External Fallback (Optional):**
-- Multi-source aggregation (Chainlink, Pyth, custom feeds)
-- Outlier detection with configurable deviation bounds
-- Circuit breakers at X% deviation from inventory-implied price
+**External Chainlink (base-token depeg circuit-breaker, default-on for non-fully-stable bases):**
+- Chainlink consulted **only** on the base (numéraire) token, **only** as a halt gate, **not** as a primary quote source
+- Reverts `BaseDepegged` when |basePrice − 1e18| / 1e18 > 500 bps (default)
+- See [Depeg Halt](/docs/dex/3.6-Depeg-Halt) for the full mechanism
 
-For low-volume pools, external oracle fallback prevents TWAP manipulation across block boundaries.
+Internal TWAP remains the price source for every non-base asset in all configurations.
 
 ### 7.4. Extreme Volatility Handling
 
@@ -472,7 +476,7 @@ AIMM is designed to be **gas-competitive with Uniswap v4**:
 
 | Operation | AIMM | Uniswap v4 | Curve v2 |
 |-----------|------|------------|----------|
-| Spline traversal | ~3-5 knots | 10-50+ ticks | N/A |
+| Spline traversal | ~4 knots/segment + O(log k) binary search across N profile knots | pair-dependent, typically several to many ticks per swap | N/A |
 | Price computation | Direct | Tick iteration | Newton iteration (~35k gas) |
 | Storage pattern | EIP-1153 transient | EIP-1153 transient | Traditional SSTORE |
 
@@ -611,8 +615,8 @@ These are fundamentally different designs. Uniswap could build AIMM, but it woul
 We are not claiming "unforkable". The Solidity is open and the design is documented; a serious team could replicate the architecture. What we claim is a coherent combination of three load-bearing pieces that no other shipping AMM combines today:
 
 1. **Regime-adaptive policy substrate** — the spline depth profile is admin-mutable on-chain *data*, not hard-coded *code*. Concentration, asymmetry, and per-asset shape can be re-fit from on-chain trade-density analysis without a contract upgrade. Curve's `A` and Gyroscope's `λ` are immutable per-pool parameters; AIMM's spline is the policy itself.
-2. **Shared-inventory multiplier** — a hub asset's reserves simultaneously back its `N-1` pair markets (see [Capital Efficiency](/docs/Capital-Efficiency)). Realistic 4× V3-equivalent depth at `N=5`, 7-8× at `N=10`, with an honest contention discount `γ ∈ [0.5, 1.0]`. UniV4's singleton is a storage optimisation; AIMM's singleton is a liquidity-sharing geometry.
-3. **Hybrid oracle (internal TWAP + external depeg halt)** — internal dual-window TWAP drives all quoting (Earth/TJ-LB lineage); an optional external Chainlink feed on the *base token* triggers a circuit-breaker halt when |basePrice − 1e18| / 1e18 > `BASE_DEPEG_HALT_BPS` (default 500 bps). Quoting is decentralised; tail-risk gating is delegated to an external feed where it belongs. See [DEX Oracle System](/docs/dex/3.5-Oracles) and [Depeg Halt](/docs/dex/3.6-Depeg-Halt).
+2. **Shared-inventory multiplier** — a hub asset's reserves simultaneously back its approximately `N-1` pair markets under hub-flow assumption (see [Capital Efficiency](/docs/Capital-Efficiency)). Realistic ranges: ~3-5× V3-equivalent depth at `N=5`, ~5-10× at `N=10`, deployment-dependent, with an honest contention discount `γ ∈ [0.5, 1.0]`. UniV4's singleton is a storage optimisation; AIMM's singleton is a liquidity-sharing geometry.
+3. **Hybrid oracle (internal TWAP primary + Chainlink base-token depeg circuit-breaker)** — internal dual-window TWAP drives all quoting (Trader Joe LB / Bancor / Curve V2 inspiration); Chainlink is consulted **only** for the base token, **only** as a halt gate, **not** as a primary price source. Triggers `BaseDepegged` when |basePrice − 1e18| / 1e18 > `BASE_DEPEG_HALT_BPS` (default 500 bps). Quoting is decentralised; tail-risk gating is delegated to an external feed where it belongs. See [DEX Oracle System](/docs/dex/3.5-Oracles) and [Depeg Halt](/docs/dex/3.6-Depeg-Halt).
 
 **Honest tagline**: *Liquidity for blue-chip multi-hop. Curated, regime-adaptive, oracle-synced.* We are class-leading for curated 5-15-asset blue-chip baskets. We are not a category killer for stable-stable in-peg flow (Curve V1 wins on that), and we are not a long-tail TAM play (UniV3/V4 win on permissionless pair creation).
 
@@ -638,7 +642,7 @@ Traditional AMMs treat every trade identically. AIMM treats every trade based on
 |---------|-----------------|---------------|
 | **Pricing** | Static invariant formulas | TWAP-centered + spline + inventory-aware |
 | **Capital** | Fragmented across pairs/tiers | Unified multi-asset pools with O(1) scaling |
-| **LP Risk** | 5-7% annual LVR (unpriced) | Explicit adverse selection fees + cooperative arbitrage |
+| **LP Risk** | 5-7% annual LVR (unpriced) | Explicit adverse selection fees + (roadmap) cooperative arbitrage |
 | **Flexibility** | Fixed curve shapes | Customizable liquidity profiles per asset |
 | **Intelligence** | Passive price taker | Dynamic fees (volatility + momentum) |
 

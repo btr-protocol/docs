@@ -8,7 +8,7 @@
 
 AIMM (Adaptive Inventory Market Maker) synthesizes ideas from quantitative market making theory, ALM-based stableswap design, and concentrated liquidity research. This document traces the intellectual genealogy of each component, acknowledges prior art, and explains our design decisions including paths not taken.
 
-For AIMM's vision and value proposition, see [Manifesto](/docs/manifesto).
+For AIMM's vision and value proposition, see [Manifesto](/docs/Manifesto).
 
 ---
 
@@ -165,7 +165,7 @@ AIMM shares Swaap's oracle-first philosophy but differs architecturally:
 
 | Aspect | Swaap | AIMM |
 |--------|-------|------|
-| **Price source** | External oracles | Internal TWAP + external fallback |
+| **Price source** | External oracles | Internal TWAP primary + Chainlink base-token depeg circuit-breaker (not a quote fallback) |
 | **Pool structure** | Weighted portfolio | Coverage-based ALM |
 | **Spread mechanism** | Stochastic (vol-based) | Bi-factor (vol + deviation) + inventory skew |
 | **Target users** | Professional market makers | Passive LPs |
@@ -275,7 +275,7 @@ Spline-based profiles overcome elliptical limitations:
 | **Double peak** | No | Yes |
 | **Flat regions** | Limited | Yes |
 | **Sharp cutoffs** | No | Yes (via tension) |
-| **Arbitrary shapes** | No | Yes (Catmull-Rom) |
+| **Arbitrary shapes** | No | Yes (monotone cubic Hermite) |
 
 See [Liquidity Shaping](/docs/1.1.2-Liquidity-Shaping) for spline mechanics.
 
@@ -442,7 +442,7 @@ See [Anchor Path Pricing](/docs/1.1.3-Anchor-Path-Pricing) for implementation.
 
 ### 10.1. Polar Coordinate AMMs
 
-Recent research explores AMMs using polar coordinates on an n-dimensional sphere. [Paradigm's Orbital](https://www.paradigm.xyz/2025/06/orbital), the implementing DEX [Orbswap](https://orbswap.org/lite-paper), and academic work on [Concentrated Circular Market Makers (CCMM)](https://arxiv.org/abs/2510.05428) represent this direction.
+Recent research explores AMMs using polar coordinates on an n-dimensional sphere. The polar-tick mathematics and sphere/superellipse invariants in this section trace to [Paradigm's Orbital paper](https://www.paradigm.xyz/2024/06/orbital) and academic work on [Concentrated Circular Market Makers (CCMM)](https://arxiv.org/abs/2510.05428) (Tolstikov et al.). [Orbswap](https://orbswap.org/lite-paper) is one implementing DEX; its lite-paper presents the formulas as images and is not the canonical mathematical source — citations below are to Paradigm/CCMM.
 
 **Sphere invariant** (n stablecoins, reserves $x_i$, radius $r$):
 
@@ -462,7 +462,7 @@ $$r_{int}^2 = (\vec{x}\cdot\vec{v} - k_{bound} - r_{int}\sqrt{n})^2 + (\|\vec{x}
 
 > "By rotating the sphere around the circle, we obtain a single torus, or donut shape."
 
-Reported capital efficiency vs Curve for n=5 stables: ~15× at a 0.90 depeg threshold, ~150× at 0.99. Risk-isolation claim (Orbswap litepaper): *"if one of the stablecoins depegs, the others can all trade at efficient prices, while the depegged one will become worthless much faster than a traditional AMM curve."* This is structural: the sphere geometry penalizes any single coordinate diverging far from the diagonal, so a depeg asymmetrically drains the bad asset rather than dragging the pool.
+Reported capital efficiency vs Curve for n=5 stables (per the Paradigm Orbital paper): ~15× at a 0.90 depeg threshold, ~150× at 0.99 — pegged-only in v1; LST extensions are theoretical. Risk-isolation claim (Paradigm Orbital / Orbswap litepaper): *"if one of the stablecoins depegs, the others can all trade at efficient prices, while the depegged one will become worthless much faster than a traditional AMM curve."* This is structural: the sphere geometry penalizes any single coordinate diverging far from the diagonal, so a depeg asymmetrically drains the bad asset rather than dragging the pool.
 
 ### 10.3. Why AIMM Didn't Pursue This
 
@@ -485,7 +485,7 @@ Despite theoretical elegance, circular/orbital approaches face practical challen
 
 **AIMM's Alternative**:
 - Cartesian splines are computationally simpler
-- Arbitrary liquidity profiles via Catmull-Rom interpolation
+- Arbitrary liquidity profiles via monotone cubic Hermite (Fritsch-Carlson) interpolation
 - Direct price/depth correspondence
 - Easier visualization and debugging
 
@@ -499,7 +499,7 @@ Despite theoretical elegance, circular/orbital approaches face practical challen
 | **Capital efficiency (mixed-vol)** | N/A (invariant breaks for volatile pairs) | Native via anchor-path pricing |
 | **Multi-hop / N-asset routing** | Implicit through n-sphere | Explicit O(log N) LCA pathfinding |
 | **Oracle dependency** | None (curve-derived prices) | Yes (oracle mid + inventory skew) |
-| **Math elegance** | High — closed-form invariant | Lower — Catmull-Rom + Avellaneda-Stoikov composite |
+| **Math elegance** | High — closed-form invariant | Lower — monotone cubic Hermite + Avellaneda-Stoikov composite |
 | **Asymmetric depth** | Hard (sphere is symmetric) | Native (per-knot spline control) |
 
 For a pure stables / pure LST pool, Orbital is likely the better technical primitive. For mixed-volatility deployments (USDC + WBTC + WETH + LSTs together), AIMM is the only viable design here — the spherical invariant cannot price volatile-vs-pegged. Where the two **do** compete is BTR's stables-pool deployments; there Orbswap has a real edge on intrinsic depeg isolation, and AIMM compensates via oracle-sync, inventory feedback, and regime-adaptive fees rather than via geometry.
@@ -510,19 +510,17 @@ For a pure stables / pure LST pool, Orbital is likely the better technical primi
 
 ### 11.1. Novel Contribution
 
-AIMM's spline-based liquidity profiles appear to be **novel** in DeFi AMM design. Extensive literature search found no prior implementations of Catmull-Rom or similar interpolating splines for AMM pricing functions.
+AIMM's spline-based liquidity profiles appear to be **novel** in DeFi AMM design. Extensive literature search found no prior implementations of monotone cubic Hermite or similar interpolating splines for AMM pricing functions.
 
 ### 11.2. Mathematical Foundation
 
-[Catmull-Rom splines](https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull%E2%80%93Rom_spline) (1974) are widely used in computer graphics for smooth curve interpolation:
-
-> "Catmull-Rom is an interpolating cubic spline with built-in C1 continuity."
+AIMM uses the [Fritsch-Carlson monotone cubic Hermite interpolation](https://en.wikipedia.org/wiki/Monotone_cubic_interpolation) (1980), not Catmull-Rom. The implementation in `Spline.sol::_tangents` applies Fritsch-Carlson **sign-preservation** on adjacent secants plus the `α² + β² ≤ 9` tangent-magnitude clamp, which guarantees the interpolant is monotone between knots — a hard requirement for an AMM depth profile (a non-monotone segment would imply negative marginal liquidity, breaking pricing). Catmull-Rom has C1 continuity but is **not** monotone in general; it can overshoot between control points.
 
 Properties relevant to AMM design:
 - **Passes through control points**: LP-intuitive (price$\to$depth mapping exact at knots)
 - **C1 continuous**: No discontinuous jumps in liquidity
 - **Local control**: Moving one knot doesn't affect distant regions
-- **Centripetal variant**: Avoids self-intersections and cusps
+- **Monotone by construction**: Fritsch-Carlson sign-preservation + magnitude clamp prevents overshoot
 
 ### 11.3. Advantages Over Alternatives
 
@@ -552,7 +550,7 @@ For query price p:
   3. Return interpolated depth
 ```
 
-Gas cost: $O(\log k)$ where $k$ = number of knots (typically 3-7).
+Gas cost: $O(\log k)$ binary search (`Spline.sol::_search`) + ~4 knots touched per segment (p0/p1 + neighbor tangents for Hermite interpolation), where $k$ = number of profile knots (typically 3-7).
 
 See [Liquidity Shaping](/docs/1.1.2-Liquidity-Shaping) for spline mathematics.
 
@@ -685,11 +683,11 @@ AIMM learned from these designs that **fighting price lag is critical for reduci
 1. **Internal TWAP** (dual-window) as primary price reference
 2. **External oracle** as optional fallback, not requirement
 3. **Inventory skew** pricing rather than oracle-based mid-price
-4. **Cooperative Arbitrage** to internalize stat arb without oracle dependency
+4. **Cooperative Arbitrage** (proposed) to internalize stat arb without oracle dependency
 
 Pool prices remain **reactive** (not pro-active), but:
 - Inventory skew discourages adverse selection
-- Cooperative Arbitrage accelerates price convergence via whitelisted cooperators
+- (proposed) Cooperative Arbitrage **would** accelerate price convergence via whitelisted cooperators
 - No single point of oracle failure
 
 The result: LVR mitigation comparable to oracle-based systems, without their failure modes.
@@ -715,7 +713,7 @@ AIMM holds that **permissionless operation is non-negotiable** for a DeFi primit
 | **Trading** | ✅ Yes | Anyone can swap, no KYC |
 | **Price discovery** | ✅ Yes | Internal TWAP, no external dependency |
 | **Pool creation** | ✅ Yes | Anyone can deploy pools |
-| **Cooperative Arbitrage** | ⚠️ Whitelisted | DAO-curated cooperators, competitive rebates |
+| **Cooperative Arbitrage** | ⚠️ Whitelisted | (roadmap) DAO-curated cooperators w/ competitive rebates (see §15.4) |
 | **Governance** | ✅ Yes | Token-based, on-chain voting |
 
 ### 15.3. Contrast with Centralized Alternatives
@@ -736,31 +734,33 @@ AIMM holds that **permissionless operation is non-negotiable** for a DeFi primit
 - ❌ Complex trust assumptions
 
 **AIMM**:
-- ⚠️ Cooperative Arbitrage is whitelisted (DAO-curated)
+- ⚠️ (roadmap) Cooperative Arbitrage would be whitelisted via DAO curation
 - ✅ Trading remains fully permissionless
 - ✅ No off-chain dependencies for pricing
 - ✅ Optional (not required) external oracles
 
 ### 15.4. The Cooperative Arbitrage Model
 
-Cooperative Arbitrage balances permissionless trading with curated arbitrageur access:
+> 🚧 **FUTURE WORK — NOT YET IMPLEMENTED.** Cooperative Arbitrage is a designed feature on the BTR DEX roadmap, not yet shipped on-chain. No Solidity implementation (cooperators, rebates, reputation) exists in the current release. The parameters below (20% start, 80% cap, <0.9 revocation, ~50 cooperator cap) are proposed initial values, not active on-chain constants. Feature target: post-mainnet, phase TBD.
 
-1. **Trading is fully permissionless**: Anyone can swap, no restrictions
-2. **Cooperator whitelist**: Arbitrageurs apply to DAO at [btr.supply/coop](https://btr.supply/coop)
-3. **Reputation-based competition**: All cooperators start equal (e.g., 20% rebate), earn higher tiers via donations
-4. **Not MEV, but stat arb**: Targets cross-exchange (CEX-DEX) statistical arbitrage, not block ordering
+Cooperative Arbitrage (proposed) **would** balance permissionless trading with curated arbitrageur access:
+
+1. **Trading would remain fully permissionless**: Anyone can swap, no restrictions
+2. **Cooperator whitelist**: Arbitrageurs would apply to DAO at [btr.supply/coop](https://btr.supply/coop)
+3. **Reputation-based competition**: All cooperators would start equal (e.g., 20% rebate), would earn higher tiers via donations
+4. **Not MEV, but stat arb**: Would target cross-exchange (CEX-DEX) statistical arbitrage, not block ordering
 5. **Rebate distribution**: `reputation = donations / rebates`; higher reputation → higher rebates (up to 80%)
 6. **Revocation**: Low reputation (<0.9) → loss of Cooperator status
 
-**Key distinction**: Cooperators use the same swap interface as everyone, they don't get execution privileges or off-chain access. The whitelist controls rebate eligibility, not trading access.
+**Key distinction** (proposed design): Cooperators would use the same swap interface as everyone; they would not get execution privileges or off-chain access. The whitelist would control rebate eligibility, not trading access.
 
-**Why whitelist?**:
-- **Quality control**: Ensure cooperators don't expose LP deposits to excessive CEX risk
-- **Inventory management**: Trusted actors carry bounded inventory risk
-- **Active monitoring**: Track donations, reputation, and behavior
-- **Competitive alignment**: Only high-performing cooperators remain
+**Why whitelist?** (rationale):
+- **Quality control**: Cooperators would not expose LP deposits to excessive CEX risk
+- **Inventory management**: Trusted actors would carry bounded inventory risk
+- **Active monitoring**: Donations, reputation, and behavior would be tracked
+- **Competitive alignment**: Only high-performing cooperators would remain
 
-This differs from solver/filler whitelists (CoW, UniswapX) where non-whitelisted users cannot access certain execution paths. In AIMM, everyone trades on equal terms; cooperators just earn rebates for improving pool state.
+This would differ from solver/filler whitelists (CoW, UniswapX) where non-whitelisted users cannot access certain execution paths. In AIMM, everyone would trade on equal terms; cooperators would just earn rebates for improving pool state.
 
 ### 15.5. Implications for Resilience
 
@@ -783,7 +783,7 @@ AIMM builds on decades of research:
 **Academic Foundations**:
 - Avellaneda & Stoikov (2008): [High-Frequency Trading in a Limit Order Book](https://people.orie.cornell.edu/sfs33/LimitOrderBook.pdf)
 - Guéant, Lehalle & Fernandez-Tapia (2012): [Optimal Portfolio Liquidation with Limit Orders](https://arxiv.org/abs/1206.4810)
-- Catmull & Rom (1974): A Class of Local Interpolating Splines
+- Fritsch & Carlson (1980): Monotone Piecewise Cubic Interpolation, *SIAM J. Numer. Anal.* 17(2)
 
 **DeFi Protocols**:
 - [Uniswap](https://uniswap.org): Constant product AMMs, concentrated liquidity

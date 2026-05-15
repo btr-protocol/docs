@@ -235,7 +235,7 @@ Atomic sequence of transactions submitted as a unit (typically by MEV searchers)
 ## C
 
 ### Catmull-Rom Spline
-See [Spline (Cubic Interpolation)](#spline-cubic-interpolation).
+**See also** [Fritsch-Carlson Monotone Cubic Hermite Interpolation](#fritsch-carlson-monotone-cubic-hermite-interpolation) — the canonical AIMM method. Catmull-Rom was considered and rejected because it is **not monotone** in general (uses centered secants without sign-preservation or the `α² + β² ≤ 9` clamp). See [Spline (Cubic Interpolation)](#spline-cubic-interpolation).
 
 ### Certificate Authority (CA)
 Trusted entity that issues and validates digital certificates for PKI systems. In blockchain context, used for identity verification in enterprise systems and secure key management infrastructure.
@@ -339,7 +339,9 @@ See [Execution Client](#execution-client), [Validator](#validator), [Gasper](#ga
 See [Adversarial Behavior](#adversarial-behavior), [Cooperative Arbitrage](#cooperative-arbitrage), [Cooperator](#cooperator), [Statistical Arbitrage](#statistical-arbitrage-stat-arb).
 
 ### Cooperative Arbitrage
-AIMM's **whitelisted, reputation-based rebate program** that transforms adversarial CEX-DEX [Statistical Arbitrage](#statistical-arbitrage-stat-arb) into collaborative LP protection. Unlike traditional AMMs where arbitrageurs extract LVR unilaterally, Cooperative Arbitrage aligns incentives via:
+> 🚧 **(roadmap, not yet implemented)** — Cooperative Arbitrage is proposed BTR DEX functionality; no on-chain Solidity exists in the current release. The mechanism below describes proposed behavior.
+
+AIMM's **(proposed) whitelisted, reputation-based rebate program** that would transform adversarial CEX-DEX [Statistical Arbitrage](#statistical-arbitrage-stat-arb) into collaborative LP protection. Unlike traditional AMMs where arbitrageurs extract LVR unilaterally, Cooperative Arbitrage would align incentives via:
 
 **Mechanism**:
 1. **Whitelist application**: Arbitrageurs apply to DAO for Cooperator status
@@ -353,8 +355,8 @@ AIMM's **whitelisted, reputation-based rebate program** that transforms adversar
 
 **How it fights LVR**:
 - Rebates lower profit threshold → cooperators arbitrage faster → smaller LVR window
-- High-reputation cooperators donate proceeds → LPs recover LVR losses directly
-- DAO can run bot with 100% donation rate → maximal reputation → closes LVR loop
+- High-reputation cooperators would donate proceeds → LPs would recover LVR losses directly
+- DAO could run bot with 100% donation rate → maximal reputation → would close LVR loop
 
 **Comparison with alternatives**:
 - **vs. McAMM**: No builder dependency (works on any EVM), simpler (no auction mechanics)
@@ -2574,7 +2576,7 @@ See [Price Impact](#price-impact), [Spread](#spread), [MEV](#mev-maximal-extract
 - **Normalization vs Standardization**: Both rescale data; normalization bounds values [0,1], standardization centers on mean with unit variance
 - **Density analysis**: Identifies where liquidity should concentrate (high-volume price zones need tighter depth shaping)
 
-**Related**: [Volatility](#volatility-σ), [Price Impact](#price-impact), [Liquidity Profile](#liquidity-profile), [Catmull-Rom Spline](#catmull-rom-spline), [Makima Spline](#makima-spline).
+**Related**: [Volatility](#volatility-σ), [Price Impact](#price-impact), [Liquidity Profile](#liquidity-profile), [Fritsch-Carlson Monotone Cubic Hermite Interpolation](#fritsch-carlson-monotone-cubic-hermite-interpolation), [Makima Spline](#makima-spline).
 
 ### Monotonicity
 Mathematical property where a function is always non-decreasing or non-increasing over its domain. In trading, **monotonic depth** means liquidity gets consistently deeper (or shallower) as you move away from market price, never reverses. Critical for spline-based profiles to prevent "dips" where a shallower price zone lies between deeper ones (which would create arbitrage opportunities).
@@ -2787,8 +2789,8 @@ See [Prices](#prices).
 
 | Method | Continuity | Oscillation | Monotone | AIMM Use |
 |--------|-----------|-------------|----------|----------|
-| **[Catmull-Rom](#catmull-rom-spline)** | C¹ | Possible | With constraint | PRIMARY |
-| **[Monotone Hermite](#monotone-cubic-hermite-interpolation)** | C¹ | None | Enforced | Implementation |
+| **[Fritsch-Carlson Monotone Cubic Hermite](#fritsch-carlson-monotone-cubic-hermite-interpolation)** | C¹ | None | Enforced (sign-preservation + α²+β²≤9 clamp) | **PRIMARY** |
+| **[Catmull-Rom](#catmull-rom-spline)** | C¹ | Possible | Not enforced | Rejected (non-monotone) |
 | **[Makima](#makima-spline)** | C¹ | Minimal | With constraint | Alternative |
 
 **How AIMM Uses Splines**:
@@ -2801,40 +2803,27 @@ Allows tighter depth near market price (retail-friendly), wider depth at extreme
 
 See [Knot](#knot-spline), [Liquidity Shaping](#liquidity-shaping), [Price Impact](#price-impact).
 
-#### Catmull-Rom Spline
-Cubic spline interpolation method producing smooth C¹ continuous curves through control points ([knots](#knot-spline)). Each segment uses cubic polynomial determined by 4 adjacent knots. Gradient at knot i depends on knots i-1 and i+1, producing natural behavior without excessive oscillation.
+#### Fritsch-Carlson Monotone Cubic Hermite Interpolation
+**Canonical AIMM spline.** Cubic Hermite interpolation with monotonicity strictly enforced via Fritsch & Carlson's 1980 algorithm ("Monotonic Piecewise Cubic Interpolation", *SIAM J. Numer. Anal.* 17(2)). Two-step construction: (1) compute tangents as averaged secants with **sign-preservation** (if adjacent secants disagree in sign, tangent = 0); (2) apply the `α² + β² ≤ 9` magnitude clamp on normalized tangents, which **guarantees** monotonicity of the cubic between knots.
 
-**Mathematical basis**:
-```
-P(t) = 0.5 * [2·C₁ + (-C₀ + C₂)·t + (2·C₀ - 5·C₁ + 4·C₂ - C₃)·t² + (-C₀ + 3·C₁ - 3·C₂ + C₃)·t³]
-where C₀, C₁, C₂, C₃ are the 4 control points
-```
+**Why monotonicity matters**: Liquidity depth must be monotone in price offset from peg. A non-monotone segment would imply negative marginal liquidity over that range → broken pricing and internal arbitrage. Fritsch-Carlson is the standard solution.
 
-**AIMM implementation**: Uses monotone-constrained Catmull-Rom for liquidity profiles. Ensures derivative signs match data to prevent reversals. Allows arbitrary depth at each price level while maintaining smooth transitions.
+**AIMM implementation**: `Spline.sol::_tangents` applies sign-preservation on adjacent secants plus the `α² + β² ≤ 9` clamp. Per-segment cubic Hermite evaluation has closed-form analytical integral, used for VWAP calculation.
 
-**Properties**: C¹ continuous (smooth, natural curves), local control (knots affect only nearby regions), can oscillate if not constrained (Monotone Hermite fixes this), computationally efficient for real-time pricing.
+**Distinction from Catmull-Rom**: Catmull-Rom uses centered secant tangents without sign-preservation or magnitude clamp → **not monotone** in general, can overshoot. Catmull-Rom was considered and rejected for AIMM.
 
-See [Monotone Cubic Hermite Interpolation](#monotone-cubic-hermite-interpolation), [Knot](#knot-spline).
-
-#### Monotone Cubic Hermite Interpolation
-Spline algorithm ensuring liquidity profiles are strictly increasing. Enforces monotonicity constraints to prevent negative depth or price reversals.
-
-**Why monotonicity matters**: Liquidity depth must increase monotonically with distance from current price. Prices must increase monotonically as traversing through reserves. Violating this creates arbitrage opportunities within the pool.
-
-**Implementation**: Base uses cubic Hermite polynomials with constrained slopes. Constraint ensures derivative signs match adjacent points. Result is natural-looking curves that respect data monotonicity.
-
-See [Catmull-Rom Spline](#catmull-rom-spline), [Liquidity Shaping](#liquidity-shaping).
+See [Catmull-Rom Spline](#catmull-rom-spline), [Liquidity Shaping](#liquidity-shaping), [Knot](#knot-spline).
 
 #### Makima Spline
-Cubic spline interpolation designed to minimize oscillation while preserving monotonicity. Modifies [Catmull-Rom](#catmull-rom-spline) gradients to avoid overshooting. Uses weighted averages of neighboring slopes and naturally handles monotone data (increasing/decreasing sequences).
+Cubic spline interpolation designed to minimize oscillation while preserving monotonicity. Uses modified Akima-style weighted averages of neighboring slopes and naturally handles monotone data.
 
-**Advantages over Catmull-Rom**: Less oscillation around knots (stable for noisy data), monotone-preserving without explicit constraints, smoother transitions in steep regions.
+**Advantages over Fritsch-Carlson**: Less oscillation around knots (stable for noisy data), smoother transitions in steep regions.
 
-**Disadvantages**: Slightly less natural feel than Catmull-Rom, more complex computation.
+**Disadvantages**: More complex computation, slightly less rigid monotonicity guarantee.
 
-**When to use**: Catmull-Rom with monotone constraint for exact control (AIMM choice), Makima for built-in stability (alternative for less strict applications).
+**When to use**: Fritsch-Carlson monotone cubic Hermite for exact monotone control (AIMM choice); Makima as alternative for noisy data sets with less strict monotonicity needs.
 
-See [Catmull-Rom Spline](#catmull-rom-spline), [Monotone Cubic Hermite Interpolation](#monotone-cubic-hermite-interpolation).
+See [Fritsch-Carlson Monotone Cubic Hermite Interpolation](#fritsch-carlson-monotone-cubic-hermite-interpolation).
 
 ### Staking
 Locking tokens (BTR or LP) to earn rewards and governance rights. Subject to lock duration and cooldowns.

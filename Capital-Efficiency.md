@@ -56,11 +56,11 @@ For a hub asset `h` (e.g. USDC), the depth available to market `(h, j)` is the f
 
 where `α'` is BTR's own concentration factor (anchor-path AIMM concentrates near the oracle quote, comparable in magnitude to UniV3's `α` for blue chips).
 
-**Multiplier vs UniV3 on hub-pair depth, holding `α' ≈ α`:**
+**Multiplier vs UniV3 on hub-pair depth, holding `α' ≈ α`, under hub-flow assumption:**
 
-`D_hj^BTR / D_hj^V3 = (T/N) / (T / (N(N-1))) = N-1`
+`D_hj^BTR / D_hj^V3 = (T/N) / (T / (N(N-1))) ≈ N-1`
 
-For `N=5`: 4×. For `N=10`: 9×. For `N=15`: 14×.
+Approximate values: for `N=5`, ~3-5×; for `N=10`, ~5-10×; for `N=15`, ~8-14× (deployment-dependent) — under hub-flow assumption, before contention discount.
 
 ---
 
@@ -74,7 +74,7 @@ Assets: USDC (hub), WBTC, WETH, SOL, BNB. Even TVL split.
 | TVL per pool | $100M | $1B |
 | USDC per USDC-pair | $50M | $200M (shared) |
 | Hub-pair direct depth | $50M × α | $200M × α' |
-| Hub-pair multiplier | 1× | **4×** |
+| Hub-pair multiplier | 1× | **~3-5×** (deployment-dependent) |
 | Non-hub pair (WBTC↔SOL) | 1 pool, 1 fee, 1 slip | 2-hop in singleton, 1 fee, 1 contract |
 | Oracle re-price latency | per-pool, MEV-arb gated | atomic on root update |
 
@@ -94,7 +94,7 @@ In practice:
 - AIMM quotes update post-trade so the second trade sees skewed (worse) prices, which is correct behaviour, not a bug
 - Adversarial concurrent-drain is bounded by `R_h` per block, same as a UniV3 pool's per-pool cap
 
-The expected-case multiplier remains `(N-1)` for hub pairs; the worst-case multiplier degrades toward 1× under fully concurrent drains on every hub pair. Realistic operational range: 2-4× of nominal for `N=5`, 4-8× for `N=10`.
+The expected-case multiplier remains approximately `(N-1)` for hub pairs under hub-flow assumption; the worst-case multiplier degrades toward 1× under fully concurrent drains on every hub pair. Indicative operational ranges: ~3-5× of nominal for `N=5`, ~5-10× for `N=10`, deployment-dependent.
 
 ---
 
@@ -141,26 +141,26 @@ where:
 - `μ_multihop ≈ 1.1-1.3` from fee + gas savings on non-hub routes
 - `β_oracle ≈ 1.3-1.6` net-revenue uplift from oracle-synced repricing
 
-**Realistic mix** (`w_hub = 0.7`, `N = 5`, `γ = 0.8`):
+**Indicative mix** (`w_hub = 0.7`, `N = 5`, `γ = 0.8`), under hub-flow assumption:
 
-`E_BTR / E_V3 ≈ 0.7 · 4 · 0.8 + 0.3 · 1.2 + 1.4 ≈ 2.24 + 0.36 + 1.4 ≈ 4.0×`
+`E_BTR / E_V3 ≈ 0.7 · 4 · 0.8 + 0.3 · 1.2 + 1.4 ≈ ~3-5×` (deployment-dependent)
 
-For `N = 10`: ~7-8×. For `N = 15`: ~10-12×.
+For `N = 10`: approximately ~5-10× range. For `N = 15`: approximately ~8-14× range. All ranges are deployment-dependent and assume hub-routed flow; concurrent multi-pair drains compress toward 1×.
 
 ---
 
 ## 9. Scenario Table
 
-VCR uplift of BTR singleton vs UniV3 baseline, `w_hub = 0.7`, `γ = 0.8`, `μ = 1.2`, `β = 1.4`:
+Indicative VCR uplift ranges (BTR singleton vs UniV3 baseline) under `w_hub ≈ 0.7`, `γ ≈ 0.8`, `μ ≈ 1.2`, `β ≈ 1.4`, hub-flow assumption:
 
-| N  | TVL $10M | TVL $100M | TVL $1B | Hub-pair raw multiplier |
-|----|----------|-----------|---------|-------------------------|
-| 3  | 2.9×     | 2.9×      | 2.9×    | 2×                      |
-| 5  | 4.0×     | 4.0×      | 4.0×    | 4×                      |
-| 10 | 7.4×     | 7.4×      | 7.4×    | 9×                      |
-| 15 | 10.8×    | 10.8×     | 10.8×   | 14×                     |
+| N  | Approximate uplift range (deployment-dependent) | Hub-pair raw multiplier (approx, hub-flow) |
+|----|-------------------------------------------------|--------------------------------------------|
+| 3  | ~2-3×                                           | ~2-3×                                      |
+| 5  | ~3-5×                                           | ~3-5×                                      |
+| 10 | ~5-10×                                          | ~5-10×                                     |
+| 15 | ~8-14×                                          | ~8-14×                                     |
 
-The multiplier is TVL-invariant by construction (it is a ratio of geometries, not an absolute). Absolute depth scales linearly with `T` in both venues.
+The multiplier is TVL-invariant by construction (it is a ratio of geometries, not an absolute). Absolute depth scales linearly with `T` in both venues. All numbers are indicative; deployment-dependent under realistic flow mixes.
 
 ---
 
@@ -180,4 +180,4 @@ UniV4's singleton is a *storage* optimisation, not a *liquidity* one — each po
 
 ## 11. Summary
 
-The shared-inventory multiplier is real, formally `(N-1)×` on hub-pair direct depth, and composes with non-hub multi-hop savings and oracle-synced repricing to a realistic 4-10× VCR uplift for `N = 5-15`. The contention caveat is honest and bounded: aggregate per-block outflow on any asset is still capped at its reserve `T/N`, identical to a pair pool's cap. Concurrent drains degrade the multiplier gracefully toward 1× in the worst case; under realistic non-concurrent flow it holds at 70-90% of nominal.
+The shared-inventory multiplier is real, formally approximately `(N-1)×` on hub-pair direct depth under hub-flow assumption, and composes with non-hub multi-hop savings and oracle-synced repricing to an indicative ~3-10× VCR uplift range for `N = 5-15` (deployment-dependent). The contention caveat is honest and bounded: aggregate per-block outflow on any asset is still capped at its reserve `T/N`, identical to a pair pool's cap. Concurrent drains degrade the multiplier gracefully toward 1× in the worst case; under realistic non-concurrent flow it typically holds at 70-90% of nominal.
