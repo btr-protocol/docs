@@ -1,25 +1,25 @@
 ---
-title: "BTR Prime — Documentation Index"
+title: "BTR Prime - Documentation Index"
 description: "Mathematical methodology behind BTR Prime: adaptive Renko bars, Parkinson volatility, microstructure features, perpetual gradient boosting, walk-forward validation, directional and CL range output rules."
 audience: tech
 type: reference
 status: live
 phase: n/a
-order: 0
+order: -1
 lang: en
 publish: true
 ---
-# BTR Prime — Documentation Index
+# BTR Prime - Documentation Index
 
 > Quantitative methodology behind BTR Prime: how perpetual gradient boosting on adaptive Renko bars + microstructure features powers both directional trading and concentrated-liquidity range management.
 
-This documentation set is the **theoretical companion** to the production Rust code at `~/Work/btr/prime`. It is **not** a product manual — it is a math reference for internal quantitative review and external reproducibility. Every formula links to the file:line that implements it.
+This documentation set is the **theoretical companion** to the production Rust code at `~/Work/btr/prime`. It is **not** a product manual - it is a math reference for internal quantitative review and external reproducibility. Every formula links to the file:line that implements it.
 
 ---
 
 ## Start here
 
-- **[§00 Overview](./00.%20Overview.md)** — what Prime is, the pipeline at a glance, design invariants, conventions.
+- **[§00 Overview](./00.%20Overview.md)** - what Prime is, the pipeline at a glance, design invariants, conventions.
 
 ## The methodology (read in order)
 
@@ -40,13 +40,13 @@ This documentation set is the **theoretical companion** to the production Rust c
 
 **Phase 1 (live):** all the math documented in §01-§08 reflects production code at master. Adaptive Renko bars, Parkinson volatility, feature pipeline, perpetual GBM (Stage-1 primary, decay-weighted inter-fold ensemble), walk-forward harness, fitness function, directional LO/SO output, CL range output.
 
-**Phase 2 (planned, plumbed but inactive):** Stage-2 meta-classifier; intra-fold seed-diverse ensembling; explicit σ-floor trade rejection. See [§10 Open Questions §1](./10.%20Open%20Questions.md#1-codedoc-mismatches-active).
+**Phase 2 (planned, plumbed but inactive):** Stage-2 meta-classifier; intra-fold seed-diverse ensembling; explicit σ-floor trade rejection. See [§10 Open Questions §1](./10.%20Open%20Questions.md).
 
 **Phase 3 (research):** GARCH/EGARCH overlay on σ; regime-detection meta-feature; tail-risk-aware fitness extensions; predictive-distribution outputs.
 
 ## Internal-only
 
-- [Architecture (engineering view)](./architecture.md) — service inventory, deployment topology. `publish: false`.
+- [Architecture (engineering view)](./architecture.md) - service inventory, deployment topology. `publish: false`.
 
 ## Audience & conventions
 
