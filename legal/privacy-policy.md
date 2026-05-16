@@ -13,12 +13,12 @@ publish: true
 
 *Last Updated: May 2026*
 
-BTR Supply and its contributors (collectively "BTR Supply", "BTR", “we”, “us”, “our”) respect the privacy of its customers, users and visitors of its services, including its platforms, apps and website (collectively, the “Services”). For further information on our Services and how to use them, please see [our Terms of Service](/terms-of-service).
+BTR Supply and its contributors (collectively "BTR Supply", "BTR", “we”, “us”, “our”) respect the privacy of its customers, users and visitors of its services, including its platforms, apps and website (collectively, the “Services”). For further information on our Services and how to use them, please see [our Terms of Service](./terms-of-service.md).
 This Privacy Policy informs you of how we gather, use, store, disclose, and otherwise process your information, including personal information (also known as personal data), in conjunction with your access and use of our Services. Please read this Privacy Policy carefully to understand our views and practices regarding your personal information and how we will treat it.
 
 ## 1. CONTACT AND CONTROLLER DETAILS
 
-You can contact us or ask us any questions about our privacy practices or any of the information in this Privacy Policy by email at [contact@btr.supply](contact@btr.supply) or [on X](https://x.com/BtrSupply).
+You can contact us or ask us any questions about our privacy practices or any of the information in this Privacy Policy by email at [contact@btr.supply](mailto:contact@btr.supply) or [on X](https://x.com/BtrSupply).
 If you are an individual located in the EU or the UK, the controller of your personal information is BTR.
 
 ## 2. PERSONAL INFORMATION WE COLLECT
@@ -50,7 +50,7 @@ We may collect certain limited information automatically when you use the Servic
 We may use your personal information for a variety of business purposes, including to:
 
 - Provide the Services: We will use your information to provide you with, and facilitate the use of, our Services.
-- Location: We will use your information to confirm you are not located in or established under the laws of a Restricted Country (for more information, please see [our Terms of Service](/terms-of-service)).
+- Location: We will use your information to confirm you are not located in or established under the laws of a Restricted Country (for more information, please see [our Terms of Service](./terms-of-service.md)).
 - Communications: We will use your information to communicate with you about your use of the Services, changes to policies of terms, and in response to any queries, questions or comments you send to us. If you are on the Restricted Country Mailing list (as discussed above), we may use your email address to communicate to you that there has been a change in the Restricted Country list.
 - Marketing: We may use your information to send you marketing communications, subject to you providing your consent.
 - Surveys, Contests and Sweepstakes: Where necessary, we may use your information to allow you to take part in surveys, contests and sweepstakes.
@@ -109,7 +109,7 @@ We implement technical, physical and organizational security safeguards designed
 
 ## 8. COOKIE POLICY
 
-We consciously refrain from using tracking, marketing, or any other commercial cookies. Some cookies are part of a critical process, meaning they either prevent fraudulent actions or enable service-critical website features. These essential cookies are anonymous and cannot be used to identify you, nor can they be used for commercial activities. For more information, please see [our official Cookie Policy](/cookie-policy).
+We consciously refrain from using tracking, marketing, or any other commercial cookies. Some cookies are part of a critical process, meaning they either prevent fraudulent actions or enable service-critical website features. These essential cookies are anonymous and cannot be used to identify you, nor can they be used for commercial activities. For more information, please see [our official Cookie Policy](./cookie-policy.md).
 
 ## 9. THIRD PARTY LINKS AND PLUG-INS
 

@@ -1,5 +1,5 @@
 ---
-title: "USDC — Uniswap v3 ETH Strategy"
+title: "USDC - Uniswap v3 ETH Strategy"
 description: "USDC vault deploying into Uniswap v3 ETH/USDC concentrated liquidity."
 audience: user
 type: reference
@@ -7,15 +7,15 @@ status: planned
 phase: 1
 order: 1
 lang: en
-publish: true
+publish: false
 ---
 
-# USDC — Uniswap v3 ETH Strategy
+# USDC - Uniswap v3 ETH Strategy
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 ## Underlying venue
-Uniswap v3 — ETH/USDC 0.05% pool (Ethereum mainnet)
+Uniswap v3 - ETH/USDC 0.05% pool (Ethereum mainnet)
 
 ## Strategy
 Concentrated liquidity around spot; periodic rebalance to maintain target range width. Optional delta hedge via perp short.
@@ -67,4 +67,4 @@ See [risk tier legend](./_template.md#risk-tier-definitions-legend) for quantita
 - **Cumulative net return since inception:** `[%]`
 
 ## Example Deposit Walkthrough
-1. *Pending screenshots — see [Tutorials → Deposit into Vault](../../tutorials/deposit-into-vault.md) once content lands.*
+1. *Pending screenshots - see [Tutorials → Deposit into Vault](../../tutorials/deposit-into-vault.md) once content lands.*

@@ -17,7 +17,7 @@ publish: true
 
 ## 1. Overview
 
-This section covers **protocol-wide integration** with the BTR Protocol. For AMM-specific features (swaps, liquidity, hooks, pool deployment), see [Section 1.3: Integration](../../1.\ AIMM/1.3.\ Integration/).
+This section covers **protocol-wide integration** with the BTR Protocol. For AMM-specific features (swaps, liquidity, hooks, pool deployment), see [Section 1.3: Integration](../1.%20AIMM/1.3.%20Integration/).
 
 ### 1.1. Scope Separation
 
@@ -35,9 +35,9 @@ This section covers **protocol-wide integration** with the BTR Protocol. For AMM
 
 | Guide | Description |
 |-------|-------------|
-| [Treasury Integration](./5.1.\ Treasury\ Integration.md) | Protocol fee collection and treasury operations |
-| [Bridging](./5.2.\ Bridging.md) | Cross-chain token transfers via Bridge |
-| [White Labelling](./5.3.\ White\ Labelling.md) | Deploying branded pool instances |
+| [Treasury Integration](./5.1.%20Treasury%20Integration.md) | Protocol fee collection and treasury operations |
+| [Bridging](./5.2.%20Bridging.md) | Cross-chain token transfers via Bridge |
+| [White Labelling](./5.3.%20White%20Labelling.md) | Deploying branded pool instances |
 
 ---
 
@@ -68,6 +68,6 @@ import { IPool, ITreasury, IBridge } from '@btr/interfaces';
 
 ## 4. Related Documentation
 
-- [Integration](../../1.\ AIMM/1.3.\ Integration/) -AMM-specific integration patterns
-- [Security Overview](../../3.\ Security/Overview.md) -Audit considerations
-- [Contributing](../../6.\ Contributing/) -Internal development practices
+- [Integration](../1.%20AIMM/1.3.%20Integration/) -AMM-specific integration patterns
+- [Security Overview](../3.%20Security/Overview.md) -Audit considerations
+- [Contributing](../6.%20Contributing/) -Internal development practices

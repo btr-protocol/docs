@@ -57,7 +57,7 @@ The protocol relies on smart contracts that are **open-source** and available fo
 - **Upgrade backdoor**: Even with timelocks, centralized upgrade authority could potentially bypass community consensus
 - **Storage collision risks**: Diamond patterns require careful ERC-7201 slot management; collisions could corrupt data
 
-For details on upgradeability and governance processes, see [Protocol Architecture](/specs/PROTOCOL.md).
+For details on upgradeability and governance processes, see [Protocol Overview](../protocol/01.%20Overview.md) and [Deployment & Upgrades](../dex/3.%20Security/3.2.%20Deployment%20&%20Upgrades.md).
 
 **Reentrancy Protection**: Critical modules implement ReentrancyGuard patterns, but external calls to other contracts could enable reentrancy attacks if third-party contracts are malicious.
 
@@ -77,7 +77,7 @@ BTR does not provide investment, legal, or tax advice. You are solely responsibl
 haircut (h) = (1 - coverage)^η
 ```
 
-Where `η` (eta) is a power-law parameter that determines the severity of haircuts. As coverage approaches 0%, haircuts approach 100%, meaning LPs could face **total loss** of their claims. LPs share losses pro-rata without additional penalties. For details, see [Coverage Ratio Documentation](/specs/ALM_AND_COVERAGE.md).
+Where `η` (eta) is a power-law parameter that determines the severity of haircuts. As coverage approaches 0%, haircuts approach 100%, meaning LPs could face **total loss** of their claims. LPs share losses pro-rata without additional penalties. For details, see [Vault Risk Model](../vaults/05.%20Risk%20Model.md).
 
 **Undercollateralization Risk**: If an asset's coverage ratio reaches 0% due to depletion, LPs in that pool lose 100% of their deposits. No insurance or backstop exists for undercollateralized pools.
 
@@ -133,7 +133,7 @@ The protocol uses **internal oracles** based on Time-Weighted Average Price (TWA
 
 **External Oracle Reliance**: If the protocol integrates external oracles (Chainlink, Pyth, etc.) as fallbacks, attacks on those external oracle networks propagate to BTR. The protocol currently relies primarily on internal TWAPs but may use external sources.
 
-For technical details, see [Oracle Architecture](/specs/ORACLE.md).
+For technical details, see [Oracles](../dex/3.%20Security/3.5.%20Oracles.md).
 
 #### 2.6. Slippage and Execution Risks
 
@@ -427,7 +427,7 @@ Best practice: approve only the amount needed, or use permit-based approvals whe
 
 #### 7.1. Regulatory and Compliance Risks
 
-Digital asset regulations vary significantly by jurisdiction and are rapidly evolving. You are solely responsible for ensuring your use of BTR services complies with all applicable laws and regulations in your jurisdiction. BTR does not provide legal advice. Regulatory actions against digital assets, DeFi protocols, or specific tokens may render the protocol illegal or unusable in your region. Citizenship and geographic restrictions are detailed in [our Terms of Service](/terms-of-service).
+Digital asset regulations vary significantly by jurisdiction and are rapidly evolving. You are solely responsible for ensuring your use of BTR services complies with all applicable laws and regulations in your jurisdiction. BTR does not provide legal advice. Regulatory actions against digital assets, DeFi protocols, or specific tokens may render the protocol illegal or unusable in your region. Citizenship and geographic restrictions are detailed in [our Terms of Service](./terms-of-service.md).
 
 #### 7.2. Blockchain Network Risks
 
@@ -608,4 +608,4 @@ By using BTR services, you acknowledge and accept:
 
 11. **Forward-Looking Acknowledgment**: You acknowledge that cross-chain allocation, additional DEX integrations, BTR token issuance, and governance frameworks described as forward-looking are not commitments and may change, be delayed, or be cancelled.
 
-For full terms and conditions, see [our Terms of Service](/terms-of-service).
+For full terms and conditions, see [our Terms of Service](./terms-of-service.md).

@@ -13,9 +13,9 @@ publish: false
 
 ML-driven trading platform for crypto spot and concentrated liquidity management.
 
-**Scope boundary:** BTR consumes information bars produced by [NX Rates](../../nx/nx-rates/docs/architecture.md) and produces trading signals executed against exchanges. The unified pipeline uses GBM to predict Parkinson-normalized returns with deterministic sigma-based trading rules -- no chained optimizers. Full ML methodology is documented in [methodology.md](methodology.md).
+**Scope boundary:** BTR consumes information bars produced by NX Rates and produces trading signals executed against exchanges. The unified pipeline uses GBM to predict Parkinson-normalized returns with deterministic sigma-based trading rules -- no chained optimizers. Full ML methodology is documented in [methodology.md](methodology.md).
 
-**Wire/Bar format:** Bars are 96-byte `mitch::Bar` records (64B OHLCV + 32B microstructure); see [NX Rates MITCH Bar spec](../../nx/nx-rates/mitch/model/bar.md) for the canonical layout. The composite TDWAP Index that feeds bar generation is documented in [NX Rates aggregation-methodology.md](../../nx/nx-rates/docs/aggregation-methodology.md).
+**Wire/Bar format:** Bars are 96-byte `mitch::Bar` records (64B OHLCV + 32B microstructure); see NX Rates MITCH Bar spec for the canonical layout. The composite TDWAP Index that feeds bar generation is documented in NX Rates aggregation-methodology.md.
 
 ---
 
@@ -186,4 +186,4 @@ Environment:
 
 **Storage:** Shared PVC for model.bin + bars files; mmap MAP_SHARED between optimizer and executor.
 
-See [cluster-architecture.md](../../nx/docs/cluster-architecture.md) for the full infrastructure picture.
+See cluster-architecture.md for the full infrastructure picture.

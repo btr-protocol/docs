@@ -44,8 +44,8 @@ By accessing the AIMM DEX (when deployed), you acknowledge and accept:
 ## CONDITIONAL CONFIRMATION
 
 Upon AIMM mainnet launch and your explicit opt-in, you will confirm that:
-- You have read and understood the [Risk Disclaimer](/risk-disclaimer), including DEX-specific sections
-- You have read and agreed to the [Terms of Service](/terms-of-service), including AIMM-specific Section 20
+- You have read and understood the [Risk Disclaimer](./risk-disclaimer.md), including DEX-specific sections
+- You have read and agreed to the [Terms of Service](./terms-of-service.md), including AIMM-specific Section 20
 - You are not located in a restricted jurisdiction
 - You accept all AIMM-specific risks including coverage-ratio haircuts, Diamond upgradeability, dynamic fees, flash-loan exposure, MEV exposure, and governance-attack risk
 - You assume full responsibility for your use of the AIMM DEX

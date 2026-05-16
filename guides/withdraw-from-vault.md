@@ -12,6 +12,6 @@ publish: true
 
 # Withdraw From a Vault
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 Step-by-step withdrawal flow. Covers redemption-queue mechanics, exit fees, slippage on rebalance, and how to verify receipt on-chain.

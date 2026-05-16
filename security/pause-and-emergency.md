@@ -13,8 +13,6 @@ last_reviewed: 2026-05-15
 
 # Pause and Emergency Response
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
-
 BTR's contracts expose granular pause controls held by a `PAUSER` role. Pause actions are bounded by timelock and recorded on-chain. See [Roles and Timelock](./roles-and-timelock.md) for parameter values.
 
 ### Incident communication channels

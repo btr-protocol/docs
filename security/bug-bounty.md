@@ -13,4 +13,4 @@ last_reviewed: 2026-05-15
 
 # Bug Bounty
 
-The full bug-bounty policy — scope, severity tiers, rewards, and submission procedure — lives at [legal/bug-bounty.md](../legal/bug-bounty.md).
+The full bug-bounty policy - scope, severity tiers, rewards, and submission procedure - lives at [legal/bug-bounty.md](../legal/bug-bounty.md).

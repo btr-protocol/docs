@@ -13,12 +13,12 @@ publish: false
 
 ML-driven trading strategy optimization and execution for crypto spot and concentrated liquidity.
 
-**Scope boundary:** BTR receives memory-mapped information bars ([mitch::Bar](../../nx/nx-rates/mitch/model/bar.md), 96 bytes = 64B OHLCV + 32B microstructure) produced by [NX Rates](../../nx/nx-rates/docs/architecture.md). BTR computes features, trains models, evaluates fitness, and executes trades using a unified pipeline: GBM predicts Parkinson-normalized returns, deterministic sigma-based trading rules translate predictions into orders. No chained optimizers.
+**Scope boundary:** BTR receives memory-mapped information bars (mitch::Bar, 96 bytes = 64B OHLCV + 32B microstructure) produced by NX Rates. BTR computes features, trains models, evaluates fitness, and executes trades using a unified pipeline: GBM predicts Parkinson-normalized returns, deterministic sigma-based trading rules translate predictions into orders. No chained optimizers.
 
 **Upstream references** (canonical specs live in NX Rates):
-- Bar wire format: [nx-rates/mitch/model/bar.md](../../nx/nx-rates/mitch/model/bar.md)
-- Composite Index (TDWAP) methodology: [nx-rates/docs/aggregation-methodology.md](../../nx/nx-rates/docs/aggregation-methodology.md)
-- Service architecture: [nx-rates/docs/architecture.md](../../nx/nx-rates/docs/architecture.md)
+- Bar wire format: nx-rates/mitch/model/bar.md
+- Composite Index (TDWAP) methodology: nx-rates/docs/aggregation-methodology.md
+- Service architecture: nx-rates/docs/architecture.md
 
 ---
 

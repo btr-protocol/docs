@@ -1069,7 +1069,7 @@ priceEmitter.emit({ symbol: 'BTC', price: 50000 });
 
 ## Internal References
 
-- [`CONTRIBUTING.md`](../CONTRIBUTING.md) - Commit conventions
+- [`GIT.md`](./GIT.md) - Commit conventions
 - [`FRONTEND.md`](./FRONTEND.md) - Front-end best practices
 
 ---

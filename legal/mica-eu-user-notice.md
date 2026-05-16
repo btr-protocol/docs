@@ -39,7 +39,7 @@ BTR's position on MiCA applicability rests on the following analysis (not legal 
 
 **(b) Non-public-offer carve-out.** Offers limited to fewer than 150 persons per Member State (Art. 4(2)(b)) or restricted to qualified investors (Art. 4(2)(a)) are also out-of-scope. BTR's geofencing controls (see [Geofencing & Sanctions Screening](./geofencing-and-sanctions-screening.md)) implement these limits.
 
-**(c) Not an ART/EMT.** BTR token is not an asset-referenced token (Art. 3(1)(6)) — no peg, no basket, no reference to fiat/commodity stability. It is not an e-money token (Art. 3(1)(7)) — no single-fiat-currency redemption. It is a "crypto-asset other than ART/EMT" subject only to Title II if offered to the EEA public.
+**(c) Not an ART/EMT.** BTR token is not an asset-referenced token (Art. 3(1)(6)) - no peg, no basket, no reference to fiat/commodity stability. It is not an e-money token (Art. 3(1)(7)) - no single-fiat-currency redemption. It is a "crypto-asset other than ART/EMT" subject only to Title II if offered to the EEA public.
 
 **(d) Recital 22 / decentralization considerations.** ESMA's Final Report on MiCA (October 2024) clarifies that fully-decentralized services without an identifiable issuer or service provider fall outside MiCA Titles III, IV, V (CASP authorization). BTR Supply's vault contracts have no centralized issuer; governance is conducted via on-chain proposal and timelock. This is a fact-pattern analysis rather than a regulatory exemption.
 
@@ -65,7 +65,7 @@ For EEA users, the front-end may:
 
 ## 5. NO CASP STATUS REPRESENTATION
 
-BTR does **not** hold a CASP authorisation under MiCA and does **not** represent itself as a CASP. Users acknowledge that the Services described in the [Terms of Service](/terms-of-service) are provided by autonomous, non-custodial smart contracts.
+BTR does **not** hold a CASP authorisation under MiCA and does **not** represent itself as a CASP. Users acknowledge that the Services described in the [Terms of Service](./terms-of-service.md) are provided by autonomous, non-custodial smart contracts.
 
 ## 6. FORWARD-LOOKING
 

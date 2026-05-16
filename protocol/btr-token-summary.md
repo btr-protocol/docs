@@ -1,5 +1,5 @@
 ---
-title: "BTR Token — Summary"
+title: "BTR Token - Summary"
 description: "Friendly summary of the BTR token: supply, utility, and where it lives."
 audience: user
 type: explanation
@@ -10,9 +10,7 @@ lang: en
 publish: true
 ---
 
-# BTR Token — Summary
-
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+# BTR Token - Summary
 
 ## What it is
 
@@ -35,4 +33,4 @@ BTR is the protocol's native ERC-20 token. It captures protocol value (fee share
 
 ## Deep dive
 
-For full details — utility surfaces, emission curve, supply enforcement — see [`08. BTR Token.md`](./08.%20BTR%20Token.md).
+For full details - utility surfaces, emission curve, supply enforcement - see [`08. BTR Token.md`](./08.%20BTR%20Token.md).

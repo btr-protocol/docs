@@ -43,7 +43,7 @@ BTR does not operate, control, or have custody over the underlying blockchains, 
 - Curating ALM vault configurations (adapter selection, fee tiers, tick ranges, deviation / heartbeat / slippage / interval defensive parameters) within the bounds enforced by the smart contracts
 - Providing documentation and specifications
 
-**ALM Vault Custody Model**: BTR ALM vaults take custody of deposited assets *within the smart contract* for the duration of the deposit. The depositor retains an ERC-20 share token redeemable for the underlying assets, subject to the protocol's redemption mechanics (synchronous fallback or ERC-7540 asynchronous request, per vault configuration), pessimistic NAV accounting, exit-fee floor, high-water-mark performance fee, and the operational and third-party risks described in [our Risk Disclaimer](/risk-disclaimer). At no point does BTR (the entity, the team, or any individual contributor) hold private keys to user deposits; vault-level governance authority over adapter configuration, swapper selection, and emergency controls vests in the AccessControl contract, which is itself constrained by on-chain timelocks and rate-limited keeper actions.
+**ALM Vault Custody Model**: BTR ALM vaults take custody of deposited assets *within the smart contract* for the duration of the deposit. The depositor retains an ERC-20 share token redeemable for the underlying assets, subject to the protocol's redemption mechanics (synchronous fallback or ERC-7540 asynchronous request, per vault configuration), pessimistic NAV accounting, exit-fee floor, high-water-mark performance fee, and the operational and third-party risks described in [our Risk Disclaimer](./risk-disclaimer.md). At no point does BTR (the entity, the team, or any individual contributor) hold private keys to user deposits; vault-level governance authority over adapter configuration, swapper selection, and emergency controls vests in the AccessControl contract, which is itself constrained by on-chain timelocks and rate-limited keeper actions.
 
 **Smart Contract Upgradeability**: The protocol uses upgradeable smart contracts via beacon proxy pattern. While the core logic is designed for stability, upgrades may be executed by governance or contract owners to fix bugs, add features, or respond to security incidents. Upgrades are transparent and follow governance processes, but may introduce new risks.
 
@@ -56,7 +56,7 @@ We can make updates to these Terms at any time and will make any updated version
 
 ## 1. CONTACT
 
-If you have any questions about the Services, these Terms, or our Privacy Policy, please reach out to the team at [contact@btr.supply](contact@btr.supply) or [on X](https://x.com/BtrSupply).
+If you have any questions about the Services, these Terms, or our Privacy Policy, please reach out to the team at [contact@btr.supply](mailto:contact@btr.supply) or [on X](https://x.com/BtrSupply).
 
 ## 2. RESTRICTIONS OF USE
 
@@ -176,7 +176,7 @@ In order for you to receive the Services at the best standard, we grant you a re
 
 ### 8.5. Open-Source License Compliance
 
-The Services may incorporate or be based upon open-source software components that are licensed under various open-source licenses ("OSS Licenses"). You acknowledge that certain components of the Services may be subject to OSS Licenses, which may grant you rights that differ from the rights granted under these Terms. Where OSS Licenses apply, those licenses will govern your use of those specific components. We comply with all applicable OSS Licenses and make source code available as required by such licenses. For information about open-source components and their licenses, please contact us at [contact@btr.supply](contact@btr.supply).
+The Services may incorporate or be based upon open-source software components that are licensed under various open-source licenses ("OSS Licenses"). You acknowledge that certain components of the Services may be subject to OSS Licenses, which may grant you rights that differ from the rights granted under these Terms. Where OSS Licenses apply, those licenses will govern your use of those specific components. We comply with all applicable OSS Licenses and make source code available as required by such licenses. For information about open-source components and their licenses, please contact us at [contact@btr.supply](mailto:contact@btr.supply).
 
 ### 8.6. Infringement of Intellectual Property
 
@@ -184,7 +184,7 @@ If you believe our Intellectual Property is being infringed by a third party, pl
 
 ## 9. PRIVACY
 
-As you may know, to use the Services, we must collect, store, use, share and otherwise process your personal data. To learn more about why and how we do this, please read [our Privacy Policy](/privacy-policy). It will also provide useful information about the rights you may have in relation to your personal data and how you may be able to exercise such rights.
+As you may know, to use the Services, we must collect, store, use, share and otherwise process your personal data. To learn more about why and how we do this, please read [our Privacy Policy](./privacy-policy.md). It will also provide useful information about the rights you may have in relation to your personal data and how you may be able to exercise such rights.
 
 ## 10. DISCLAIMER
 
@@ -198,7 +198,7 @@ You use and accept the provision of the Services at your own risk and at all tim
 - we do not control, and are not responsible for controlling, how or when our users use our Services; and
 - we are not responsible for and are not obligated to control the actions or information (including content) of our users or other third parties.
   The foregoing disclaimers will apply to the fullest extent permitted by applicable law.
-  Further risk information can be found in [our Risk Disclaimer](/risk-disclaimer)
+  Further risk information can be found in [our Risk Disclaimer](./risk-disclaimer.md)
 
 ## 11. SERVICE MODIFICATIONS AND SUSPENSION
 
@@ -290,11 +290,11 @@ Unless expressly stated otherwise in these Terms, we, our affiliates, subsidiari
 - losses incurred as a result of abnormal or unforeseeable circumstances outside our reasonable control, including delays or failures caused by problems of another system or network, mechanical breakdown, industrial action or a pandemic;
 - losses incurred as a result of unauthorised access or use of your Wallet;
 - losses incurred where a law, or guidance or instruction from a governmental authority, requires us to take action, for example to terminate these Terms and cease providing you access to the Services;
-- losses resulting from protocol risks, smart contract vulnerabilities, or technical failures (detailed in [our Risk Disclaimer](/risk-disclaimer));
-- losses resulting from market risks, volatility, or financial losses (detailed in [our Risk Disclaimer](/risk-disclaimer));
-- losses resulting from oracle errors, manipulation, or failures (detailed in [our Risk Disclaimer](/risk-disclaimer));
-- losses resulting from blockchain network risks, forks, or infrastructure issues (detailed in [our Risk Disclaimer](/risk-disclaimer));
-- losses resulting from malicious attacks, exploits, or security vulnerabilities (detailed in [our Risk Disclaimer](/risk-disclaimer)); or
+- losses resulting from protocol risks, smart contract vulnerabilities, or technical failures (detailed in [our Risk Disclaimer](./risk-disclaimer.md));
+- losses resulting from market risks, volatility, or financial losses (detailed in [our Risk Disclaimer](./risk-disclaimer.md));
+- losses resulting from oracle errors, manipulation, or failures (detailed in [our Risk Disclaimer](./risk-disclaimer.md));
+- losses resulting from blockchain network risks, forks, or infrastructure issues (detailed in [our Risk Disclaimer](./risk-disclaimer.md));
+- losses resulting from malicious attacks, exploits, or security vulnerabilities (detailed in [our Risk Disclaimer](./risk-disclaimer.md)); or
 - any other loss or damage to the extent that such loss or damage is caused or contributed to by you, or is a result of the failure by you to comply with these Terms.
 
 For any other losses or damages for which we are found liable, the BTR Supply's team aggregate liability towards you for all claims during our relationship with you shall not exceed $100. The foregoing exclusions and cap of liability will each apply to the fullest extent permitted by applicable law.

@@ -9,7 +9,7 @@ order: 99
 lang: en
 publish: true
 ---
-> 🚧 **Pre-launch document — do NOT rely on for legal/operational decisions.** Multisig signers, keeper addresses, and Foundation board memberships are placeholders. This document will be populated and re-signed before mainnet General Availability. Reading party should confirm finalization with the Foundation before treating any disclosure as binding.
+> 🚧 **Pre-launch document - do NOT rely on for legal/operational decisions.** Multisig signers, keeper addresses, and Foundation board memberships are placeholders. This document will be populated and re-signed before mainnet General Availability. Reading party should confirm finalization with the Foundation before treating any disclosure as binding.
 
 # CONFLICTS AND OPERATOR DISCLOSURE
 

@@ -1060,7 +1060,7 @@ jupyter-lab
 
 ## Internal References
 
-- [`CONTRIBUTING.md`](../CONTRIBUTING.md) - Commit conventions
+- [`GIT.md`](./GIT.md) - Commit conventions
 - [`BACKEND.md`](./BACKEND.md) - Back-end patterns
 
 ---

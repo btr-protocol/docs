@@ -1,5 +1,5 @@
 ---
-title: "Staking — Summary"
+title: "Staking - Summary"
 description: "Friendly summary of BTR staking: lock BTR, earn fee share, vote with veBTR."
 audience: user
 type: explanation
@@ -10,9 +10,7 @@ lang: en
 publish: true
 ---
 
-# Staking — Summary
-
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+# Staking - Summary
 
 ## What it is
 
@@ -37,4 +35,4 @@ Staking lets you lock BTR for a chosen duration to receive **veBTR** (vote-escro
 
 ## Deep dive
 
-For full mechanics — lock math, distributor flow, claim cadence — see [`04. Staking.md`](./04.%20Staking.md).
+For full mechanics - lock math, distributor flow, claim cadence - see [`04. Staking.md`](./04.%20Staking.md).

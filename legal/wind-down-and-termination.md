@@ -60,7 +60,7 @@ In a wind-down scenario, BTR (or its successors per the AccessControl ownership-
 Users retain custody of their share tokens at all times. Best practices for wind-down resilience:
 
 - Keep share tokens in a wallet whose seed phrase you control. Do **not** leave share tokens on a custodial interface.
-- Record the canonical contract addresses (Vault, Adapter set, Swapper, PriceProvider, AccessControl) from the [BTR documentation](/specs).
+- Record the canonical contract addresses (Vault, Adapter set, Swapper, PriceProvider, AccessControl) from the [BTR documentation](../reference/contract-addresses.md).
 - Familiarise yourself with on-chain redemption paths (synchronous redeem; ERC-7540 request) before you need to use them in adversarial conditions.
 - Subscribe to communication channels (§6) so that you receive wind-down notifications.
 
@@ -86,13 +86,13 @@ In the event of a planned cessation of operations, BTR Foundation will:
 
 After cessation of operations:
 
-- BTR's obligations under the [Terms of Service](/terms-of-service) survive only to the extent expressly stated therein (typically: limitation of liability, indemnification, governing law, dispute resolution).
+- BTR's obligations under the [Terms of Service](./terms-of-service.md) survive only to the extent expressly stated therein (typically: limitation of liability, indemnification, governing law, dispute resolution).
 - BTR is not obligated to continue operating the front-end, keepers, or oracle-update bots.
 - BTR is not obligated to maintain documentation, websites, or communication channels.
 
 ## 8. NO COMPENSATION
 
-No compensation, insurance, or backstop exists for losses arising from BTR's cessation of operations, including losses from forced exit at unfavourable prices, cohort haircuts, adapter shutdowns, or oracle staleness. See [Risk Disclaimer](/risk-disclaimer) and [Acknowledgement](./acknowledgement.md).
+No compensation, insurance, or backstop exists for losses arising from BTR's cessation of operations, including losses from forced exit at unfavourable prices, cohort haircuts, adapter shutdowns, or oracle staleness. See [Risk Disclaimer](./risk-disclaimer.md) and [Acknowledgement](./acknowledgement.md).
 
 ## 9. TAX CHARACTERIZATION (NO ADVICE)
 

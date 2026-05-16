@@ -7,12 +7,12 @@ status: planned
 phase: 1
 order: 3
 lang: en
-publish: true
+publish: false
 ---
 
 # SDK Reference
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 The canonical TypeScript SDK for BTR Protocol is published as [`@btr-protocol/sdk`](https://www.npmjs.com/package/@btr-protocol/sdk). It bundles ABIs, an Ethereum RPC client, and shared types used across the front-end and back-end services.
 

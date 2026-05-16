@@ -1,5 +1,5 @@
 ---
-title: "Governance — Summary"
+title: "Governance - Summary"
 description: "Friendly summary of BTR governance: roles, timelock, on-chain voting (forward-looking)."
 audience: user
 type: explanation
@@ -10,9 +10,7 @@ lang: en
 publish: true
 ---
 
-# Governance — Summary
-
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+# Governance - Summary
 
 ## What it is
 
@@ -31,4 +29,4 @@ BTR is governed through a layered model:
 
 ## Deep dive
 
-For full mechanics — proposal lifecycle, quorum, council scope, supermajority thresholds — see [`07. Governance.md`](./07.%20Governance.md).
+For full mechanics - proposal lifecycle, quorum, council scope, supermajority thresholds - see [`07. Governance.md`](./07.%20Governance.md).

@@ -1,6 +1,6 @@
 ---
 title: "Security Overview"
-description: "How BTR Protocol approaches security — audits, bounties, pause controls, and roles."
+description: "How BTR Protocol approaches security - audits, bounties, pause controls, and roles."
 audience: both
 type: reference
 status: planned
@@ -19,11 +19,11 @@ last_reviewed: 2026-05-15
 
 | Aspect | Value | Source |
 |--------|-------|--------|
-| Independent audit firm(s) | *Pending — to be announced before GA* | [Audit Reports](../legal/audit-reports.md) |
+| Independent audit firm(s) | *Pending - to be announced before GA* | [Audit Reports](../legal/audit-reports.md) |
 | Multisig configuration | *m-of-n: configuration TBD* | [Roles & Timelock](./roles-and-timelock.md) |
 | Pause authority | Foundation Owner (timelocked rotation) | [Pause & Emergency](./pause-and-emergency.md) |
-| Status page | *To be announced* | — |
-| Incident channel | *To be announced* | — |
+| Status page | *To be announced* | - |
+| Incident channel | *To be announced* | - |
 | Bug bounty | Self-hosted (Immunefi onboarding TBD) | [Bug Bounty](../legal/bug-bounty.md) |
 | Timelock rotation | 7 days (Treasury, Swapper, Staking), 14 days (Factory) | [Roles & Timelock](./roles-and-timelock.md) |
 | Contract addresses | *Pending mainnet deployment* | [Contract Addresses](../reference/contract-addresses.md) |
@@ -36,8 +36,8 @@ last_reviewed: 2026-05-15
 4. **Bug Bounty** with safe-harbor for good-faith research. See [Bug Bounty](../legal/bug-bounty.md).
 
 ## Sub-pages
-- [Audits](./audits.md) — pointer to [Audit Reports](../legal/audit-reports.md)
-- [Bug Bounty](./bug-bounty.md) — pointer to [Bug Bounty](../legal/bug-bounty.md)
+- [Audits](./audits.md) - pointer to [Audit Reports](../legal/audit-reports.md)
+- [Bug Bounty](./bug-bounty.md) - pointer to [Bug Bounty](../legal/bug-bounty.md)
 - [Pause & Emergency](./pause-and-emergency.md)
 - [Roles & Timelock](./roles-and-timelock.md)
-- [Contract Addresses](./contracts.md) — pointer to [Contract Addresses](../reference/contract-addresses.md)
+- [Contract Addresses](./contracts.md) - pointer to [Contract Addresses](../reference/contract-addresses.md)

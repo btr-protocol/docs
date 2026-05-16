@@ -12,6 +12,6 @@ publish: true
 
 # Connect Your Wallet
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 Walks a user through connecting MetaMask, Rabby, WalletConnect, or hardware wallets to the BTR app. Covers supported chains, switching networks, and troubleshooting common connection errors.

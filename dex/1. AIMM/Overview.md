@@ -66,11 +66,11 @@ graph LR
 
 | Contract | Path | Purpose |
 |---|---|---|
-| **[Pool](/docs/1.2.1-pool)** | `src/Pool.sol` | Swap, deposit, withdraw, donate, liability swap. Inherits internal TWAP oracle. |
-| **[Admin](/docs/1.2.3-admin)** | `src/Admin.sol` | Per-pool timelocked configuration. |
-| **[Staking](/docs/1.2.4-staking)** | `src/Staking.sol` | Governance + LP staking. |
-| **[Distributor](/docs/1.2.5-distributor)** | `src/Distributor.sol` | Token-only campaign Merkle distribution. |
-| **[Flash](/docs/1.2.6-flash)** | `src/Flash.sol` | ERC-3156 flash loans. |
+| **[Pool](1.2.%20Modules/1.2.1.%20Pool.md)** | `src/Pool.sol` | Swap, deposit, withdraw, donate, liability swap. Inherits internal TWAP oracle. |
+| **[Admin](1.2.%20Modules/1.2.3.%20Admin.md)** | `src/Admin.sol` | Per-pool timelocked configuration. |
+| **[Staking](1.2.%20Modules/1.2.4.%20Staking.md)** | `src/Staking.sol` | Governance + LP staking. |
+| **[Distributor](1.2.%20Modules/1.2.5.%20Distributor.md)** | `src/Distributor.sol` | Token-only campaign Merkle distribution. |
+| **[Flash](1.2.%20Modules/1.2.6.%20Flash.md)** | `src/Flash.sol` | ERC-3156 flash loans. |
 | **PoolFactory** | `src/PoolFactory.sol` | Deploys EIP-1167 Pool clones, owns reference-impl swap timelock. |
 | **AccessControl** | `@btr-shared/access/AccessControl.sol` | Single owner ref consumed by all singletons. |
 
@@ -86,7 +86,7 @@ Per-asset state includes reserves, liabilities, pricing parameters, and sensitiv
 - Sensitivity params: gamma, vega, lambda
 - Fee bounds: minFeeBps, maxFeeBps
 
-See: [Parametrization](/docs/1.1.7-Parametrization) for full field reference.
+See: [Parametrization](1.1.%20Pricing/1.1.7.%20Parametrization.md) for full field reference.
 
 ---
 
@@ -113,9 +113,9 @@ graph TB
 - **Spline Traversal**: Price impact via liquidity profile integration
 
 See:
-- [Inventory Management](/docs/1.1.1-inventory-management) -Coverage, skew, withdrawal haircuts
-- [Spread & Fees](/docs/1.1.4-spread-fees) -Fee calculation
-- [Liquidity Shaping](/docs/1.1.2-liquidity-shaping) -Spline profiles
+- [Inventory Management](1.1.%20Pricing/1.1.1.%20Inventory%20Management.md) -Coverage, skew, withdrawal haircuts
+- [Spread & Fees](1.1.%20Pricing/1.1.4.%20Spread%20&%20Fees.md) -Fee calculation
+- [Liquidity Shaping](1.1.%20Pricing/1.1.2.%20Liquidity%20Shaping.md) -Spline profiles
 
 ---
 
@@ -150,7 +150,7 @@ graph LR
 - Max path length: 6 hops (2 × MAX_DEPTH)
 - No cycles allowed
 
-See: [Anchor Path Pricing](/docs/1.1.3-anchor-path-pricing)
+See: [Anchor Path Pricing](1.1.%20Pricing/1.1.3.%20Anchor%20Path%20Pricing.md)
 
 ---
 
@@ -163,7 +163,7 @@ Auto-updated on every swap with:
 - **Dual volatility EMAs**: Responsive + Stable
 - **B64 encoding**: Compact 64-bit price storage
 
-See: [Internal Oracle](/docs/1.2.2-internal-oracle) for full details.
+See: [Internal Oracle](1.2.%20Modules/1.2.2.%20Internal%20Oracle.md) for full details.
 
 ### 6.2. Gas Optimization
 
@@ -185,7 +185,7 @@ Asset-Liability Management (ALM) tracks reserves vs LP claims per asset:
 - Withdrawal haircuts protect remaining LPs when `c < 100%`
 - Liability decay gradually restores coverage in emergencies
 
-See: [Inventory Management](/docs/1.1.1-inventory-management) for formulas and details.
+See: [Inventory Management](1.1.%20Pricing/1.1.1.%20Inventory%20Management.md) for formulas and details.
 
 ---
 
@@ -197,7 +197,7 @@ Fritsch-Carlson monotone cubic Hermite spline profiles define liquidity distribu
 - **Exact analytical integration** for price impact calculation
 - **Customizable shapes**: Concentrated, uniform, multimodal
 
-See: [Liquidity Shaping](/docs/1.1.2-liquidity-shaping) for profile design and examples.
+See: [Liquidity Shaping](1.1.%20Pricing/1.1.2.%20Liquidity%20Shaping.md) for profile design and examples.
 
 ---
 
@@ -330,6 +330,6 @@ See: `contracts/src/interfaces/IErrors.sol`
 
 ## 15. Related Documentation
 
-- [Inventory Management](/docs/1.1.1-inventory-management) -Pricing mechanics
-- [Pool Contract](/docs/1.2.1-pool) -Module documentation
-- [Parametrization](/docs/1.1.7-parametrization) -Parameter reference
+- [Inventory Management](1.1.%20Pricing/1.1.1.%20Inventory%20Management.md) -Pricing mechanics
+- [Pool Contract](1.2.%20Modules/1.2.1.%20Pool.md) -Module documentation
+- [Parametrization](1.1.%20Pricing/1.1.7.%20Parametrization.md) -Parameter reference

@@ -97,12 +97,12 @@ docs/
 
 ### Link Format
 
-**Use slugified paths with `/docs/` prefix:**
+**Use relative paths with URL-encoded spaces (`%20`):**
 
 ```markdown
 ✅ CORRECT
-[Inventory Management](/docs/1.1.1-inventory-management)
-[Spread & Fees §3](/docs/1.1.4-spread-fees#3-spread-calculation)
+[Inventory Management](../1.%20AIMM/1.1.%20Pricing/1.1.1.%20Inventory%20Management.md)
+[Spread & Fees §3](../1.%20AIMM/1.1.%20Pricing/1.1.4.%20Spread%20&%20Fees.md#3-spread-calculation)
 
 ❌ WRONG
 [Inventory Management](./1.1.1.%20Inventory%20Management.md)
@@ -117,14 +117,14 @@ File: `1.1.1. Inventory Management.md` → Slug: `1.1.1-inventory-management`
 - Hyphens instead of spaces
 - Preserves section numbers (dots)
 - No file extension
-- Use `/docs/` prefix for absolute links from anywhere
+- Use relative paths from the source file (URL-encode spaces as `%20`)
 
 ### Anchor Links
 
 ```markdown
 ## 3. Spread Calculation
 
-Link here with: [Section 3](/docs/1.1.4-spread-fees#3-spread-calculation)
+Link here with: [Section 3](../1.%20AIMM/1.1.%20Pricing/1.1.4.%20Spread%20&%20Fees.md#3-spread-calculation)
 ```
 
 ---

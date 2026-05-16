@@ -15,13 +15,13 @@ publish: true
 
 ## 1. PURPOSE
 
-This notice describes the technical and self-attestation controls BTR uses to enforce the jurisdictional restrictions and sanctions-screening requirements in the [Terms of Service](/terms-of-service).
+This notice describes the technical and self-attestation controls BTR uses to enforce the jurisdictional restrictions and sanctions-screening requirements in the [Terms of Service](./terms-of-service.md).
 
 ## 2. JURISDICTIONAL CONTROLS (FRONT-END)
 
 The BTR front-end ([https://btr.supply](https://btr.supply)) is configured to:
 
-- **IP-based geo-blocking**: requests from IP addresses geolocated to a Restricted Country listed in [Terms of Service §2](/terms-of-service) are blocked at the edge via the Cloudflare Web Application Firewall ("CF WAF"). Blocked users receive an HTTP 451 ("Unavailable For Legal Reasons") response where supported.
+- **IP-based geo-blocking**: requests from IP addresses geolocated to a Restricted Country listed in [Terms of Service §2](./terms-of-service.md) are blocked at the edge via the Cloudflare Web Application Firewall ("CF WAF"). Blocked users receive an HTTP 451 ("Unavailable For Legal Reasons") response where supported.
 - **VPN / proxy disclaimer**: users are informed that circumventing geographic restrictions via VPN, proxy, or other location-obfuscation technology is a breach of the Terms.
 - **Country self-attestation**: on first interaction, users are asked to self-attest that they are not resident in, citizen of, or accessing the Services from a Restricted Country.
 
@@ -33,7 +33,7 @@ BTR's restricted-list scope includes:
 
 - jurisdictions subject to comprehensive sanctions by the U.S. Office of Foreign Assets Control ("OFAC");
 - jurisdictions subject to comprehensive sanctions by the EU, UK HMT, UN Security Council, or Switzerland SECO;
-- the Restricted Countries listed in [Terms of Service §2](/terms-of-service).
+- the Restricted Countries listed in [Terms of Service §2](./terms-of-service.md).
 
 ### 3.1 Wallet screening
 
@@ -58,7 +58,7 @@ BTR will respond within a reasonable period. BTR is not obligated to remove any 
 
 ## 5. NO WAIVER OF USER RESPONSIBILITY
 
-Nothing in this notice waives any user's obligation under the [Terms of Service](/terms-of-service) to comply with the law and the Restricted Country regime. Successful access via circumvention does not create any right of use.
+Nothing in this notice waives any user's obligation under the [Terms of Service](./terms-of-service.md) to comply with the law and the Restricted Country regime. Successful access via circumvention does not create any right of use.
 
 ## 6. UPDATES
 

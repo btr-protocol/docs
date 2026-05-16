@@ -21,7 +21,7 @@ BTR welcomes responsible security disclosures from independent researchers. This
 
 ### 2.1 In scope
 
-- BTR ALM production smart contracts deployed at the canonical addresses published in the [BTR documentation](/specs):
+- BTR ALM production smart contracts deployed at the canonical addresses published in the [BTR documentation](../reference/contract-addresses.md):
   - Vault
   - Dex Adapters
   - Swapper (chain singleton)
@@ -62,11 +62,11 @@ If BTR lists this program on a third-party platform (e.g., Immunefi), the platfo
 
 To the maximum extent permitted by applicable law, BTR Foundation grants safe-harbor to good-faith security researchers conducting research within the scope of this Bug Bounty. Specifically:
 
-- **United States — Computer Fraud and Abuse Act (CFAA, 18 U.S.C. § 1030):** No civil action will be brought against in-scope, good-faith research.
-- **United States — DMCA § 1201:** Reverse-engineering of BTR smart contracts and front-end JavaScript for security-research purposes is authorized.
-- **United Kingdom — Computer Misuse Act 1990:** Same as CFAA above.
-- **European Union — NIS2 Directive (2022/2555):** Security research conducted under this policy qualifies as "coordinated vulnerability disclosure" for NIS2 purposes.
-- **European Union — Cyber Resilience Act:** Reporting conducted under this policy meets responsible-disclosure standards.
+- **United States - Computer Fraud and Abuse Act (CFAA, 18 U.S.C. § 1030):** No civil action will be brought against in-scope, good-faith research.
+- **United States - DMCA § 1201:** Reverse-engineering of BTR smart contracts and front-end JavaScript for security-research purposes is authorized.
+- **United Kingdom - Computer Misuse Act 1990:** Same as CFAA above.
+- **European Union - NIS2 Directive (2022/2555):** Security research conducted under this policy qualifies as "coordinated vulnerability disclosure" for NIS2 purposes.
+- **European Union - Cyber Resilience Act:** Reporting conducted under this policy meets responsible-disclosure standards.
 
 ### Out-of-scope and Safe-Harbor Revocation
 

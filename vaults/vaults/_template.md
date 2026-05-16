@@ -12,10 +12,10 @@ publish: false
 
 # `<Vault Display Name>`
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 ## Underlying venue
-`<e.g. Uniswap v3 — ETH/USDC 0.05%>`
+`<e.g. Uniswap v3 - ETH/USDC 0.05%>`
 
 ## Strategy
 `<concise strategy description: range width, rebalance cadence, hedging>`
@@ -75,4 +75,4 @@ Color + icon ensure a11y; tier is also conveyed in text.
 - **Cumulative net return since inception:** `[%]`
 
 ## Example Deposit Walkthrough
-1. *Pending screenshots — see [Tutorials → Deposit into Vault](../../tutorials/deposit-into-vault.md) once content lands.*
+1. *Pending screenshots - see [Tutorials → Deposit into Vault](../../tutorials/deposit-into-vault.md) once content lands.*

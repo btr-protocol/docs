@@ -199,7 +199,7 @@ modifier nonReentrant() {
 1. Primary external  2. Secondary external  3. Internal  4. Revert
 ```
 
-See: [Oracles](/docs/3.5-Oracles)
+See: [Oracles](3.5.%20Oracles.md)
 
 ---
 
@@ -232,7 +232,7 @@ factory.cancelReferenceUpgrade();           // optional cancel before exec
 - `Admin`, `Staking`, `Distributor`, `Flash` singletons -replaced by re-deployment, not upgraded in place.
 - `Pool` clones -non-upgradeable per-instance.
 
-See: [Deployment & Upgrades](/docs/3.2-Deployment-&-Upgrades)
+See: [Deployment & Upgrades](3.2.%20Deployment%20&%20Upgrades.md)
 
 ---
 
@@ -328,7 +328,7 @@ For security disclosures:
 
 ## 11. Audit Hardening Summary (Phases 42C + 42H)
 
-This protocol has gone through two consolidated hardening sweeps. The verdicts below summarise what was closed and how -full per-finding write-ups live in the shared phase records (`docs/shared/16..33` for Phase 42C, `docs/shared/34..42` for Phase 42H).
+This protocol has gone through two consolidated hardening sweeps. The verdicts below summarise what was closed and how.
 
 ### 11.1. Phase 42C -Audit Findings R1-R18
 
@@ -356,15 +356,15 @@ Phase 42H replaced the Diamond-lite proxy + ERC-7201 module pattern with standal
 - **G21 -Bridge cancel paths.** `Bridge.cancelConfigChange` and `Bridge.cancelSetPeer` were added so an in-flight queued upgrade can be explicitly retired without waiting for an indefinite grace window (and without ever silently expiring).
 
 Soft residuals are tracked separately:
-- **G6** -divergent Timelock encodings across 4 callsites; see [ADR-002 Timelock Encodings](/docs/shared/43-ADR-002-Timelock-Encodings) for the decision record.
+- **G6** -divergent Timelock encodings across 4 callsites; tracked as a documentation-only soft residual.
 - **G17** -alm `Vault` async withdraw queue (ERC-7540) is exposed through the generic `ERC7540_ABI` in `sdk/src/eth/erc7540.ts`; no per-contract ABI regen is required.
 
 ---
 
 ## 12. Related Documentation
 
-- [Deployment & Upgrades](/docs/3.2-Deployment-&-Upgrades) -Upgrade procedures and deployment
-- [Access Control](/docs/3.3-Access-Control) -Roles and permissions
-- [Flow Guards](/docs/3.4-Flow-Guards) -JIT protection, cooldowns
-- [Oracles](/docs/3.5-Oracles) -Oracle security and fallbacks
-- [Admin](/docs/1.2.3-Admin) -Administrative functions
+- [Deployment & Upgrades](3.2.%20Deployment%20&%20Upgrades.md) -Upgrade procedures and deployment
+- [Access Control](3.3.%20Access%20Control.md) -Roles and permissions
+- [Flow Guards](3.4.%20Flow%20Guards.md) -JIT protection, cooldowns
+- [Oracles](3.5.%20Oracles.md) -Oracle security and fallbacks
+- [Admin](../1.%20AIMM/1.2.%20Modules/1.2.3.%20Admin.md) -Administrative functions

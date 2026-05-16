@@ -13,8 +13,6 @@ last_reviewed: 2026-05-15
 
 # Roles and Timelock
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
-
 ## Multisig signers
 
 Active signers and threshold will be listed here once the deployment Safe is finalized. *(placeholder)*

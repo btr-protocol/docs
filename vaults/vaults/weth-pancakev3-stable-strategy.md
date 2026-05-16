@@ -1,5 +1,5 @@
 ---
-title: "WETH — PancakeSwap v3 Stable Strategy"
+title: "WETH - PancakeSwap v3 Stable Strategy"
 description: "WETH vault deploying into PancakeSwap v3 stable-pair concentrated liquidity."
 audience: user
 type: reference
@@ -7,15 +7,15 @@ status: planned
 phase: 1
 order: 2
 lang: en
-publish: true
+publish: false
 ---
 
-# WETH — PancakeSwap v3 Stable Strategy
+# WETH - PancakeSwap v3 Stable Strategy
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 ## Underlying venue
-PancakeSwap v3 — WETH/stable pair (BNB Chain)
+PancakeSwap v3 - WETH/stable pair (BNB Chain)
 
 ## Strategy
 Tight concentrated-liquidity range around the WETH/stable price; rebalance on range exit; modest leverage cap.
@@ -67,4 +67,4 @@ See [risk tier legend](./_template.md#risk-tier-definitions-legend) for quantita
 - **Cumulative net return since inception:** `[%]`
 
 ## Example Deposit Walkthrough
-1. *Pending screenshots — see [Tutorials → Deposit into Vault](../../tutorials/deposit-into-vault.md) once content lands.*
+1. *Pending screenshots - see [Tutorials → Deposit into Vault](../../tutorials/deposit-into-vault.md) once content lands.*

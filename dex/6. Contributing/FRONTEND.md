@@ -1169,8 +1169,7 @@ export function useWallet() {
 
 ## Internal References
 
-- [`CONTRIBUTING.md`](../CONTRIBUTING.md) - Commit conventions and PR guidelines
-- [`AGENTS.md`](../AGENTS.md) - AI agent workflows
+- [`GIT.md`](./GIT.md) - Commit conventions and PR guidelines
 
 ---
 

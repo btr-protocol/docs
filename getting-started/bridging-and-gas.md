@@ -12,6 +12,6 @@ publish: true
 
 # Bridging and Gas
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 Explains how to move USDC, ETH, and other assets across chains using trusted bridges, plus how to obtain a small amount of native gas token on each network BTR supports.

@@ -12,7 +12,7 @@ publish: true
 
 # Troubleshooting
 
-> **Placeholder content — solutions pending screenshots / product clarity.** The topics below are the must-cover issues for Phase-1 launch.
+> **Placeholder content - solutions pending screenshots / product clarity.** The topics below are the must-cover issues for Phase-1 launch.
 
 ## Approval issues
 ### "Approve" transaction fails

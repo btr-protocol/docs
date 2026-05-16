@@ -22,8 +22,8 @@ You are using BTR Supply -the BTR ALM (Automated Liquidity Management) vault sys
 **By accessing BTR Supply, you acknowledge and accept:**
 
 1. **Full Responsibility**: You take sole responsibility for your use of the protocol and all associated risks. You have read and understand:
-   - [Risk Disclaimer](/risk-disclaimer) -Comprehensive risk disclosures, including ALM-specific sections §7.5–§7.12
-   - [Terms of Service](/terms-of-service) -Legal agreement and conditions, including ALM-specific Section 20
+   - [Risk Disclaimer](./risk-disclaimer.md) -Comprehensive risk disclosures, including ALM-specific sections §7.5–§7.12
+   - [Terms of Service](./terms-of-service.md) -Legal agreement and conditions, including ALM-specific Section 20
 
 2. **Potential for Total Loss**: Using the protocol may result in partial or complete loss of deposited funds. This includes:
    - Loss from smart-contract bugs in BTR ALM contracts (vault / adapter / Swapper / PriceProvider / AccessControl)
@@ -35,7 +35,7 @@ You are using BTR Supply -the BTR ALM (Automated Liquidity Management) vault sys
 
 3. **No Guarantees**: The protocol is provided "as is" without warranties. Smart contracts may contain bugs. Prices may be volatile. Transactions are irreversible. ALM vault NAV may fluctuate non-monotonically due to pessimistic worst-of(pool, oracle) accounting. Asynchronous redemptions may be subject to cohort haircuts.
 
-4. **Geographic Compliance**: BTR Supply services are **NOT available** to residents, citizens, or entities in restricted jurisdictions. The full list of restricted countries is specified in [Terms of Service, Section 2](/terms-of-service#2-restrictions-of-use). If you are located in a restricted jurisdiction, you may not access or use the Services. Geographic restrictions apply regardless of VPN or proxy use.
+4. **Geographic Compliance**: BTR Supply services are **NOT available** to residents, citizens, or entities in restricted jurisdictions. The full list of restricted countries is specified in [Terms of Service, Section 2](./terms-of-service.md#2-restrictions-of-use). If you are located in a restricted jurisdiction, you may not access or use the Services. Geographic restrictions apply regardless of VPN or proxy use.
 
 5. **No Advice**: BTR does not provide financial, legal, or tax advice. You should consult qualified advisors before using the protocol. Vault performance metrics displayed on the Interface (yield, NAV, fee rates) are informational and do not predict future results.
 
@@ -54,8 +54,8 @@ User acknowledges that the BTR Foundation, its directors, contributors, and affi
 ## CONFIRMATION
 
 By clicking "I Accept" or otherwise accessing the Services, you confirm that:
-- You have read and understood the [Risk Disclaimer](/risk-disclaimer), including ALM-specific sections
-- You have read and agreed to the [Terms of Service](/terms-of-service), including ALM-specific Section 20
+- You have read and understood the [Risk Disclaimer](./risk-disclaimer.md), including ALM-specific sections
+- You have read and agreed to the [Terms of Service](./terms-of-service.md), including ALM-specific Section 20
 - You are not located in a restricted jurisdiction
 - You accept all risks and assume full responsibility for your use of the Services
 - For ALM specifically: you understand vault accounting, fee structure, redemption mechanics, defensive parameters, and third-party DEX dependencies

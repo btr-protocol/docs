@@ -17,7 +17,7 @@ publish: true
 
 ## 1. Overview
 
-This section covers **AMM-specific integration** with BTR Protocol pools. For protocol-wide features (treasury, bridging, white-labelling), see [Section 5: Developer Guides](../../../5.\ Developer\ Guides/).
+This section covers **AMM-specific integration** with BTR Protocol pools. For protocol-wide features (treasury, bridging, white-labelling), see [Section 5: Developer Guides](../../5.%20Developer%20Guides/).
 
 ### 1.1. Scope
 
@@ -35,9 +35,9 @@ This section covers **AMM-specific integration** with BTR Protocol pools. For pr
 
 | Guide | Description |
 |-------|-------------|
-| [Composability](./1.3.1.\ Composability.md) | Standard interfaces for swaps, liquidity, flash loans |
-| [Hooks](./1.3.2.\ Hooks.md) | Per-asset customization via hook contracts |
-| [Pool Deployment](./1.3.3.\ Curation\ &\ Pool\ Deployment.md) | Deploying and configuring custom pools |
+| [Composability](./1.3.1.%20Composability.md) | Standard interfaces for swaps, liquidity, flash loans |
+| [Hooks](./1.3.2.%20Hooks.md) | Per-asset customization via hook contracts |
+| [Pool Deployment](./1.3.3.%20Curation%20&%20Pool%20Deployment.md) | Deploying and configuring custom pools |
 
 ---
 
@@ -86,6 +86,6 @@ uint256 amountOut = pool.swap(tokenIn, tokenOut, amountIn, minOut, recipient);
 
 ## 5. Related Documentation
 
-- [Architecture Overview](../../Overview.md) -Pool design and modules
-- [Spread & Fees](../1.1.\ Pricing/1.1.4.\ Spread\ &\ Fees.md) -Fee calculation
-- [Parametrization](../1.1.\ Pricing/1.1.7.\ Parametrization.md) -Parameter reference
+- [Architecture Overview](../Overview.md) -Pool design and modules
+- [Spread & Fees](../1.1.%20Pricing/1.1.4.%20Spread%20&%20Fees.md) -Fee calculation
+- [Parametrization](../1.1.%20Pricing/1.1.7.%20Parametrization.md) -Parameter reference

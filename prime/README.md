@@ -11,7 +11,7 @@ publish: false
 ---
 # BTR Prime - Documentation Index
 
-ML-driven trading platform for crypto spot + concentrated liquidity. Consumes Bar streams from [NX Rates](../../nx/nx-rates/docs/architecture.md).
+ML-driven trading platform for crypto spot + concentrated liquidity. Consumes Bar streams from NX Rates.
 
 ## Where to start
 
@@ -19,9 +19,8 @@ ML-driven trading platform for crypto spot + concentrated liquidity. Consumes Ba
 |-----------|------|
 | Need the service architecture (optimizer, executor, providers) | [architecture.md](architecture.md) |
 | Need the ML methodology (features, GBM, fitness) | [methodology.md](methodology.md) |
-| Want the latest research / benchmarks | [../research/](../research/) |
-| Need NXR's data model / wire format | [`../../nx/nx-rates/mitch/model/`](../../nx/nx-rates/mitch/model/overview.md) |
-| Need the composite TDWAP maths | [`../../nx/nx-rates/docs/aggregation-methodology.md`](../../nx/nx-rates/docs/aggregation-methodology.md) |
+| Need NXR's data model / wire format | `../../nx/nx-rates/mitch/model/` |
+| Need the composite TDWAP maths | `../../nx/nx-rates/docs/aggregation-methodology.md` |
 
 ## Two views
 
@@ -36,10 +35,10 @@ BTR is a **consumer** of NX Rates. Canonical specs for upstream concepts live in
 
 | Concept | Canonical source |
 |---------|------------------|
-| `mitch::Bar` (96 B) wire layout | [nx-rates/mitch/model/bar.md](../../nx/nx-rates/mitch/model/bar.md) |
-| Composite Index (TDWAP) frame | [nx-rates/mitch/model/index.md](../../nx/nx-rates/mitch/model/index.md) |
-| TDWAP / staleness / triangulation maths | [nx-rates/docs/aggregation-methodology.md](../../nx/nx-rates/docs/aggregation-methodology.md) |
-| UDP mcast / WS transport | [nx-rates/docs/api.md](../../nx/nx-rates/docs/api.md) |
-| Forwarder + sink architecture | [nx-rates/docs/architecture.md](../../nx/nx-rates/docs/architecture.md) |
+| `mitch::Bar` (96 B) wire layout | nx-rates/mitch/model/bar.md |
+| Composite Index (TDWAP) frame | nx-rates/mitch/model/index.md |
+| TDWAP / staleness / triangulation maths | nx-rates/docs/aggregation-methodology.md |
+| UDP mcast / WS transport | nx-rates/docs/api.md |
+| Forwarder + sink architecture | nx-rates/docs/architecture.md |
 
 BTR docs **link** to those rather than re-specify.

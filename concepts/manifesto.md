@@ -15,7 +15,7 @@ publish: true
 
 ---
 
-> **See also**: [Foundations](/docs/concepts/foundations) -Theoretical inspiration and prior art: Avellaneda-Stoikov, Platypus/Wombat ALM, Swaap MMM, Curve v2. · [AMM Landscape](/docs/concepts/amm-landscape) -Side-by-side comparison vs Uniswap V2/V3/V4, Curve V1/V2, Balancer, DODO, Maverick, LFJ Liquidity Book (formerly Trader Joe v2), Platypus, Wombat, OrbSwap.
+> **See also**: [Foundations](foundations.md) -Theoretical inspiration and prior art: Avellaneda-Stoikov, Platypus/Wombat ALM, Swaap MMM, Curve v2. · [AMM Landscape](amm-landscape.md) -Side-by-side comparison vs Uniswap V2/V3/V4, Curve V1/V2, Balancer, DODO, Maverick, LFJ Liquidity Book (formerly Trader Joe v2), Platypus, Wombat, OrbSwap.
 
 ---
 
@@ -28,7 +28,7 @@ BTR began as an **advanced Automated Liquidity Manager (ALM)** aimed at solving 
 **The core problems with existing ALMs:**
 - **Ranges too static**: Most ALMs use simple heuristics without market awareness, no volatility tracking, no momentum signals. Ranges end up either too narrow (exposed to extreme LVR and daily massive swap slippage executed at sub-market rates) or too wide (not yielding at all).
 - **No quantitative foundation**: The technical infrastructure was solid, but the "performant market making" claims often outran the underlying mechanics, which were reactive rather than predictive systems.
-- **Reporting gap**: LVR-adjusted returns frequently diverge from headline APY. BTR Supply **aims to** close that reporting gap by tracking realized P&L net of LVR per vault. *Reporting accuracy depends on oracle availability and adapter cooperation; see [Risk Disclaimer](./legal/risk-disclaimer.md).*
+- **Reporting gap**: LVR-adjusted returns frequently diverge from headline APY. BTR Supply **aims to** close that reporting gap by tracking realized P&L net of LVR per vault. *Reporting accuracy depends on oracle availability and adapter cooperation; see [Risk Disclaimer](../legal/risk-disclaimer.md).*
 
 The founding team has been **providing liquidity for years**. We wanted to offer an easy liquidity management solution for users, a UX as simple as Uniswap V2, while yielding more than most self-managed positions. The goal: passive, set-it-and-forget-it liquidity provision that actually makes money.
 
@@ -63,11 +63,11 @@ This is when we extended our scope from ALM-on-CL alone to also building **AIMM*
 
 BTR Supply is the **Phase 1 launch product**: ALM vaults that allocate single-asset deposits across third-party concentrated-liquidity venues. AIMM (Phase 2) joins later as one additional adapter target.
 
-**Vault model**: ERC-4626 (synchronous deposit/redeem) + ERC-7540 (async redemption tickets for capacity-constrained exits). Each vault is denominated in a single ERC-20 (`Vault.sol:_asset`); LPs see one decimal of risk — the deposit asset. Share price uses pessimistic **worst-of(pool, oracle)** marking to close both JIT-pool-pump and stale-oracle attack surfaces simultaneously.
+**Vault model**: ERC-4626 (synchronous deposit/redeem) + ERC-7540 (async redemption tickets for capacity-constrained exits). Each vault is denominated in a single ERC-20 (`Vault.sol:_asset`); LPs see one decimal of risk - the deposit asset. Share price uses pessimistic **worst-of(pool, oracle)** marking to close both JIT-pool-pump and stale-oracle attack surfaces simultaneously.
 
 **Supported adapters (DexType enum)**: UniV3, UniV4, PancakeV3, PancakeInfinity, Algebra, Ramses. Aerodrome Slipstream is served by the UniV3 adapter (no separate enum variant). Phase 2 adds AIMM. **8-adapter ceiling per vault** enforces operational cost discipline.
 
-**Regime adaptation at vault layer**: rebalance triggers, range widths, and allocation weights respond to realized volatility, pool deviation, sequencer health, and intent backlog. The vault — not the underlying CL pool — owns regime decisions.
+**Regime adaptation at vault layer**: rebalance triggers, range widths, and allocation weights respond to realized volatility, pool deviation, sequencer health, and intent backlog. The vault - not the underlying CL pool - owns regime decisions.
 
 **Ratchet-down keeper params**: keeper-mutable parameters (range tightness, cap utilization, fee tier) only ratchet **toward more conservative** values without governance approval; loosening requires owner/timelock. This bounds keeper compromise blast-radius.
 
@@ -125,7 +125,7 @@ Here's what CLOB proponents miss: **these same advances supercharge AMMs even mo
 | **Sub-second blocks** | Near real-time quotes | Near real-time TWAP updates → **minimal price lag** |
 | **Cheap gas** | Affordable order placement | Affordable dynamic compute **and storage** → volatility tracking, dynamic fees |
 | **Low latency finality** | Competitive execution | Block-scoped MEV window shrinks → **organic MEV protection** |
-| **High throughput** | More orders per second | More swaps feeding internal oracle → better price accuracy; (roadmap) [Cooperative Arbitrage](/docs/1.1.6-Toxic-Flow-Mitigation#36-cooperative-arbitrage) **would** offer affordable repegging vs external markets |
+| **High throughput** | More orders per second | More swaps feeding internal oracle → better price accuracy; (roadmap) [Cooperative Arbitrage](../dex/1.%20AIMM/1.1.%20Pricing/1.1.6.%20Toxic%20Flow%20Mitigation.md#36-cooperative-arbitrage) **would** offer affordable repegging vs external markets |
 
 **The MEV surface shrinks dramatically on fast chains:**
 - Block time drops from 12s → as low as 10ms on the fastest L2s/alt-L1s = **1000× smaller MEV window**
@@ -147,7 +147,7 @@ Order books succeeded because they embed market maker psychology:
 - **Inventory protection**: Quote asymmetrically based on position
 - **Risk pricing**: Charge more for adverse conditions
 
-Static AMMs leave adverse-selection management to the LP layer — a trade-off LPs must price themselves. AIMM internalizes it in the curve; BTR Supply provides it as a management layer over V3/V4.
+Static AMMs leave adverse-selection management to the LP layer - a trade-off LPs must price themselves. AIMM internalizes it in the curve; BTR Supply provides it as a management layer over V3/V4.
 
 **AIMM embeds CLOB market-making psychology into pool-based architecture:**
 
@@ -169,14 +169,14 @@ Order books require someone to *actively* provide liquidity. This creates centra
 **Permissionless liquidity is DeFi's core innovation.** Any attempt to re-centralize liquidity provision, whether through RFQ systems, solver auctions, or off-chain quote infrastructure, sacrifices what makes DeFi valuable.
 
 AIMM maintains strict permissionlessness:
-- **Privileged arbitrageurs (Cooperators)** exist, but the model is fair: any stat-arb trader can enlist anonymously to compete. See [Cooperative Arbitrage](/docs/1.1.6-Toxic-Flow-Mitigation#36-cooperative-arbitrage).
+- **Privileged arbitrageurs (Cooperators)** exist, but the model is fair: any stat-arb trader can enlist anonymously to compete. See [Cooperative Arbitrage](../dex/1.%20AIMM/1.1.%20Pricing/1.1.6.%20Toxic%20Flow%20Mitigation.md#36-cooperative-arbitrage).
 - **No off-chain components** for pricing decisions
 - **Internal multi-timeframe TWAP and volatility** by default, no external oracle dependency
 - **Anyone can provide liquidity** without approval
 
 Most AMM design research in 2025 is trending toward centralization: oracle-dictated pricing, whitelisted market makers, MEV auctions. AIMM solves the same problems in a fully decentralized manner.
 
-This differentiates AIMM from modern "hybrid" approaches. See [Foundations § Permissionless Design](/docs/concepts/foundations#15-permissionless-design-philosophy) for detailed comparison with RFQ/intent protocols.
+This differentiates AIMM from modern "hybrid" approaches. See [Foundations § Permissionless Design](foundations.md#15-permissionless-design-philosophy) for detailed comparison with RFQ/intent protocols.
 
 ---
 
@@ -203,7 +203,7 @@ Current AMMs derive prices directly from reserves through rigid invariant formul
 
 These parameters are **static**. Curve's A coefficient or Gyroscope's λ stretch factor don't respond to market volatility, price velocity, or inventory imbalance. They mechanically map reserves → price regardless of market conditions.
 
-Static-invariant AMMs leave regime-adaptation on the table — BTR Supply provides that adaptation layer on top of V3/V4 venues today, and AIMM bakes it into the curve long-term.
+Static-invariant AMMs leave regime-adaptation on the table - BTR Supply provides that adaptation layer on top of V3/V4 venues today, and AIMM bakes it into the curve long-term.
 
 ### 3.2. Fragmented Capital
 
@@ -215,13 +215,13 @@ The explosion of isolated pairs, fee tiers, and hooks has shattered liquidity ac
 
 Capital efficiency plummets. Traders face worse execution. LPs spread thin across competing pools.
 
-### 3.3. LVR — The Largest LP Cost Center
+### 3.3. LVR - The Largest LP Cost Center
 
-**Loss-Versus-Rebalancing (LVR)** is the dominant LP cost, accounting for [5-7% of LP liquidity annually](https://docs.cow.fi/cow-amm/concepts/the-problem-of-lvr) — hundreds of millions in aggregate. Research by [Milionis et al.](https://arxiv.org/pdf/2208.06046) established that AMMs systematically trade at worse-than-market prices, creating guaranteed arbitrage profits.
+**Loss-Versus-Rebalancing (LVR)** is the dominant LP cost, accounting for [5-7% of LP liquidity annually](https://docs.cow.fi/cow-amm/concepts/the-problem-of-lvr) - hundreds of millions in aggregate. Research by [Milionis et al.](https://arxiv.org/pdf/2208.06046) established that AMMs systematically trade at worse-than-market prices, creating guaranteed arbitrage profits.
 
 > *"Fees do not sufficiently compensate for arbitrage losses in most of the largest Uniswap liquidity pools, historically, returns from fees have been smaller than losses to arbitrageurs."* -[Measuring Arbitrage Losses and Profitability of AMM Liquidity (2024)](https://arxiv.org/html/2404.05803v1)
 
-LVR accounts for more value extraction than frontrunning and sandwich attacks combined. Yet every major AMM, including Uniswap V4's hook ecosystem, inherits the same exposure: **constant fees and reactive reserves admit one-sided extraction in most regimes**. V4 hooks are an active mitigation surface; AIMM explores a parallel curve-native path — whether the pool uses market price directly from reserves (CLMMs) or TWAP/VWAP derived (like Curve's EMA).
+LVR accounts for more value extraction than frontrunning and sandwich attacks combined. Yet every major AMM, including Uniswap V4's hook ecosystem, inherits the same exposure: **constant fees and reactive reserves admit one-sided extraction in most regimes**. V4 hooks are an active mitigation surface; AIMM explores a parallel curve-native path - whether the pool uses market price directly from reserves (CLMMs) or TWAP/VWAP derived (like Curve's EMA).
 
 **Current solutions are insufficient.** Uniswap v4 and Balancer V3 hooks enable [LVR minimization experiments](https://github.com/sameshl/uniswap-v4-hooks-exploration), [volatility-based fee hooks](https://github.com/fewwwww/awesome-uniswap-hooks), and [impermanent loss hedging hooks](https://github.com/johnsonstephan/awesome-uniswap-v4-hooks). Hooks extend V4 elegantly; AIMM is a parallel research path with different trade-offs. BTR Supply operates natively on V4 hooks where users live.
 
@@ -237,7 +237,7 @@ We're not dropping invariants entirely, we're loosening the strict relationship 
 
 **How AIMM pricing works:**
 1. **Reference price** = multi-timeframe TWAP of swap prices (internal oracle)
-2. **Mid-price** = adjusted based on inventory skew (inventory risk management) along pair-specific liquidity profiles with volatility-scaled dispersion. See [Anchor-Tree Pricing](/docs/1.1.3-Anchor-Path-Pricing).
+2. **Mid-price** = adjusted based on inventory skew (inventory risk management) along pair-specific liquidity profiles with volatility-scaled dispersion. See [Anchor-Tree Pricing](../dex/1.%20AIMM/1.1.%20Pricing/1.1.3.%20Anchor%20Path%20Pricing.md).
 3. **Spread (fees)** = dynamic around mid-price, based on volatility and momentum (price deviation from TWAP)
 
 All these components work together to provide better pricing, capital efficiency, and risk management for LPs and traders alike.
@@ -252,7 +252,7 @@ Instead of deriving price from reserve ratios, they track what the pool *owes* L
 
 Both Platypus and Wombat demonstrated the viability of the ALM model for stableswap at scale, and started working on volatile extensions. **But they didn't go far enough.** They still use coverage ratio merely as a slippage modifier, the pricing mechanism remains fundamentally constrained by a modified, strict invariant bonding all pooled assets together.
 
-> For a deeper analysis of ALM mechanics and how AIMM extends them, see [Foundations § Asset-Liability Management](/docs/concepts/foundations#3-asset-liability-management-platypus--wombat).
+> For a deeper analysis of ALM mechanics and how AIMM extends them, see [Foundations § Asset-Liability Management](foundations.md#3-asset-liability-management-platypus--wombat).
 
 ### 4.2. The PMM Lineage (DODO)
 
@@ -260,7 +260,7 @@ Both Platypus and Wombat demonstrated the viability of the ALM model for stables
 
 ### 4.3. Internal Price Discovery via Bin/Tick State (LFJ Liquidity Book, Bancor, Curve V2)
 
-**LFJ Liquidity Book** (formerly Trader Joe v2; and the broader DLMM family) demonstrated that an AMM can perform **internal price discovery from its own bin/tick state**, without an external oracle — each swap shifts the active bin, which is itself a price signal that subsequent trades and fee logic can consume. **Bancor** and **Curve V2** independently pioneered EMA-smoothed internal price oracles derived from the pool's own trade stream. AIMM's `PoolOracle` — the dual-window (5min fast / 1hr slow) internal accumulator that updates on every swap — is **inspired by** this prior art: internal-state-as-oracle, with dual-timeframe TWAP smoothing.
+**LFJ Liquidity Book** (formerly Trader Joe v2; and the broader DLMM family) demonstrated that an AMM can perform **internal price discovery from its own bin/tick state**, without an external oracle - each swap shifts the active bin, which is itself a price signal that subsequent trades and fee logic can consume. **Bancor** and **Curve V2** independently pioneered EMA-smoothed internal price oracles derived from the pool's own trade stream. AIMM's `PoolOracle` - the dual-window (5min fast / 1hr slow) internal accumulator that updates on every swap - is **inspired by** this prior art: internal-state-as-oracle, with dual-timeframe TWAP smoothing.
 
 ### 4.4. Consolidated Heritage
 
@@ -274,7 +274,7 @@ BTR DEX is not a clean-room invention; it is an explicit synthesis. Single sourc
 | EMA-based price + amplification | Curve V2 (CryptoSwap) | Internal price oracle, concentration parameter | Spline replaces amplification + γ; admin-mutable not encoded in invariant |
 | Inventory-aware quoting | Avellaneda-Stoikov | Reservation-price framework | Discrete on-chain implementation, fee-side via vol + momentum |
 | Singleton multi-asset | Balancer, Curve V2, Uniswap V4 | One contract, many assets | Anchor-tree pricing (LCA routing) + shared inventory accounting per asset |
-| Spline depth profile | None known (novel in DeFi AMM) | — | Monotone cubic Hermite, admin-mutable, data-not-code policy substrate |
+| Spline depth profile | None known (novel in DeFi AMM) | - | Monotone cubic Hermite, admin-mutable, data-not-code policy substrate |
 | Concentrated multi-asset, pegged-only | Paradigm Orbital paper, CCMM | Structural similarity, different domain | Pegged-only sphere vs mixed-volatility anchor-tree |
 
 This is the load-bearing lineage. Everything else is integration plumbing.
@@ -309,7 +309,7 @@ Traditional AMM:     reserves → invariant → price
 AIMM:               oracle + spline + inventory → price
 ```
 
-> Spline-based liquidity profiles appear to be [novel in DeFi AMM design](/docs/concepts/foundations#11-spline-based-liquidity-profiles). For comparison with elliptical (Gyroscope) and parametric curves, see Foundations.
+> Spline-based liquidity profiles appear to be [novel in DeFi AMM design](foundations.md#11-spline-based-liquidity-profiles). For comparison with elliptical (Gyroscope) and parametric curves, see Foundations.
 
 ### 5.2. Multi-Asset Unified Pools
 
@@ -318,17 +318,17 @@ AIMM pools contain **any number of tokens** routed through an anchor tree topolo
 **Important distinction**: Swaps don't all path through a single hub token. The first **common anchor** is used for pricing, and swaps are accounted in the pool's "base token" (numéraire). Two swaps might not share any anchor, but all anchors connect to the tree root (base token), enabling unified accounting and risk management.
 
 **Why this matters:**
-- **O(1) scaling**: Unlike pairwise designs (Curve v2 CryptoSwap, Wombat) where N-asset pools require N² compute for oracle upkeep, pool configuration, and invariant solving, our anchor-tree design scales linearly. The two AMM families reasonably scalable beyond 10-asset pools are anchor-tree (BTR AIMM) and CCMM/Orbital ([Paradigm's Orbital research](https://www.paradigm.xyz/2024/06/orbital), with a sphere/superellipse invariant; OrbSwap is one implementation). The two are **complementary, not competing**: Orbital wins **pegged-only** deployments through intrinsic geometric risk isolation (the sphere drains a depegged asset asymmetrically without needing an oracle), with the Paradigm Orbital paper reporting 15-150× Curve capital efficiency for stables at 0.90-0.99 depeg thresholds; BTR wins **mixed-volatility** baskets (stables + LSTs + majors) where no peg constraint applies and regime-adaptive splines + inventory skew are required. See [Foundations §10](/docs/concepts/foundations) for the sphere invariant and polar-tick mathematics, and [AMM Landscape](/docs/concepts/amm-landscape) for the full side-by-side comparison.
+- **O(1) scaling**: Unlike pairwise designs (Curve v2 CryptoSwap, Wombat) where N-asset pools require N² compute for oracle upkeep, pool configuration, and invariant solving, our anchor-tree design scales linearly. The two AMM families reasonably scalable beyond 10-asset pools are anchor-tree (BTR AIMM) and CCMM/Orbital ([Paradigm's Orbital research](https://www.paradigm.xyz/2024/06/orbital), with a sphere/superellipse invariant; OrbSwap is one implementation). The two are **complementary, not competing**: Orbital wins **pegged-only** deployments through intrinsic geometric risk isolation (the sphere drains a depegged asset asymmetrically without needing an oracle), with the Paradigm Orbital paper reporting 15-150× Curve capital efficiency for stables at 0.90-0.99 depeg thresholds; BTR wins **mixed-volatility** baskets (stables + LSTs + majors) where no peg constraint applies and regime-adaptive splines + inventory skew are required. See [Foundations §10](foundations.md) for the sphere invariant and polar-tick mathematics, and [AMM Landscape](amm-landscape.md) for the full side-by-side comparison.
 - **Triangulated quoting**: All assets quote vs anchors, not directly against each other. This reduces mispricing arbitrage surface and provides robustness against market fragmentation and price manipulation.
 - **Capital consolidation**: One pool depth serves all pairs, eliminating fragmentation.
 
-The anchor tree uses Least Common Ancestor (LCA) pathfinding, mathematically optimal routing with minimal on-chain computation. This mirrors [traditional FX market structure](/docs/concepts/foundations#9-anchor-path-pricing) where cross-rates triangulate through major currency pairs (typically USD).
+The anchor tree uses Least Common Ancestor (LCA) pathfinding, mathematically optimal routing with minimal on-chain computation. This mirrors [traditional FX market structure](foundations.md#9-anchor-path-pricing) where cross-rates triangulate through major currency pairs (typically USD).
 
 ### 5.3. LVR-Aware Pricing
 
 Here's where AIMM fundamentally diverges: we don't claim to eliminate LVR-**we're the first AMM to price it explicitly** rather than leaving the cost implicit on LP balance sheets.
 
-**Inventory Skew Adjusts Mid-Price ([Avellaneda-Stoikov Framework](/docs/concepts/foundations#2-inventory-based-market-making-the-avellaneda-stoikov-framework))**
+**Inventory Skew Adjusts Mid-Price ([Avellaneda-Stoikov Framework](foundations.md#2-inventory-based-market-making-the-avellaneda-stoikov-framework))**
 
 When coverage ratio deviates from target:
 - Pool accumulating token → quote tighter asks, wider bids
@@ -360,16 +360,16 @@ The pool behaves less like a passive option writer and more like an informed cou
 
 ### 5.4. Cooperative Arbitrage
 
-> 🚧 **FUTURE WORK — NOT YET IMPLEMENTED.** Cooperative Arbitrage is a designed feature on the BTR DEX roadmap, not yet shipped on-chain. No Solidity implementation (cooperators, rebates, reputation) exists in the current release. The parameters below (20% start, 80% cap, <0.9 revocation, ~50 cooperator cap) are proposed initial values pending on-chain verification and DAO ratification, not active protocol constants. Feature target: post-mainnet, phase TBD.
+> 🚧 **FUTURE WORK - NOT YET IMPLEMENTED.** Cooperative Arbitrage is a designed feature on the BTR DEX roadmap, not yet shipped on-chain. No Solidity implementation (cooperators, rebates, reputation) exists in the current release. The parameters below (20% start, 80% cap, <0.9 revocation, ~50 cooperator cap) are proposed initial values pending on-chain verification and DAO ratification, not active protocol constants. Feature target: post-mainnet, phase TBD.
 
 The remaining challenge with reactive AMM pricing: **lagged prices** relative to external markets. Traditional solutions add centralization:
 - High-frequency oracles (single point of failure)
 - am-AMM style auctions (single manager, complex, and centralized)
 - RFQ systems (whitelisted solvers, off-chain matching)
 
-AIMM **would** solve this (roadmap) through **Cooperative Arbitrage** — a proposed whitelisted, reputation-based rebate program:
+AIMM **would** solve this (roadmap) through **Cooperative Arbitrage** - a proposed whitelisted, reputation-based rebate program:
 
-1. **Anonymous application**: Any stat-arb trader **would** be able to apply to become a Cooperator (application route to be announced — see [Protocol → Governance](../protocol/governance-summary.md) (forum URL to be announced) for updates)
+1. **Anonymous application**: Any stat-arb trader **would** be able to apply to become a Cooperator (application route to be announced - see [Protocol → Governance](../protocol/governance-summary.md) (forum URL to be announced) for updates)
 2. **All cooperators would start equal** with the same starting rebate tier (indicative initial value: 20%, governance-adjustable)
 3. **Reputation = donations / rebates**: Higher reputation → higher rebate percentage (indicative cap: 80%, governance-adjustable)
 4. **Competition among cooperators** would keep prices tight and inventory balanced
@@ -377,7 +377,7 @@ AIMM **would** solve this (roadmap) through **Cooperative Arbitrage** — a prop
 
 > The 20% / 80% / <0.9 / 50-cap values above are **indicative initial parameters** pending on-chain verification and governance ratification, not load-bearing protocol constants.
 
-Cooperators **would be** arbitrageurs — encompassing MEV searchers, HFT desks, and medium-frequency stat arb traders. Overlap between MEV and statistical arbitrage exists; we don't distinguish.
+Cooperators **would be** arbitrageurs - encompassing MEV searchers, HFT desks, and medium-frequency stat arb traders. Overlap between MEV and statistical arbitrage exists; we don't distinguish.
 
 **Why it would work** (proposed mechanism):
 - Rebates would lower cooperators' profit threshold → they would front-run unknown arbitrageurs → smaller LVR window
@@ -393,7 +393,7 @@ The expected result: LVR mitigation comparable to oracle-based AMMs (UAMM, Swaap
 
 We call these participants **"Cooperators"** or **"Cooperative Arbitrageurs"**.
 
-See: [Cooperative Arbitrage](/docs/1.1.6-Toxic-Flow-Mitigation#36-cooperative-arbitrage)
+See: [Cooperative Arbitrage](../dex/1.%20AIMM/1.1.%20Pricing/1.1.6.%20Toxic%20Flow%20Mitigation.md#36-cooperative-arbitrage)
 
 ---
 
@@ -405,7 +405,7 @@ V4 hooks demonstrate strong demand for adaptive AMM features; AIMM explores a co
 
 ### 6.2. The LP Experience Is Constrained
 
-Passive V3/V4 LPs face execution complexity — range selection, rebalance cadence, JIT competition. BTR Supply absorbs that complexity: a single deposit auto-allocates across V3, V4, and AIMM venues with LVR-adjusted reporting.
+Passive V3/V4 LPs face execution complexity - range selection, rebalance cadence, JIT competition. BTR Supply absorbs that complexity: a single deposit auto-allocates across V3, V4, and AIMM venues with LVR-adjusted reporting.
 
 **Our design is opinionated:** Most liquidity providers don't want to run market-making strategies. AIMM offers an alternative curve geometry; BTR Supply offers managed access to V3/V4 depth for the same LP cohort.
 
@@ -435,7 +435,7 @@ Input: (tokenIn, tokenOut, amountIn)
        ↓
 2. Get TWAP from internal/external oracle
        ↓
-3. Calculate per-hop volatility σ_i = mean(fastVolEMA, slowVolEMA); path-level σ_path = max_i(σ_i) per [Spread & Fees §3.1](/docs/1.1.4-spread-fees#3-spread-calculation)
+3. Calculate per-hop volatility σ_i = mean(fastVolEMA, slowVolEMA); path-level σ_path = max_i(σ_i) per [Spread & Fees §3.1](../dex/1.%20AIMM/1.1.%20Pricing/1.1.4.%20Spread%20&%20Fees.md#3-spread-calculation)
        ↓
 4. Traverse spline by volume → execution price
        ↓
@@ -463,7 +463,7 @@ Building on Wombat's foundation, AIMM implements:
 **External Chainlink (base-token depeg circuit-breaker, default-on for non-fully-stable bases):**
 - Chainlink consulted **only** on the base (numéraire) token, **only** as a halt gate, **not** as a primary quote source
 - Reverts `BaseDepegged` when |basePrice − 1e18| / 1e18 > 500 bps (default)
-- See [Depeg Halt](/docs/dex/3.6-Depeg-Halt) for the full mechanism
+- See [Depeg Halt](../dex/3.%20Security/3.6.%20Depeg%20Halt.md) for the full mechanism
 
 Internal TWAP remains the price source for every non-base asset in all configurations.
 
@@ -633,9 +633,9 @@ These are fundamentally different designs. AIMM and Uniswap target different des
 
 We are not claiming "unforkable". The Solidity is open and the design is documented; a serious team could replicate the architecture. What we claim is a coherent combination of three load-bearing pieces that no other shipping AMM combines today:
 
-1. **Regime-adaptive policy substrate** — the spline depth profile is admin-mutable on-chain *data*, not hard-coded *code*. Concentration, asymmetry, and per-asset shape can be re-fit from on-chain trade-density analysis without a contract upgrade. Curve's `A` and Gyroscope's `λ` are immutable per-pool parameters; AIMM's spline is the policy itself.
-2. **Shared-inventory multiplier** — a hub asset's reserves simultaneously back its approximately `N-1` pair markets under hub-flow assumption (see [Capital Efficiency](/docs/concepts/capital-efficiency)). Realistic ranges: ~3-5× V3-equivalent depth at `N=5`, ~5-10× at `N=10`, deployment-dependent, with an honest contention discount `γ ∈ [0.5, 1.0]`. UniV4's singleton is a storage optimisation; AIMM's singleton is a liquidity-sharing geometry.
-3. **Hybrid oracle (internal TWAP primary + Chainlink base-token depeg circuit-breaker)** — internal dual-window TWAP drives all quoting (LFJ Liquidity Book / Bancor / Curve V2 inspiration); Chainlink is consulted **only** for the base token, **only** as a halt gate, **not** as a primary price source. Triggers `BaseDepegged` when |basePrice − 1e18| / 1e18 > `BASE_DEPEG_HALT_BPS` (default 500 bps). Quoting is decentralised; tail-risk gating is delegated to an external feed where it belongs. See [DEX Oracle System](/docs/dex/3.5-Oracles) and [Depeg Halt](/docs/dex/3.6-Depeg-Halt).
+1. **Regime-adaptive policy substrate** - the spline depth profile is admin-mutable on-chain *data*, not hard-coded *code*. Concentration, asymmetry, and per-asset shape can be re-fit from on-chain trade-density analysis without a contract upgrade. Curve's `A` and Gyroscope's `λ` are immutable per-pool parameters; AIMM's spline is the policy itself.
+2. **Shared-inventory multiplier** - a hub asset's reserves simultaneously back its approximately `N-1` pair markets under hub-flow assumption (see [Capital Efficiency](capital-efficiency.md)). Realistic ranges: ~3-5× V3-equivalent depth at `N=5`, ~5-10× at `N=10`, deployment-dependent, with an honest contention discount `γ ∈ [0.5, 1.0]`. UniV4's singleton is a storage optimisation; AIMM's singleton is a liquidity-sharing geometry.
+3. **Hybrid oracle (internal TWAP primary + Chainlink base-token depeg circuit-breaker)** - internal dual-window TWAP drives all quoting (LFJ Liquidity Book / Bancor / Curve V2 inspiration); Chainlink is consulted **only** for the base token, **only** as a halt gate, **not** as a primary price source. Triggers `BaseDepegged` when |basePrice − 1e18| / 1e18 > `BASE_DEPEG_HALT_BPS` (default 500 bps). Quoting is decentralised; tail-risk gating is delegated to an external feed where it belongs. See [DEX Oracle System](../dex/3.%20Security/3.5.%20Oracles.md) and [Depeg Halt](../dex/3.%20Security/3.6.%20Depeg%20Halt.md).
 
 **Honest tagline**: *Liquidity for blue-chip multi-hop. Curated, regime-adaptive, oracle-synced.* We are class-leading for curated 5-15-asset blue-chip baskets. We are not a category killer for stable-stable in-peg flow (Curve V1 wins on that), and we are not a long-tail TAM play (UniV3/V4 win on permissionless pair creation).
 
@@ -649,7 +649,7 @@ We named ourselves **BTR (Bayesian True Range)** because our early research used
 - **True Range**: We capture realistic dispersion of price outcomes, not idealized curves
 - **Adaptive**: Every parameter responds to market conditions
 
-The goal isn't to eliminate adverse selection entirely, that's impossible without eliminating trading. The goal is to **price it more accurately, such that LPs are more likely to be compensated fairly** *(no guarantee; outcomes depend on market regime, oracle health, and adapter behavior — see [Risk Disclaimer](./legal/risk-disclaimer.md))* and arbitrageurs can't extract risk-free profits.
+The goal isn't to eliminate adverse selection entirely, that's impossible without eliminating trading. The goal is to **price it more accurately, such that LPs are more likely to be compensated fairly** *(no guarantee; outcomes depend on market regime, oracle health, and adapter behavior - see [Risk Disclaimer](../legal/risk-disclaimer.md))* and arbitrageurs can't extract risk-free profits.
 
 Traditional AMMs treat every trade identically. AIMM treats every trade based on what it reveals about market conditions.
 

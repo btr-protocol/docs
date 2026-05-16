@@ -13,7 +13,7 @@ publish: true
 
 > BTR DEX is a curated multi-asset singleton (typically 5-15 blue-chip assets). Unlike pair-pinned AMMs (UniV3, UniV4, classic Balancer pair-flows), every dollar of reserve in BTR simultaneously backs every market the asset participates in. This document formalizes that claim, gives a numerical comparison, and is honest about the contention caveat.
 
-> **See also**: [AMM Landscape](/docs/concepts/amm-landscape) for side-by-side peer comparison · [Manifesto §5.2](/docs/concepts/manifesto) for the multi-asset unified-pool rationale · [Foundations §10](/docs/concepts/foundations) for OrbSwap's complementary sphere-invariant approach.
+> **See also**: [AMM Landscape](amm-landscape.md) for side-by-side peer comparison · [Manifesto §5.2](manifesto.md) for the multi-asset unified-pool rationale · [Foundations §10](foundations.md) for OrbSwap's complementary sphere-invariant approach.
 
 > Note: this analysis describes BTR's *AIMM* singleton (`dex/contracts/src/`). The BTR Supply ALM vaults *consume* this efficiency when they allocate to AIMM pools, in addition to external CLMM/DLMM pools.
 
@@ -61,7 +61,7 @@ UniV3's concentration boost multiplies this by an active-range factor `α ∈ [1
 
 One pool, `N` assets, even split → each asset has reserves `R_i = T / N`. Quotes are produced by the anchor-path pricing module (see `dex/contracts/src/` and `docs/dex/1. AIMM/1.1. Pricing`), which prices every directed pair off a common tree.
 
-For a hub asset `h` (e.g. USDC), the depth available to market `(h, j)` is the full `R_h = T/N`, **independent of `j`**. The same dollar of USDC is counterparty for USDC↔WBTC, USDC↔WETH, USDC↔SOL, ... concurrently — subject to the contention caveat (§5).
+For a hub asset `h` (e.g. USDC), the depth available to market `(h, j)` is the full `R_h = T/N`, **independent of `j`**. The same dollar of USDC is counterparty for USDC↔WBTC, USDC↔WETH, USDC↔SOL, ... concurrently - subject to the contention caveat (§5).
 
 `D_hj^BTR = α' · T / N`
 
@@ -71,7 +71,7 @@ where `α'` is BTR's own concentration factor (anchor-path AIMM concentrates nea
 
 `D_hj^BTR / D_hj^V3 = (T/N) / (T / (N(N-1))) ≈ N-1`
 
-Approximate values: for `N=5`, ~3-5×; for `N=10`, ~5-10×; for `N=15`, ~8-14× (deployment-dependent) — under hub-flow assumption, before contention discount.
+Approximate values: for `N=5`, ~3-5×; for `N=10`, ~5-10×; for `N=15`, ~8-14× (deployment-dependent) - under hub-flow assumption, before contention discount.
 
 ---
 
@@ -89,7 +89,7 @@ Assets: USDC (hub), WBTC, WETH, SOL, BNB. Even TVL split.
 | Non-hub pair (WBTC↔SOL) | 1 pool, 1 fee, 1 slip | 2-hop in singleton, 1 fee, 1 contract |
 | Oracle re-price latency | per-pool, MEV-arb gated | atomic on root update |
 
-Per-asset total reserves are identical ($200M of USDC in both) — the multiplier is *not* fake new capital. It is the removal of an artificial partition.
+Per-asset total reserves are identical ($200M of USDC in both) - the multiplier is *not* fake new capital. It is the removal of an artificial partition.
 
 ---
 
@@ -129,7 +129,7 @@ Quantified: on a 100 bps slippage budget, a 2-hop V3 route consumes ~10 bps in f
 
 ## 7. Oracle-Sync Bonus
 
-BTR's anchor-tree (see `1.1. Pricing`) means an oracle update on the root re-prices every leaf in the same block. UniV3 pools must each be arbed individually after an external price move — the arb is paid for by LPs (LVR cost to LPs).
+BTR's anchor-tree (see `1.1. Pricing`) means an oracle update on the root re-prices every leaf in the same block. UniV3 pools must each be arbed individually after an external price move - the arb is paid for by LPs (LVR cost to LPs).
 
 The cost-saving here is hard to express as a multiplier on VCR, but it directly improves LP retention:
 
@@ -185,12 +185,12 @@ The multiplier is TVL-invariant by construction (it is a ratio of geometries, no
 | Venue | Topology | Shared inventory? | Per-pair depth (N=5, T=$1B, hub pair) |
 |---|---|---|---|
 | UniV3 | `N(N-1)/2` pair pools, isolated | No | $50M × α |
-| UniV4 | Singleton storage, per-pair hook logic | **No** — pools logically isolated, only storage shared | $50M × α |
+| UniV4 | Singleton storage, per-pair hook logic | **No** - pools logically isolated, only storage shared | $50M × α |
 | Curve V2 | Single pool per N-asset basket (up to 3-8) | Yes, within basket | ~$200M (similar geometry, but stableswap invariant) |
 | Balancer Weighted | Single weighted pool per basket | Yes, within basket | depends on weights; geomean invariant penalises large trades |
 | **BTR AIMM** | Singleton, anchor-tree, N=5-15, oracle-synced | **Yes**, with concentrated quotes | **$200M × α'**, oracle-synced |
 
-UniV4's singleton is a *storage* optimisation, not a *liquidity* one — each pool still has its own reserves. Curve V2 and Balancer share inventory within a basket but use different invariants (stableswap / geomean) that trade off concentration for stability. BTR combines basket sharing with concentrated-liquidity quotes anchored on an oracle tree, which is the geometry that delivers the multiplier described above.
+UniV4's singleton is a *storage* optimisation, not a *liquidity* one - each pool still has its own reserves. Curve V2 and Balancer share inventory within a basket but use different invariants (stableswap / geomean) that trade off concentration for stability. BTR combines basket sharing with concentrated-liquidity quotes anchored on an oracle tree, which is the geometry that delivers the multiplier described above.
 
 ---
 

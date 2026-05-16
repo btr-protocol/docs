@@ -15,7 +15,7 @@ publish: true
 
 ## 1. PURPOSE
 
-This notice describes the BTR governance process and the legal nature of participation. It supplements, and does not replace, the [Terms of Service](/terms-of-service) and [Risk Disclaimer](/risk-disclaimer).
+This notice describes the BTR governance process and the legal nature of participation. It supplements, and does not replace, the [Terms of Service](./terms-of-service.md) and [Risk Disclaimer](./risk-disclaimer.md).
 
 Note: parts of the governance framework below are forward-looking and conditional on the issuance of the BTR Token (see [BTR Token Notice](./btr-token-notice.md)). Pre-issuance, governance is conducted off-chain by core contributors with community input.
 
@@ -38,7 +38,7 @@ Voting eligibility is restricted to holders of:
 - staked BTR (sBTR) with conviction-weighted voting power per the staking schedule;
 - where applicable, sLP (staked LP) tokens for surface-specific votes.
 
-Voters must not be located in a Restricted Country listed in [Terms of Service §2](/terms-of-service). Voters resident in jurisdictions where participation in decentralised governance would require registration, licensing, or regulatory approval not held by the voter are responsible for ensuring their participation is lawful.
+Voters must not be located in a Restricted Country listed in [Terms of Service §2](./terms-of-service.md). Voters resident in jurisdictions where participation in decentralised governance would require registration, licensing, or regulatory approval not held by the voter are responsible for ensuring their participation is lawful.
 
 ## 4. QUORUM AND TIMELOCK
 

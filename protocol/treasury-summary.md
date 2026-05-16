@@ -1,5 +1,5 @@
 ---
-title: "Treasury — Summary"
+title: "Treasury - Summary"
 description: "Friendly summary of the BTR treasury: fees in, POL out, supply enforcement."
 audience: user
 type: explanation
@@ -10,9 +10,7 @@ lang: en
 publish: true
 ---
 
-# Treasury — Summary
-
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+# Treasury - Summary
 
 ## What it is
 
@@ -22,7 +20,7 @@ The BTR Treasury is the protocol's single fund-management hub. It collects all p
 
 - **Sustainability**: predictable fee accrual funds long-term protocol development without diluting holders.
 - **Transparency**: monthly (2% of supply) and annual (8% of supply) spending caps are on-chain enforced; nothing can be spent above the cap without supermajority governance.
-- **Aligned operators**: vault performance fees route through the same treasury SSoT as DEX fees — no off-the-books revenue paths.
+- **Aligned operators**: vault performance fees route through the same treasury SSoT as DEX fees - no off-the-books revenue paths.
 
 ## Key parameters
 
@@ -35,4 +33,4 @@ The BTR Treasury is the protocol's single fund-management hub. It collects all p
 
 ## Deep dive
 
-For full mechanics — fee routing diagram, vesting schedules, council scope, supply-cap proof — see [`03. Treasury.md`](./03.%20Treasury.md).
+For full mechanics - fee routing diagram, vesting schedules, council scope, supply-cap proof - see [`03. Treasury.md`](./03.%20Treasury.md).

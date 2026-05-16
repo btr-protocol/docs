@@ -626,7 +626,7 @@ function _checkWithdrawCooldown(address user, address asset) internal view {
 
 ---
 
-## 4. SVM Security (Solana - Future)
+## 4. SVM Security (Solana - Future) {#4-svm-security-solana-future}
 
 > **Status**: Not currently deployed. Reference for future Solana expansion.
 
@@ -787,7 +787,7 @@ pub fn force_defund(ctx: Context<ForceDefund>) -> Result<()> {
 
 ---
 
-## 5. MoveVM Security (Aptos/Sui - Future)
+## 5. MoveVM Security (Aptos/Sui - Future) {#5-movevm-security-aptossui-future}
 
 > **Status**: Not currently deployed. Reference for future MoveVM expansion.
 

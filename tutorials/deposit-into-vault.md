@@ -12,6 +12,6 @@ publish: true
 
 # Deposit Into a Vault
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 Detailed tutorial for depositing into any BTR vault, including approval flow, slippage settings, and how to monitor your share value over time.

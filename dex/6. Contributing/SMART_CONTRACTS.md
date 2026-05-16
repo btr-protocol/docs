@@ -13,7 +13,7 @@ publish: true
 
 **Tech Stack**: EVM (Solidity) + SVM (Rust) + MoveVM (Move)
 
-> **Architecture note (post Phase 42H)** -code samples below that reference `PoolProxy`, the Diamond pattern, ERC-7201 namespaced storage, or `delegatecall`-based module dispatch describe **generic Solidity patterns** for educational purposes; they do **not** reflect the BTR DEX repo's current architecture. The DEX uses standalone singletons + EIP-1167 `Pool` clones (no Diamond, no delegatecall, no ERC-7201). See [3.2 Deployment & Upgrades](../../dex/3.\ Security/3.2.\ Deployment\ &\ Upgrades.md) for the current model.
+> **Architecture note (post Phase 42H)** -code samples below that reference `PoolProxy`, the Diamond pattern, ERC-7201 namespaced storage, or `delegatecall`-based module dispatch describe **generic Solidity patterns** for educational purposes; they do **not** reflect the BTR DEX repo's current architecture. The DEX uses standalone singletons + EIP-1167 `Pool` clones (no Diamond, no delegatecall, no ERC-7201). See [3.2 Deployment & Upgrades](../3.%20Security/3.2.%20Deployment%20&%20Upgrades.md) for the current model.
 
 ---
 
@@ -974,7 +974,7 @@ aptos move publish             # Publish to chain
 
 ## Internal References
 
-- [`CONTRIBUTING.md`](../CONTRIBUTING.md) - Commit conventions
+- [`GIT.md`](./GIT.md) - Commit conventions
 - [`SECURITY.md`](./SECURITY.md) - Security best practices
 
 ---

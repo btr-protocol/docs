@@ -19,7 +19,7 @@ publish: true
 
 AIMM (Adaptive Inventory Market Maker) synthesizes ideas from quantitative market making theory, ALM-based stableswap design, and concentrated liquidity research. This document traces the intellectual genealogy of each component, acknowledges prior art, and explains our design decisions including paths not taken.
 
-For AIMM's vision and value proposition, see [Manifesto](/docs/concepts/manifesto).
+For AIMM's vision and value proposition, see [Manifesto](manifesto.md).
 
 ---
 
@@ -29,25 +29,25 @@ For AIMM's vision and value proposition, see [Manifesto](/docs/concepts/manifest
 
 ### 1.5.1. CLM Prior Art
 
-- **Gamma Strategies** — Pioneered automated range management on Uniswap V3. Hypervisor contracts deposit dual-asset LP, expose fungible shares, and rebalance via off-chain keepers. Demonstrated the viability of professional range management as a service.
-- **Arrakis Finance** — Originally G-UNI on Uniswap V3; later expanded to multi-venue strategy vaults (Arrakis V2 / PALM). Introduced the keeper-driven programmable ALM (PALM) vault pattern and the role separation between strategy author, executor, and depositor.
-- **Kamino Finance** — Solana-native CLM on Orca Whirlpools and Raydium CLMM. Showed that aggressive, frequent rebalancing can be made cost-effective on low-fee chains, and that vault-level autocompounding plus pessimistic share pricing materially improves passive LP outcomes.
-- **Beefy CLM** — Multi-chain CL vault aggregator. Demonstrated cross-venue adapter abstraction at scale and standardized the "deposit one asset, vault handles two-sided LP" UX.
+- **Gamma Strategies** - Pioneered automated range management on Uniswap V3. Hypervisor contracts deposit dual-asset LP, expose fungible shares, and rebalance via off-chain keepers. Demonstrated the viability of professional range management as a service.
+- **Arrakis Finance** - Originally G-UNI on Uniswap V3; later expanded to multi-venue strategy vaults (Arrakis V2 / PALM). Introduced the keeper-driven programmable ALM (PALM) vault pattern and the role separation between strategy author, executor, and depositor.
+- **Kamino Finance** - Solana-native CLM on Orca Whirlpools and Raydium CLMM. Showed that aggressive, frequent rebalancing can be made cost-effective on low-fee chains, and that vault-level autocompounding plus pessimistic share pricing materially improves passive LP outcomes.
+- **Beefy CLM** - Multi-chain CL vault aggregator. Demonstrated cross-venue adapter abstraction at scale and standardized the "deposit one asset, vault handles two-sided LP" UX.
 
 BTR Supply takes the **adapter abstraction** (Beefy-class), **role separation + ratchet-down keeper authority** (Arrakis-class), **pessimistic share pricing** (Kamino-class), and **passive single-asset UX** (Gamma-class), then layers on the **worst-of(pool, oracle) NAV rule**, **regime-adaptive range policy**, and **per-vault deposit cap + 8-adapter ceiling**.
 
 ### 1.5.2. Tokenized Vault Standards
 
-- **ERC-4626 (Tokenized Vault Standard)** — Canonical interface for yield-bearing vaults: `asset`, `totalAssets`, `convertToShares`, `convertToAssets`, `deposit`, `mint`, `withdraw`, `redeem`. BTR Supply implements ERC-4626 for synchronous flows.
-- **ERC-7540 (Asynchronous ERC-4626 Tokenized Vaults)** — Extends ERC-4626 with request/claim semantics for capacity-constrained or settlement-delayed redemptions. BTR Supply uses ERC-7540 for async redeem tickets when sync exit liquidity is gated (intent in flight, kill switch, deviation halt).
+- **ERC-4626 (Tokenized Vault Standard)** - Canonical interface for yield-bearing vaults: `asset`, `totalAssets`, `convertToShares`, `convertToAssets`, `deposit`, `mint`, `withdraw`, `redeem`. BTR Supply implements ERC-4626 for synchronous flows.
+- **ERC-7540 (Asynchronous ERC-4626 Tokenized Vaults)** - Extends ERC-4626 with request/claim semantics for capacity-constrained or settlement-delayed redemptions. BTR Supply uses ERC-7540 for async redeem tickets when sync exit liquidity is gated (intent in flight, kill switch, deviation halt).
 
 ### 1.5.3. Single-Asset Vault Model
 
-The single-asset model — one ERC-20 in, one ERC-20 out, two-sided LP managed internally — is the dominant ALM UX. It collapses LP-side risk to one decimal (the deposit asset), aligns with stablecoin- or LST-denominated treasury mandates, and lets the vault, not the user, own the rebalance loop.
+The single-asset model - one ERC-20 in, one ERC-20 out, two-sided LP managed internally - is the dominant ALM UX. It collapses LP-side risk to one decimal (the deposit asset), aligns with stablecoin- or LST-denominated treasury mandates, and lets the vault, not the user, own the rebalance loop.
 
 ### 1.5.4. Regime-Adaptive Rebalancing
 
-Regime-adaptive rebalancing literature combines: (a) realized-volatility-driven range width (Garman-Klass / Parkinson estimators), (b) drift-aware re-centering (EWMA / Kalman filters), (c) cost-of-rebalance gating (LVR vs gas trade-off), and (d) sequencer / oracle health gating. BTR Supply implements regime adaptation at the **vault layer**, not inside the underlying CL pool — preserving compatibility with the unmodified third-party DEX contracts.
+Regime-adaptive rebalancing literature combines: (a) realized-volatility-driven range width (Garman-Klass / Parkinson estimators), (b) drift-aware re-centering (EWMA / Kalman filters), (c) cost-of-rebalance gating (LVR vs gas trade-off), and (d) sequencer / oracle health gating. BTR Supply implements regime adaptation at the **vault layer**, not inside the underlying CL pool - preserving compatibility with the unmodified third-party DEX contracts.
 
 ---
 
@@ -73,7 +73,7 @@ where:
 - $\sigma$ = price volatility
 - $\tau$ = time remaining (T - t)
 
-> $\tau = T - t$ is the **finite-horizon residual** in the AS-2008 formulation. AIMM, as an infinite-horizon AMM, uses the **stationary-limit reformulation** (Guéant-Lehalle-Fernandez-Tapia 2012) — the $\gamma\sigma^2\tau$ inventory penalty is replaced by its stationary analog.
+> $\tau = T - t$ is the **finite-horizon residual** in the AS-2008 formulation. AIMM, as an infinite-horizon AMM, uses the **stationary-limit reformulation** (Guéant-Lehalle-Fernandez-Tapia 2012) - the $\gamma\sigma^2\tau$ inventory penalty is replaced by its stationary analog.
 
 When inventory $q > 0$ (long position), the reservation price shifts below market, the market maker is willing to sell at lower prices to reduce exposure. The converse applies for short positions.
 
@@ -90,7 +90,7 @@ where:
 
 Higher volatility or risk aversion widens the spread; more frequent order flow tightens it.
 
-> **Framework assumptions:** This is the AS-2008 optimal half-width for a finite-horizon market-maker with exponential order-arrival intensity $\lambda = A \cdot \exp(-k\delta)$. For BTR's infinite-horizon AMM, the stationary reformulation (Guéant-Lehalle-Fernandez-Tapia 2012) applies — replace $\gamma\sigma^2\tau$ with the stationary inventory penalty.
+> **Framework assumptions:** This is the AS-2008 optimal half-width for a finite-horizon market-maker with exponential order-arrival intensity $\lambda = A \cdot \exp(-k\delta)$. For BTR's infinite-horizon AMM, the stationary reformulation (Guéant-Lehalle-Fernandez-Tapia 2012) applies - replace $\gamma\sigma^2\tau$ with the stationary inventory penalty.
 
 ### 2.4. AIMM's Adaptation
 
@@ -108,7 +108,7 @@ The pricing model implements inventory-aware market making:
 - **Directional surcharge** $U$ implements asymmetric quoting based on coverage impact
 - Coverage-improving trades face only symmetric spread; coverage-worsening trades incur surcharge
 
-See [Spread & Fees](/docs/1.1.4-Spread-&-Fees) for implementation details.
+See [Spread & Fees](../dex/1.%20AIMM/1.1.%20Pricing/1.1.4.%20Spread%20&%20Fees.md) for implementation details.
 
 ---
 
@@ -159,7 +159,7 @@ AIMM extends ALM in three directions:
 
 **Third**, we add **liability decay** for prolonged undercollateralization. When coverage remains critically low, liabilities decay over time to restore solvency preventing permanent insolvency spirals.
 
-See [Inventory Management](/docs/1.1.1-Inventory-Management) for coverage mechanics.
+See [Inventory Management](../dex/1.%20AIMM/1.1.%20Pricing/1.1.1.%20Inventory%20Management.md) for coverage mechanics.
 
 ---
 
@@ -264,7 +264,7 @@ AIMM borrows Curve's internal oracle concept but avoids dynamic invariant update
 
 AIMM's static spline profiles avoid permanent loss from curve drift while maintaining oracle-aware pricing.
 
-See [Oracles](/docs/3.5-Oracles) for dual-window TWAP design.
+See [Oracles](../dex/3.%20Security/3.5.%20Oracles.md) for dual-window TWAP design.
 
 ---
 
@@ -320,7 +320,7 @@ Spline-based profiles overcome elliptical limitations:
 | **Sharp cutoffs** | No | Yes (via tension) |
 | **Arbitrary shapes** | No | Yes (monotone cubic Hermite) |
 
-See [Liquidity Shaping](/docs/1.1.2-Liquidity-Shaping) for spline mechanics.
+See [Liquidity Shaping](../dex/1.%20AIMM/1.1.%20Pricing/1.1.2.%20Liquidity%20Shaping.md) for spline mechanics.
 
 ---
 
@@ -420,7 +420,7 @@ AIMM addresses these issues structurally:
 | **JIT exposure** | hook-mitigated | Reduced (no discrete tick crossings) |
 | **LP sophistication** | range-dependent | Not required |
 
-See [Toxic Flow Mitigation](/docs/1.1.6-Toxic-Flow-Mitigation) for detailed defenses.
+See [Toxic Flow Mitigation](../dex/1.%20AIMM/1.1.%20Pricing/1.1.6.%20Toxic%20Flow%20Mitigation.md) for detailed defenses.
 
 ---
 
@@ -480,9 +480,9 @@ The innovation is on-chain implementation with **Least Common Ancestor (LCA) pat
 | **Gas cost** | Per-pair depth | Single traversal |
 | **Adding tokens** | $N$ new pairs | 1 new edge |
 
-For a side-by-side complexity breakdown including the hub-and-spoke variant, see [Anchor Path Pricing — Key Advantages](../dex/1.%20AIMM/1.1.%20Pricing/1.1.3.%20Anchor%20Path%20Pricing.md#key-advantages).
+For a side-by-side complexity breakdown including the hub-and-spoke variant, see [Anchor Path Pricing - Key Advantages](../dex/1.%20AIMM/1.1.%20Pricing/1.1.3.%20Anchor%20Path%20Pricing.md#key-advantages).
 
-See [Anchor Path Pricing](/docs/1.1.3-Anchor-Path-Pricing) for implementation.
+See [Anchor Path Pricing](../dex/1.%20AIMM/1.1.%20Pricing/1.1.3.%20Anchor%20Path%20Pricing.md) for implementation.
 
 ---
 
@@ -490,7 +490,7 @@ See [Anchor Path Pricing](/docs/1.1.3-Anchor-Path-Pricing) for implementation.
 
 ### 10.1. Polar Coordinate AMMs
 
-Recent research explores AMMs using polar coordinates on an n-dimensional sphere. The polar-tick mathematics and sphere/superellipse invariants in this section trace to [Paradigm's Orbital paper](https://www.paradigm.xyz/2024/06/orbital) and academic work on [Concentrated Circular Market Makers (CCMM)](https://arxiv.org/abs/2510.05428) (Tolstikov et al.). [Orbswap](https://orbswap.org/lite-paper) is one implementing DEX; its lite-paper presents the formulas as images and is not the canonical mathematical source — citations below are to Paradigm/CCMM.
+Recent research explores AMMs using polar coordinates on an n-dimensional sphere. The polar-tick mathematics and sphere/superellipse invariants in this section trace to [Paradigm's Orbital paper](https://www.paradigm.xyz/2024/06/orbital) and academic work on [Concentrated Circular Market Makers (CCMM)](https://arxiv.org/abs/2510.05428) (Tolstikov et al.). [Orbswap](https://orbswap.org/lite-paper) is one implementing DEX; its lite-paper presents the formulas as images and is not the canonical mathematical source - citations below are to Paradigm/CCMM.
 
 **Sphere invariant** (n stablecoins, reserves $x_i$, radius $r$):
 
@@ -510,7 +510,7 @@ $$r_{int}^2 = (\vec{x}\cdot\vec{v} - k_{bound} - r_{int}\sqrt{n})^2 + (\|\vec{x}
 
 > "By rotating the sphere around the circle, we obtain a single torus, or donut shape."
 
-Reported capital efficiency vs Curve for n=5 stables (per the Paradigm Orbital paper): ~15× at a 0.90 depeg threshold, ~150× at 0.99 — pegged-only in v1; LST extensions are theoretical. Risk-isolation claim (Paradigm Orbital / Orbswap litepaper): *"if one of the stablecoins depegs, the others can all trade at efficient prices, while the depegged one will become worthless much faster than a traditional AMM curve."* This is structural: the sphere geometry penalizes any single coordinate diverging far from the diagonal, so a depeg asymmetrically drains the bad asset rather than dragging the pool.
+Reported capital efficiency vs Curve for n=5 stables (per the Paradigm Orbital paper): ~15× at a 0.90 depeg threshold, ~150× at 0.99 - pegged-only in v1; LST extensions are theoretical. Risk-isolation claim (Paradigm Orbital / Orbswap litepaper): *"if one of the stablecoins depegs, the others can all trade at efficient prices, while the depegged one will become worthless much faster than a traditional AMM curve."* This is structural: the sphere geometry penalizes any single coordinate diverging far from the diagonal, so a depeg asymmetrically drains the bad asset rather than dragging the pool.
 
 ### 10.3. Why AIMM Didn't Pursue This
 
@@ -542,15 +542,15 @@ Despite theoretical elegance, circular/orbital approaches face practical challen
 | Dimension | Orbital / Orbswap (CCMM) | AIMM (BTR) |
 |---|---|---|
 | **Asset scope** | Pegged only (stables, can extend to LSTs at matching pegs) | Any volatility profile, mixed pools |
-| **Risk isolation** | Intrinsic via sphere geometry — depeg drains the bad asset | Via anchor-tree topology — bad branch isolated, but shares oracle path |
+| **Risk isolation** | Intrinsic via sphere geometry - depeg drains the bad asset | Via anchor-tree topology - bad branch isolated, but shares oracle path |
 | **Capital efficiency (stables)** | ~15-150× Curve at near-peg ticks | Spline-shaped, comparable near peg, broader off-peg |
 | **Capital efficiency (mixed-vol)** | N/A (invariant breaks for volatile pairs) | Native via anchor-path pricing |
 | **Multi-hop / N-asset routing** | Implicit through n-sphere | Explicit O(log N) LCA pathfinding |
 | **Oracle dependency** | None (curve-derived prices) | Yes (oracle mid + inventory skew) |
-| **Math elegance** | High — closed-form invariant | Lower — monotone cubic Hermite + Avellaneda-Stoikov composite |
+| **Math elegance** | High - closed-form invariant | Lower - monotone cubic Hermite + Avellaneda-Stoikov composite |
 | **Asymmetric depth** | Hard (sphere is symmetric) | Native (per-knot spline control) |
 
-For a pure stables / pure LST pool, Orbital is likely the better technical primitive. For mixed-volatility deployments (USDC + WBTC + WETH + LSTs together), AIMM is the only viable design here — the spherical invariant cannot price volatile-vs-pegged. Where the two **do** compete is BTR's stables-pool deployments; there Orbswap has a real edge on intrinsic depeg isolation, and AIMM compensates via oracle-sync, inventory feedback, and regime-adaptive fees rather than via geometry.
+For a pure stables / pure LST pool, Orbital is likely the better technical primitive. For mixed-volatility deployments (USDC + WBTC + WETH + LSTs together), AIMM is the only viable design here - the spherical invariant cannot price volatile-vs-pegged. Where the two **do** compete is BTR's stables-pool deployments; there Orbswap has a real edge on intrinsic depeg isolation, and AIMM compensates via oracle-sync, inventory feedback, and regime-adaptive fees rather than via geometry.
 
 ---
 
@@ -562,7 +562,7 @@ AIMM's spline-based liquidity profiles appear to be **novel** in DeFi AMM design
 
 ### 11.2. Mathematical Foundation
 
-AIMM uses the [Fritsch-Carlson monotone cubic Hermite interpolation](https://en.wikipedia.org/wiki/Monotone_cubic_interpolation) (1980), not Catmull-Rom. The implementation in `Spline.sol::_tangents` applies Fritsch-Carlson **sign-preservation** on adjacent secants plus the `α² + β² ≤ 9` tangent-magnitude clamp, which guarantees the interpolant is monotone between knots — a hard requirement for an AMM depth profile (a non-monotone segment would imply negative marginal liquidity, breaking pricing). Catmull-Rom has C1 continuity but is **not** monotone in general; it can overshoot between control points.
+AIMM uses the [Fritsch-Carlson monotone cubic Hermite interpolation](https://en.wikipedia.org/wiki/Monotone_cubic_interpolation) (1980), not Catmull-Rom. The implementation in `Spline.sol::_tangents` applies Fritsch-Carlson **sign-preservation** on adjacent secants plus the `α² + β² ≤ 9` tangent-magnitude clamp, which guarantees the interpolant is monotone between knots - a hard requirement for an AMM depth profile (a non-monotone segment would imply negative marginal liquidity, breaking pricing). Catmull-Rom has C1 continuity but is **not** monotone in general; it can overshoot between control points.
 
 Properties relevant to AMM design:
 - **Passes through control points**: LP-intuitive (price$\to$depth mapping exact at knots)
@@ -600,7 +600,7 @@ For query price p:
 
 Gas cost: $O(\log k)$ binary search (`Spline.sol::_search`) + ~4 knots touched per segment (p0/p1 + neighbor tangents for Hermite interpolation), where $k$ = number of profile knots (typically 3-7).
 
-See [Liquidity Shaping](/docs/1.1.2-Liquidity-Shaping) for spline mathematics.
+See [Liquidity Shaping](../dex/1.%20AIMM/1.1.%20Pricing/1.1.2.%20Liquidity%20Shaping.md) for spline mathematics.
 
 ---
 
@@ -798,26 +798,11 @@ AIMM holds that **permissionless operation is non-negotiable** for a DeFi primit
 
 ### 15.4. The Cooperative Arbitrage Model
 
-> 🚧 **FUTURE WORK — NOT YET IMPLEMENTED.** Cooperative Arbitrage is a designed feature on the BTR DEX roadmap, not yet shipped on-chain. No Solidity implementation (cooperators, rebates, reputation) exists in the current release. The parameters below (20% start, 80% cap, <0.9 revocation, ~50 cooperator cap) are proposed initial values, not active on-chain constants. Feature target: post-mainnet, phase TBD.
+> 🚧 **FUTURE WORK - NOT YET IMPLEMENTED.** Cooperative Arbitrage is a designed feature on the BTR DEX roadmap, not yet shipped on-chain. Feature target: post-mainnet, phase TBD.
 
-Cooperative Arbitrage (proposed) **would** balance permissionless trading with curated arbitrageur access:
+Cooperative Arbitrage (proposed) would balance permissionless trading with curated arbitrageur access: trading remains fully permissionless for anyone, while a whitelisted Cooperator program would earn rebates proportional to a donations/rebates reputation score. Cooperators use the same swap interface as everyone, the whitelist controls rebate eligibility, not trading access. This differs from solver/filler whitelists (CoW, UniswapX) where non-whitelisted users cannot access certain execution paths.
 
-1. **Trading would remain fully permissionless**: Anyone can swap, no restrictions
-2. **Cooperator whitelist**: Arbitrageurs would apply to the DAO (application route to be announced — see [Protocol → Governance](../protocol/governance-summary.md) (forum URL to be announced) for updates)
-3. **Reputation-based competition**: All cooperators would start equal (e.g., 20% rebate), would earn higher tiers via donations
-4. **Not MEV, but stat arb**: Would target cross-exchange (CEX-DEX) statistical arbitrage, not block ordering
-5. **Rebate distribution**: `reputation = donations / rebates`; higher reputation → higher rebates (up to 80%)
-6. **Revocation**: Low reputation (<0.9) → loss of Cooperator status
-
-**Key distinction** (proposed design): Cooperators would use the same swap interface as everyone; they would not get execution privileges or off-chain access. The whitelist would control rebate eligibility, not trading access.
-
-**Why whitelist?** (rationale):
-- **Quality control**: Cooperators would not expose LP deposits to excessive CEX risk
-- **Inventory management**: Trusted actors would carry bounded inventory risk
-- **Active monitoring**: Donations, reputation, and behavior would be tracked
-- **Competitive alignment**: Only high-performing cooperators would remain
-
-This would differ from solver/filler whitelists (CoW, UniswapX) where non-whitelisted users cannot access certain execution paths. In AIMM, everyone would trade on equal terms; cooperators would just earn rebates for improving pool state.
+For the full mechanism, parameters, and rationale, see [Manifesto §5.4 Cooperative Arbitrage](manifesto.md#54-cooperative-arbitrage).
 
 ### 15.5. Implications for Resilience
 
@@ -864,10 +849,10 @@ AIMM builds on decades of research:
 
 ## 17. Further Reading
 
-- [AIMM Architecture](/docs/overview-aimm), System architecture
-- [Manifesto](/docs/manifesto), Vision and value proposition
-- [Spread & Fees](/docs/1.1.4-Spread-&-Fees), Bi-factor fee model
-- [Oracles](/docs/3.5-Oracles), Dual-window TWAP design
-- [Liquidity Shaping](/docs/1.1.2-Liquidity-Shaping), Spline profiles
-- [Toxic Flow Mitigation](/docs/1.1.6-Toxic-Flow-Mitigation), Defense mechanisms
+- [AIMM Architecture](../dex/1.%20AIMM/Overview.md), System architecture
+- [Manifesto](manifesto.md), Vision and value proposition
+- [Spread & Fees](../dex/1.%20AIMM/1.1.%20Pricing/1.1.4.%20Spread%20&%20Fees.md), Bi-factor fee model
+- [Oracles](../dex/3.%20Security/3.5.%20Oracles.md), Dual-window TWAP design
+- [Liquidity Shaping](../dex/1.%20AIMM/1.1.%20Pricing/1.1.2.%20Liquidity%20Shaping.md), Spline profiles
+- [Toxic Flow Mitigation](../dex/1.%20AIMM/1.1.%20Pricing/1.1.6.%20Toxic%20Flow%20Mitigation.md), Defense mechanisms
 

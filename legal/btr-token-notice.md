@@ -43,7 +43,7 @@ The BTR Token is **not offered to, and may not be acquired by, persons resident 
 - the United States of America;
 - the United Kingdom;
 - the European Economic Area (subject to the MiCA exemption analysis in [MiCA EU User Notice](./mica-eu-user-notice.md));
-- any Restricted Country listed in [Terms of Service §2](/terms-of-service);
+- any Restricted Country listed in [Terms of Service §2](./terms-of-service.md);
 - any jurisdiction in which acquisition, holding, or transfer of the BTR Token would require registration, licensing, or regulatory approval not held by BTR.
 
 It is the responsibility of each prospective recipient to ensure that any acquisition or holding of the BTR Token is lawful in their jurisdiction.

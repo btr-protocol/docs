@@ -12,7 +12,7 @@ publish: true
 
 # Frequently Asked Questions
 
-> **Placeholder content — answers pending product clarity / screenshots.** The questions below are the must-cover topics for Phase-1 launch.
+> **Placeholder content - answers pending product clarity / screenshots.** The questions below are the must-cover topics for Phase-1 launch.
 
 ## Custody & control
 ### Is BTR custodial?
@@ -66,7 +66,7 @@ See [Audit Reports](../legal/audit-reports.md).
 
 ## Token & governance
 ### Is BTR token live?
-*Pending — Phase 1 token launch TBA.*
+*Pending - Phase 1 token launch TBA.*
 
 ### Can I vote without staking?
 *Answer pending.*

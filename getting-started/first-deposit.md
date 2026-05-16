@@ -12,6 +12,6 @@ publish: true
 
 # Your First Deposit
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 End-to-end walkthrough: choose a vault, approve the token, confirm the deposit tx, and verify your position. Includes gas guidance and common pitfalls.

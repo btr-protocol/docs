@@ -11,7 +11,7 @@ publish: true
 ---
 # AMM Landscape: Where BTR DEX Fits
 
-> Canonical comparison of BTR DEX (AIMM) against major peer AMMs. Honest, technically precise, no marketing inflation. For theoretical lineage see [Foundations](/docs/concepts/foundations); for positioning narrative see [Manifesto](/docs/concepts/manifesto).
+> Canonical comparison of BTR DEX (AIMM) against major peer AMMs. Honest, technically precise, no marketing inflation. For theoretical lineage see [Foundations](foundations.md); for positioning narrative see [Manifesto](manifesto.md).
 
 ---
 
@@ -43,40 +43,40 @@ BTR appears in this landscape twice, in two distinct roles:
 
 | BTR Surface | Role | Launch Phase | Relation to peer AMMs in §1 |
 |-------------|------|--------------|------------------------------|
-| **BTR DEX (AIMM)** | Peer AMM. Curated multi-asset singleton with anchor-tree LCA routing, inventory-aware mid, spline depth. | **Phase 2 (Future)** | Direct peer in the §1 matrix — compared head-to-head with Uniswap, Curve, Balancer, etc. |
+| **BTR DEX (AIMM)** | Peer AMM. Curated multi-asset singleton with anchor-tree LCA routing, inventory-aware mid, spline depth. | **Phase 2 (Future)** | Direct peer in the §1 matrix - compared head-to-head with Uniswap, Curve, Balancer, etc. |
 | **BTR Supply (ALM)** | **Not a peer AMM**. Meta-LP layer. Single-asset vaults that allocate capital into UniV3, UniV4, PancakeV3, PancakeInfinity, Algebra, Ramses + (Phase 2) AIMM. | **Phase 1 (Live)** | Sits **on top of** every CL DEX in the §1 matrix; consumes their pools as liquidity venues via adapters. |
 
-The §1 matrix row labeled "**BTR DEX (AIMM)**" describes the peer-AMM surface only. **BTR Supply (ALM)** is not a column entry there because it does not have its own pricing curve — it inherits whichever curve the underlying adapter exposes.
+The §1 matrix row labeled "**BTR DEX (AIMM)**" describes the peer-AMM surface only. **BTR Supply (ALM)** is not a column entry there because it does not have its own pricing curve - it inherits whichever curve the underlying adapter exposes.
 
 ---
 
 ## 2. Per-Peer Summaries
 
-**Uniswap V2** [^1] — `x·y=k` two-asset CPMM, full-range LP. Trivially path-independent, gas-cheap, zero parameter risk. Capital-inefficient (most TVL idle far from spot), high unpriced LVR. Still dominant for long-tail pairs because deployment friction is zero.
+**Uniswap V2** [^1] - `x·y=k` two-asset CPMM, full-range LP. Trivially path-independent, gas-cheap, zero parameter risk. Capital-inefficient (most TVL idle far from spot), high unpriced LVR. Still dominant for long-tail pairs because deployment friction is zero.
 
-**Uniswap V3** [^2] — Tick-based concentrated liquidity. LP nominates a price range; in-range behaves as local CPMM. Massive in-range CE, but out-of-range = 0 active liquidity; manual rebalance; JIT bots professionalized fee extraction.
+**Uniswap V3** [^2] - Tick-based concentrated liquidity. LP nominates a price range; in-range behaves as local CPMM. Massive in-range CE, but out-of-range = 0 active liquidity; manual rebalance; JIT bots professionalized fee extraction.
 
-**Uniswap V4** [^3] — Singleton `PoolManager` + hooks + flash accounting + native ETH. Pool math is V3; the delta is (a) one contract holds all pool state → cheaper multi-hop / flash loans, (b) hooks can rewrite fee logic and even curves. **Per-pool logic is still pair-isolated**: no shared inventory across pairs in the singleton. Hooks fragment liquidity by configuration.
+**Uniswap V4** [^3] - Singleton `PoolManager` + hooks + flash accounting + native ETH. Pool math is V3; the delta is (a) one contract holds all pool state → cheaper multi-hop / flash loans, (b) hooks can rewrite fee logic and even curves. **Per-pool logic is still pair-isolated**: no shared inventory across pairs in the singleton. Hooks fragment liquidity by configuration.
 
-**Curve V1 (Stableswap)** [^4] — Hybrid invariant flattens to constant-sum near peg, bends to constant-product far from it; `A` controls flat-region width. Up to 8 assets, 2-4 typical. Joint invariant: one asset depeg drains the pool across all assets to varying degrees (UST May 2022 — pool fully cratered; USDC March 2023 SVB — 3pool drained but recovered within days).
+**Curve V1 (Stableswap)** [^4] - Hybrid invariant flattens to constant-sum near peg, bends to constant-product far from it; `A` controls flat-region width. Up to 8 assets, 2-4 typical. Joint invariant: one asset depeg drains the pool across all assets to varying degrees (UST May 2022 - pool fully cratered; USDC March 2023 SVB - 3pool drained but recovered within days).
 
-**Curve V2 (Cryptoswap)** [^5] — Stableswap + EMA price oracle + dynamic repeg governed by `γ` damping + PnL accounting. Tri-volatile around a slowly-drifting internal anchor. Capital-efficient near EMA peg; off-peg execution poor; repeg events incur permanent loss.
+**Curve V2 (Cryptoswap)** [^5] - Stableswap + EMA price oracle + dynamic repeg governed by `γ` damping + PnL accounting. Tri-volatile around a slowly-drifting internal anchor. Capital-efficient near EMA peg; off-peg execution poor; repeg events incur permanent loss.
 
-**Balancer V2/V3** [^6] — Weighted geomean invariant up to 8 assets, plus stable / composable-stable variants. V2's Vault is a singleton storage layer; per-pool math is still pairwise (no shared liquidity across pools in the Vault). V3 adds hooks.
+**Balancer V2/V3** [^6] - Weighted geomean invariant up to 8 assets, plus stable / composable-stable variants. V2's Vault is a singleton storage layer; per-pool math is still pairwise (no shared liquidity across pools in the Vault). V3 adds hooks.
 
-**DODO V1/V2 (PMM)** [^7] — Proactive Market Maker uses Chainlink anchor `i` + slip coef `k`. Accuracy depends on oracle freshness. `k=0` → CSMM, `k=1` → CPMM. Parameters static post-deploy; no regime adaptation.
+**DODO V1/V2 (PMM)** [^7] - Proactive Market Maker uses Chainlink anchor `i` + slip coef `k`. Accuracy depends on oracle freshness. `k=0` → CSMM, `k=1` → CPMM. Parameters static post-deploy; no regime adaptation.
 
-**Maverick V1/V2** [^8] — Two-asset CL with **mode-based auto-rebalance**: Static (V3-like), Right/Left (bins trail directional moves), Both (symmetric trail). Pool itself shifts LP bins on each swap, removing manual rebalance. Pair-isolated.
+**Maverick V1/V2** [^8] - Two-asset CL with **mode-based auto-rebalance**: Static (V3-like), Right/Left (bins trail directional moves), Both (symmetric trail). Pool itself shifts LP bins on each swap, removing manual rebalance. Pair-isolated.
 
-**LFJ Liquidity Book** [^9] — Discrete price bins, each bin a local CSMM. LP positions fungible per-bin. Variable fee accumulator surges spreads under realized vol. Halfway between V3 ticks and an order book.
+**LFJ Liquidity Book** [^9] - Discrete price bins, each bin a local CSMM. LP positions fungible per-bin. Variable fee accumulator surges spreads under realized vol. Halfway between V3 ticks and an order book.
 
-**Platypus** [^10] — Singleton stable AMM with **coverage ratio** (`assets/liabilities`) per token driving slippage. Single-sided deposits, `addAsset` cheap. Original ALM AMM. Feb 16 2023 ~$8.5M flash-loan exploit — root cause: `emergencyWithdraw` in `MasterPlatypus` did not check outstanding USP debt, allowing the attacker to withdraw collateral while leaving USP minted against it. Coverage-mechanism arbitrage demonstrated joint-solvency risk.
+**Platypus** [^10] - Singleton stable AMM with **coverage ratio** (`assets/liabilities`) per token driving slippage. Single-sided deposits, `addAsset` cheap. Original ALM AMM. Feb 16 2023 ~$8.5M flash-loan exploit - root cause: `emergencyWithdraw` in `MasterPlatypus` did not check outstanding USP debt, allowing the attacker to withdraw collateral while leaving USP minted against it. Coverage-mechanism arbitrage demonstrated joint-solvency risk.
 
-**Wombat** [^11] — Platypus fork with per-asset isolation: each asset has its own coverage curve, ringfencing per-asset solvency. Same coverage-slippage family; extended to LSTs.
+**Wombat** [^11] - Platypus fork with per-asset isolation: each asset has its own coverage curve, ringfencing per-asset solvency. Same coverage-slippage family; extended to LSTs.
 
-**OrbSwap (CCMM, Orbital)** [^12] — Polar-coordinate / n-sphere AMM (Paradigm research). Pegged assets sit on an n-dim sphere; per-asset "polar tick" lets one asset exit the sphere on depeg without dragging the rest, giving **mathematical isolation**. Pre-production; verification cost scales with N.
+**OrbSwap (CCMM, Orbital)** [^12] - Polar-coordinate / n-sphere AMM (Paradigm research). Pegged assets sit on an n-dim sphere; per-asset "polar tick" lets one asset exit the sphere on depeg without dragging the rest, giving **mathematical isolation**. Pre-production; verification cost scales with N.
 
-**BTR DEX (AIMM)** — Curated **multi-asset singleton** (5-15 blue-chip target: stables, LSTs, ETH, BTC, majors). Pipeline: (1) internal multi-TF TWAP → reference; (2) coverage-based **inventory skew** adjusts mid (inspired by Platypus + Avellaneda-Stoikov); (3) **spline-shaped depth** (monotone cubic Hermite, Fritsch-Carlson) with vol-scaled dispersion for market impact; (4) two-factor fees `ν·σ + λ·Δ` (vol + momentum) around adjusted mid; (5) **anchor-tree LCA routing** — all assets quote vs anchors, root in base numéraire (O(1) maintenance vs Curve V2 / Wombat O(N²)). **HYBRID oracle**: internal TWAP primary for quoting + Chainlink on base-token only as depeg circuit-breaker (not a primary price source). **Capital-efficiency multiplier**: one USDC unit counterparties N pairs simultaneously via shared inventory hub; depth-per-dollar scales with asset count instead of fragmenting across N(N-1)/2 pairs. Regime adaptation is **algorithmic** (dispersion ← σ; skew ← coverage) plus **admin-mutable spline** under timelock. `addAsset` inserts an anchor-tree node in one call.
+**BTR DEX (AIMM)** - Curated **multi-asset singleton** (5-15 blue-chip target: stables, LSTs, ETH, BTC, majors). Pipeline: (1) internal multi-TF TWAP → reference; (2) coverage-based **inventory skew** adjusts mid (inspired by Platypus + Avellaneda-Stoikov); (3) **spline-shaped depth** (monotone cubic Hermite, Fritsch-Carlson) with vol-scaled dispersion for market impact; (4) two-factor fees `ν·σ + λ·Δ` (vol + momentum) around adjusted mid; (5) **anchor-tree LCA routing** - all assets quote vs anchors, root in base numéraire (O(1) maintenance vs Curve V2 / Wombat O(N²)). **HYBRID oracle**: internal TWAP primary for quoting + Chainlink on base-token only as depeg circuit-breaker (not a primary price source). **Capital-efficiency multiplier**: one USDC unit counterparties N pairs simultaneously via shared inventory hub; depth-per-dollar scales with asset count instead of fragmenting across N(N-1)/2 pairs. Regime adaptation is **algorithmic** (dispersion ← σ; skew ← coverage) plus **admin-mutable spline** under timelock. `addAsset` inserts an anchor-tree node in one call.
 
 ---
 
@@ -84,7 +84,7 @@ The §1 matrix row labeled "**BTR DEX (AIMM)**" describes the peer-AMM surface o
 
 **BTR's niche: blue-chip multi-asset singleton with regime-adaptive policy.**
 
-- **Wins on multi-hop / composability**: anchor-tree LCA routing executes USDC→stETH, DAI→WBTC etc. in one swap inside one contract — no router fanout, no per-hop slip stacking. Uniswap V4's singleton lowers gas but still traverses pair-pools sequentially. Anchor tree collapses N(N-1)/2 pair routing to ≤2 anchor hops.
+- **Wins on multi-hop / composability**: anchor-tree LCA routing executes USDC→stETH, DAI→WBTC etc. in one swap inside one contract - no router fanout, no per-hop slip stacking. Uniswap V4's singleton lowers gas but still traverses pair-pools sequentially. Anchor tree collapses N(N-1)/2 pair routing to ≤2 anchor hops.
 - **Wins on add-asset cost**: `addAsset` call (Platypus/Wombat lineage) vs. full pool deployment (Uniswap / Curve / Balancer). Nth asset is O(1).
 - **Wins on regime adaptation**: spline + vol-scaled dispersion + coverage-driven skew updates on every swap. Curve V1 needs governance to rotate `A`; Curve V2 repegs parametrically but lossily; Uniswap is static unless hook-mediated; Platypus/Wombat curves are static.
 - **Strictly better than DODO / Platypus on policy flexibility**: explicit two-factor fees + admin-mutable spline vs. DODO's static `i/k` and Platypus's static slip function.
@@ -118,7 +118,7 @@ BTR DEX:       TWAP + coverage skew + spline σ-disp + ν·σ+λ·Δ fee (adapti
 [^1]: Adams, H. *Uniswap V2 Core* (2020). https://uniswap.org/whitepaper.pdf
 [^2]: Adams, H. et al. *Uniswap V3 Core* (2021). https://uniswap.org/whitepaper-v3.pdf
 [^3]: Uniswap Labs. *Uniswap V4 Core* (2024). https://github.com/Uniswap/v4-core
-[^4]: Egorov, M. *StableSwap — efficient mechanism for Stablecoin liquidity* (2019). https://docs.curve.finance/assets/pdf/stableswap-paper.pdf
+[^4]: Egorov, M. *StableSwap - efficient mechanism for Stablecoin liquidity* (2019). https://docs.curve.finance/assets/pdf/stableswap-paper.pdf
 [^5]: Egorov, M. *Automatic market-making with dynamic peg* (2021). https://docs.curve.finance/assets/pdf/whitepaper.pdf
 [^6]: Balancer Labs. *Balancer V2 Vault* / *V3 Hooks* (2021, 2024). https://docs.balancer.fi/
 [^7]: DODO Team. *DODO: A Next-generation On-chain Liquidity Provider Powered by PMM* (2020). https://docs.dodoex.io/

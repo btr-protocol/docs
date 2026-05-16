@@ -12,6 +12,6 @@ publish: true
 
 # Claim Rewards
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 Phase-2 guide. Will explain reward types (staking, LP, emissions), claim cadence, gas considerations, and tax-reporting hints.

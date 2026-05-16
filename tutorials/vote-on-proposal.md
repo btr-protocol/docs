@@ -12,6 +12,6 @@ publish: true
 
 # Vote on a Proposal
 
-> **Placeholder** — content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
+> **Placeholder** - content + screenshots forthcoming. See [GitHub issues](https://github.com/btr-protocol) for status.
 
 Phase-2 feature. Will cover finding active proposals, casting votes via veBTR, and tracking proposal outcomes once on-chain governance ships.

@@ -176,7 +176,7 @@ For singletons (`Admin` / `Staking` / `Distributor` / `Flash`), cross-pool state
 | **UUPS** | `Treasury`, `Bridge`, `AccessControl` | Owner-gated; upgrade-pending flag held in transient storage (Phase 42H · G18). |
 | **Singleton replacement** | `Admin`, `Staking`, `Distributor`, `Flash` | Redeployed rather than upgraded in place. |
 
-**Not used in this repo:** EIP-2535 Diamond, ERC-7201 namespaced storage, `delegatecall` between protocol contracts. (Historical references exist in `docs/shared/12..33` decision records.)
+**Not used in this repo:** EIP-2535 Diamond, ERC-7201 namespaced storage, `delegatecall` between protocol contracts.
 
 ---
 

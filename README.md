@@ -19,7 +19,7 @@ Canonical docs root for the BTR protocol. Three product surfaces under one tree,
 |---------|-----------|-------------|
 | **BTR Swap** | Off-chain liquidity meta-aggregator. Composes LiFi, Socket, Squid, Rango, Unizen, 1inch, 0x, ParaSwap, Odos, KyberSwap, OpenOcean, Firebird. Single API, best-of-kind routing, calldata validation for keepers. | [`swap/`](./swap/01.%20Overview.md) |
 | **BTR Dex (AIMM)** | BTR's own AMM. Multi-asset pools, anchor-path routing via LCA, dynamic inventory-aware fees, single-sided deposits, coverage-based IL protection. | [`dex/`](./dex/1.%20AIMM/Overview.md) |
-| **BTR Supply (ALM Vaults)** | Single-asset ERC-4626/7540 vaults that allocate to external CL pools (UniV3/V4, Pancake V3/Infinity, Algebra, Ramses, Aerodrome Slipstream) and forward-looking AIMM. Worst-of(pool, oracle) marks, HWM perf-fee, sync + async redeem. | [`vaults/`](./vaults/01.%20Overview.md) |
+| **BTR Supply (ALM Vaults)** | Single-asset ERC-4626/7540 vaults that allocate to external CL pools (UniV3/V4, Pancake V3/Infinity, Algebra, Ramses) and forward-looking AIMM. Worst-of(pool, oracle) marks, HWM perf-fee, sync + async redeem. | [`vaults/`](./vaults/01.%20Overview.md) |
 
 ## Protocol-Wide
 
@@ -27,7 +27,7 @@ Canonical docs root for the BTR protocol. Three product surfaces under one tree,
 |------|-------|
 | [`concepts/overview.md`](./concepts/overview.md) | Top-level product surfaces + cross-cutting concepts |
 | [`concepts/glossary.md`](./concepts/glossary.md) | Glossary of protocol terms (ALM dual meaning + AIMM unified) |
-| [`legal/`](./legal/) | Terms of Service, Privacy Policy, Risk Disclaimer, Cookie Policy, Acknowledgement |
+| [`legal/acknowledgement.md`](./legal/acknowledgement.md) | Terms of Service, Privacy Policy, Risk Disclaimer, Cookie Policy, Acknowledgement |
 
 Note: `concepts/manifesto.md` and `concepts/foundations.md` describe BTR DEX architecture and design precedents.
 
