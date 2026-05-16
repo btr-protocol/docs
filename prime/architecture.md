@@ -13,7 +13,7 @@ publish: false
 
 ML-driven trading platform for crypto spot and concentrated liquidity management.
 
-**Scope boundary:** BTR consumes information bars produced by NX Rates and produces trading signals executed against exchanges. The unified pipeline uses GBM to predict Parkinson-normalized returns with deterministic sigma-based trading rules -- no chained optimizers. Full ML methodology is documented in [methodology.md](methodology.md).
+**Scope boundary:** BTR consumes information bars produced by NX Rates and produces trading signals executed against exchanges. The unified pipeline uses GBM to predict Parkinson-normalized returns with deterministic sigma-based trading rules -- no chained optimizers. Full ML methodology is documented in the numbered chapters under this directory; see [README](./README.md) for the index.
 
 **Wire/Bar format:** Bars are 96-byte `mitch::Bar` records (64B OHLCV + 32B microstructure); see NX Rates MITCH Bar spec for the canonical layout. The composite TDWAP Index that feeds bar generation is documented in NX Rates aggregation-methodology.md.
 
@@ -46,7 +46,7 @@ NX Rates
               │
               ▼
     optimizer-{strategy}  [btr-ml]
-      ├── Feature extraction (29 core + 12 Renko microstructure)
+      ├── Feature extraction (29 per-bar + 8 cross-asset + 12 Renko-tracker = 49 features)
       ├── Walk-forward GBM (Perpetual, 4-fold decay-weighted ensemble)
       ├── Parkinson-normalized labeling (sigma-scaled returns)
       └── Fitness evaluation (7-component weighted geometric mean)
