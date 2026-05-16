@@ -1,44 +1,75 @@
 ---
-title: "BTR Prime - Documentation Index"
-description: "ML-driven trading platform for crypto spot + concentrated liquidity. Consumes Bar streams from NX Rates."
+title: "BTR Prime — Documentation Index"
+description: "Mathematical methodology behind BTR Prime: adaptive Renko bars, Parkinson volatility, microstructure features, perpetual gradient boosting, walk-forward validation, directional and CL range output rules."
 audience: tech
 type: reference
 status: live
 phase: n/a
-order: 99
+order: 0
 lang: en
-publish: false
+publish: true
 ---
-# BTR Prime - Documentation Index
+# BTR Prime — Documentation Index
 
-ML-driven trading platform for crypto spot + concentrated liquidity. Consumes Bar streams from NX Rates.
+> Quantitative methodology behind BTR Prime: how perpetual gradient boosting on adaptive Renko bars + microstructure features powers both directional trading and concentrated-liquidity range management.
 
-## Where to start
+This documentation set is the **theoretical companion** to the production Rust code at `~/Work/btr/prime`. It is **not** a product manual — it is a math reference for internal quantitative review and external reproducibility. Every formula links to the file:line that implements it.
 
-| If you... | Read |
-|-----------|------|
-| Need the service architecture (optimizer, executor, providers) | [architecture.md](architecture.md) |
-| Need the ML methodology (features, GBM, fitness) | [methodology.md](methodology.md) |
-| Need NXR's data model / wire format | `../../nx/nx-rates/mitch/model/` |
-| Need the composite TDWAP maths | `../../nx/nx-rates/docs/aggregation-methodology.md` |
+---
 
-## Two views
+## Start here
 
-`architecture.md` and `methodology.md` cover orthogonal concerns:
+- **[§00 Overview](./00.%20Overview.md)** — what Prime is, the pipeline at a glance, design invariants, conventions.
 
-- **architecture.md** -services, processes, K8s resources, data flow, CLI surface, file layout. Read this when wiring up infra or onboarding a new strategy binary.
-- **methodology.md** -ML algorithm: features, walk-forward GBM, Parkinson labeling, fitness function, trading rules. Read this when changing the model or interpreting results.
+## The methodology (read in order)
+
+| # | Page | One-line summary |
+|---|---|---|
+| 01 | [Information Bars](./01.%20Information%20Bars.md) | Why information time beats calendar time. Adaptive Renko brick construction. Variance homogenisation and near-Gaussianity theorems. |
+| 02 | [Parkinson Volatility](./02.%20Parkinson%20Volatility.md) | Range-based variance estimator. GBM derivation from first principles. ~5x efficiency vs close-to-close. The universal σ-normalisation. |
+| 03 | [Features](./03.%20Features.md) | 29 per-bar features + 8 cross-asset features + 12 Renko-tracker descriptors. Multi-timeframe scheme. Complete formula manifest. |
+| 04 | [Labels](./04.%20Labels.md) | Directional (LO / SO) labels with threshold-conviction decoupling. CL net-α-vs-HODL labels with Milionis-LVR dampening. Meta-labeling status. |
+| 05 | [Perpetual Boosting](./05.%20Perpetual%20Boosting.md) | Friedman GBM to perpetual variant with complexity budget. Two-stage architecture (Stage-1 active, Stage-2 reserved). Inter-fold decay-weighted ensemble. |
+| 06 | [Walk-Forward Validation](./06.%20Walk-Forward%20Validation.md) | Information-agnostic walk-forward. Purge + embargo invariants. Fitness as gated weighted geometric mean of monthly-geometric sub-scores. |
+| 07 | [Directional Trading](./07.%20Directional%20Trading.md) | Signal to entry / SL / TP / leverage / position-fraction math. Long-only vs short-only separation. PnL accounting. |
+| 08 | [CL Range Management](./08.%20CL%20Range%20Management.md) | Uniswap V3 invariant. LVR. Net-α label. σ-normalised projection to (lower, upper) ticks for the ALM Vault. |
+| 09 | [Hyperparameters](./09.%20Hyperparameters.md) | Single canonical parameter reference: every tunable, its role, default, sensitivity. |
+| 10 | [Open Questions](./10.%20Open%20Questions.md) | Honest catalogue of code↔doc mismatches, missing math, and the research roadmap. |
+
+## Status
+
+**Phase 1 (live):** all the math documented in §01-§08 reflects production code at master. Adaptive Renko bars, Parkinson volatility, feature pipeline, perpetual GBM (Stage-1 primary, decay-weighted inter-fold ensemble), walk-forward harness, fitness function, directional LO/SO output, CL range output.
+
+**Phase 2 (planned, plumbed but inactive):** Stage-2 meta-classifier; intra-fold seed-diverse ensembling; explicit σ-floor trade rejection. See [§10 Open Questions §1](./10.%20Open%20Questions.md#1-codedoc-mismatches-active).
+
+**Phase 3 (research):** GARCH/EGARCH overlay on σ; regime-detection meta-feature; tail-risk-aware fitness extensions; predictive-distribution outputs.
+
+## Internal-only
+
+- [Architecture (engineering view)](./architecture.md) — service inventory, deployment topology. `publish: false`.
+
+## Audience & conventions
+
+- **Audience:** quants, ML researchers, protocol engineers reviewing methodology before mainnet. Not for end-users.
+- **LaTeX:** all math rendered via Temml; inline `$x$` and display `$$x$$`.
+- **Code references:** form `path:line-range` against `~/Work/btr/prime/` unless prefixed.
+- **Theorems:** numbered within each page (e.g. "Theorem 2.1" lives in §02).
+- **Bibliography:** per-page, at the bottom.
 
 ## Cross-repo boundary
 
-BTR is a **consumer** of NX Rates. Canonical specs for upstream concepts live in `~/Work/nx/nx-rates`:
+BTR Prime is a **consumer** of NX Rates. Canonical specs for upstream concepts live in `~/Work/nx/nx-rates`:
 
 | Concept | Canonical source |
-|---------|------------------|
-| `mitch::Bar` (96 B) wire layout | nx-rates/mitch/model/bar.md |
-| Composite Index (TDWAP) frame | nx-rates/mitch/model/index.md |
-| TDWAP / staleness / triangulation maths | nx-rates/docs/aggregation-methodology.md |
-| UDP mcast / WS transport | nx-rates/docs/api.md |
-| Forwarder + sink architecture | nx-rates/docs/architecture.md |
+|---|---|
+| `nxr_sdk::Bar` wire layout | `nx-rates/mitch/model/bar.md` |
+| Composite Index (TDWAP) | `nx-rates/mitch/model/index.md` |
+| TDWAP / staleness / triangulation | `nx-rates/docs/aggregation-methodology.md` |
+| Adaptive Renko brick generator | `nx-rates/series-factory/src/bar_construction/renko.rs` |
+| MTF Parkinson blender | `nx-rates/series-factory/src/bar_construction/parkinson.rs` |
 
-BTR docs **link** to those rather than re-specify.
+This documentation **links** to those rather than re-specifying.
+
+---
+
+**Begin reading:** [§00 Overview →](./00.%20Overview.md)
