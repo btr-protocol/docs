@@ -1243,6 +1243,7 @@ Smart contract-to-smart contract interaction recorded on-chain as a distinct eve
 
 ### Inventory Skew {#inventory-skew}
 Price adjustment based on [coverage ratio](#coverage-ratio) deviation, derived from the [Avellaneda-Stoikov Framework](#avellaneda-stoikov-framework). Applies a quadratic penalty/discount to incentivize rebalancing:
+
 $$\begin{aligned} \text{skew} &\in [-100, +100] \text{ bps} \\ \text{skew} &= \operatorname{sign} \cdot 100 \cdot \left(\frac{\text{coverage} - \text{target}}{\text{bound} - \text{target}}\right)^{\gamma/10000} \end{aligned}$$
 
 where:
@@ -2705,6 +2706,7 @@ See [Statistical Methods](#statistical-methods), [Risk & Volatility Metrics](#ri
 **Statistical method modeling the relationship between a dependent variable (y) and one or more independent variables (x).** Quantifies how much x influences y and allows predictions.
 
 **Linear Regression Formula**:
+
 $$y = \alpha + \beta_1 \cdot x_1 + \beta_2 \cdot x_2 + \ldots + \varepsilon$$
 
 where:

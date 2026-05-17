@@ -713,6 +713,7 @@ The [UAMM paper](https://arxiv.org/abs/2402.01928) ("UAMM: Price-oracle based Au
 DODO's PMM curve ([2020 whitepaper](https://dodoex.github.io/docs/docs/pmm), §3):
 
 $$ P_{excess} = i \cdot \left(1 - k + k \cdot (B_0/B)^2\right), \quad B > B_0 $$
+
 $$ P_{deficit} = \frac{i}{1 - k + k \cdot (B/B_0)^2}, \quad B < B_0 $$
 
 where $i$ is the oracle/market mid-price, $B$ is base reserves, $B_0$ is target base reserves (set by oracle), and $k \in [0, 1]$ controls slippage curvature. AIMM's `computeInventorySkew` is inspired by this excess/deficit symmetry but uses a piecewise-linear surrogate over coverage ratio $c$, not a quadratic over reserve ratio $B/B_0$.
