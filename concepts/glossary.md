@@ -816,7 +816,7 @@ See [Proof of History](#proof-of-history), [Consensus](#consensus), [Gulf Stream
 ## D
 
 ### Dex adapter {#dex-adapter}
-Concrete contract at `alm/evm/src/adapters/Dex.sol`. A multi-holder shim that wraps a single third-party concentrated-liquidity pool (Uniswap v3/v4, PancakeSwap V3/Infinity, Algebra, Ramses, Aerodrome Slipstream). Holders (Vaults, EOAs, multisigs) deposit principal; the adapter manages LP positions on the underlying pool and exposes a uniform NAV / `assetValue` surface.
+Concrete contract at `shared/evm/src/adapters/CLAdapter.sol` (contract symbol `Dex` preserved for CREATE2 stability; moved out of `alm/` in Phase 44). A multi-holder shim that wraps a single third-party concentrated-liquidity pool (Uniswap v3/v4, PancakeSwap V3/Infinity, Algebra, Ramses, Aerodrome Slipstream). Holders (Vaults, EOAs, multisigs) deposit principal; the adapter manages LP positions on the underlying pool and exposes a uniform NAV / `assetValue` surface.
 
 NOT to be confused with **Dex** (the BTR-native AIMM product, source tree `dex/evm/`). "Dex adapter" = the alm-side integration shim; "Dex" (capitalized, no qualifier) = the BTR DEX product.
 
