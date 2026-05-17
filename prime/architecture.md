@@ -46,7 +46,7 @@ NX Rates
               │
               ▼
     optimizer-{strategy}  [btr-ml]
-      ├── Feature extraction (29 per-bar + 8 cross-asset + 12 Renko-tracker = 49 features)
+      ├── Feature extraction (29 MTF + 12 Renko + 8 cross-asset/alt + 12 microstructure = 61 features @ 1 alt)
       ├── Walk-forward GBM (Perpetual, 4-fold decay-weighted ensemble)
       ├── Parkinson-normalized labeling (sigma-scaled returns)
       └── Fitness evaluation (7-component weighted geometric mean)

@@ -27,7 +27,7 @@ This documentation set is the **theoretical companion** to the production Rust c
 |---|---|---|
 | 01 | [Information Bars](./01.%20Information%20Bars.md) | Why information time beats calendar time. Adaptive Renko brick construction. Variance homogenisation and near-Gaussianity theorems. |
 | 02 | [Parkinson Volatility](./02.%20Parkinson%20Volatility.md) | Range-based variance estimator. GBM derivation from first principles. ~5x efficiency vs close-to-close. The universal σ-normalisation. |
-| 03 | [Features](./03.%20Features.md) | 29 per-bar features + 8 cross-asset features + 12 Renko-tracker descriptors. Multi-timeframe scheme. Complete formula manifest. |
+| 03 | [Features](./03.%20Features.md) | 29 MTF per-bar + 12 Renko-tracker + 8 cross-asset (per alt) + 12 microstructure = **61 features** at the canonical 1-alt configuration. Multi-timeframe scheme. Complete formula manifest with data-source provenance. |
 | 04 | [Labels](./04.%20Labels.md) | Directional (LO / SO) labels with threshold-conviction decoupling. CL net-α-vs-HODL labels with Milionis-LVR dampening. Meta-labeling status. |
 | 05 | [Perpetual Boosting](./05.%20Perpetual%20Boosting.md) | Friedman GBM to perpetual variant with complexity budget. Two-stage architecture (Stage-1 active, Stage-2 reserved). Inter-fold decay-weighted ensemble. |
 | 06 | [Walk-Forward Validation](./06.%20Walk-Forward%20Validation.md) | Information-agnostic walk-forward. Purge + embargo invariants. Fitness as gated weighted geometric mean of monthly-geometric sub-scores. |
