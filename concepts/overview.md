@@ -170,5 +170,5 @@ AIMM introduces several innovations not found in existing AMMs:
 - **Want to swap?** → [Swap](../trade/overview.md)
 - **Want to earn yield?** → [Vaults](../vaults/01.%20Overview.md)
 - **Want to provide liquidity to BTR DEX (Phase 2)?** → [Pools - coming soon](../liquidity/coming-soon.md)
-- **Want to govern / stake?** → [Protocol → Governance](../protocol/governance-summary.md)
+- **Want to govern / stake?** → [Protocol → Governance](../protocol/07.%20Governance.md)
 - **Worried about risk?** → [Security Overview](../security/overview.md), [Risk Disclaimer](../legal/risk-disclaimer.md)

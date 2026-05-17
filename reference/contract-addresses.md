@@ -13,7 +13,7 @@ last_reviewed: 2026-05-15
 
 # Contract Addresses
 
-> ⚠ **Pre-launch:** Mainnet contracts not yet deployed. Addresses below will populate at launch. Subscribe via [Protocol → Governance](../protocol/governance-summary.md) (forum URL to be announced) for deployment announcements. **Verify all addresses here post-launch before sending funds.**
+> ⚠ **Pre-launch:** Mainnet contracts not yet deployed. Addresses below will populate at launch. Subscribe via [Protocol → Governance](../protocol/07.%20Governance.md) (forum URL to be announced) for deployment announcements. **Verify all addresses here post-launch before sending funds.**
 
 Authoritative table of deployed contract addresses per supported chain. Verify against this page before interacting with any BTR contract.
 

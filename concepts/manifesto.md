@@ -369,7 +369,7 @@ The remaining challenge with reactive AMM pricing: **lagged prices** relative to
 
 AIMM **would** solve this (roadmap) through **Cooperative Arbitrage** - a proposed whitelisted, reputation-based rebate program:
 
-1. **Anonymous application**: Any stat-arb trader **would** be able to apply to become a Cooperator (application route to be announced - see [Protocol → Governance](../protocol/governance-summary.md) (forum URL to be announced) for updates)
+1. **Anonymous application**: Any stat-arb trader **would** be able to apply to become a Cooperator (application route to be announced - see [Protocol → Governance](../protocol/07.%20Governance.md) (forum URL to be announced) for updates)
 2. **All cooperators would start equal** with the same starting rebate tier (indicative initial value: 20%, governance-adjustable)
 3. **Reputation = donations / rebates**: Higher reputation → higher rebate percentage (indicative cap: 80%, governance-adjustable)
 4. **Competition among cooperators** would keep prices tight and inventory balanced
