@@ -49,6 +49,8 @@ The single-asset model - one ERC-20 in, one ERC-20 out, two-sided LP managed int
 
 Regime-adaptive rebalancing literature combines: (a) realized-volatility-driven range width (Garman-Klass / Parkinson estimators), (b) drift-aware re-centering (EWMA / Kalman filters), (c) cost-of-rebalance gating (LVR vs gas trade-off), and (d) sequencer / oracle health gating. BTR Supply implements regime adaptation at the **vault layer**, not inside the underlying CL pool - preserving compatibility with the unmodified third-party DEX contracts.
 
+> The upstream NX Rates renko sigma basis (which the prime stack consumes) moved Parkinson-over-idx-HLC → **Rogers-Satchell over gapless s10 OHLC** (2026-06, `offline == live`), aligning with prime's own `rs` default; distinct from prime's internal `parkinson_lookback = 50`.
+
 ---
 
 ## 2. Inventory-Based Market Making: The Avellaneda-Stoikov Framework
