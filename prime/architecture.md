@@ -65,7 +65,7 @@ NX Rates
               │
       ┌───────┼───────────┐
       ▼       ▼           ▼
-   Paper   Binance    Li.Fi / Jumper
+   Paper   Binance       Li.Fi
   (sim)    Spot REST  (on-chain swaps)
 ```
 
@@ -77,7 +77,7 @@ NX Rates
 |----------|------|-----------|----------|
 | `PaperProvider` | Paper | In-memory | Forward testing, strategy validation |
 | `BinanceSpotProvider` | Live | HMAC-signed REST v3 | Spot BTC/ETH/BNB USDT pairs |
-| `LifiProvider` | Live | Li.Fi / Jumper API + on-chain | DeFi CL rebalancing (Arbitrum) |
+| `LifiProvider` | Live | Li.Fi API (`li.quest/v1`) + on-chain | DeFi CL rebalancing (Arbitrum) |
 
 ### Signal Structure
 
@@ -127,7 +127,7 @@ btr/
 │   │   ├── bin/                # btr-prime: strategy orchestrator
 │   │   ├── config/             # Domain types: Candle, MlConfig, StrategyMode, Forces
 │   │   ├── core/               # Indicators, CMA-ES (CL only), CL simulation, forces model
-│   │   ├── execution/          # On-chain: Li.Fi/Jumper swaps, AAVE leverage, alloy tx signing
+│   │   ├── execution/          # On-chain: Li.Fi swaps, AAVE leverage, alloy tx signing
 │   │   ├── ml/                 # btr-ml binary: features, GBM training, Parkinson rules, CL pipeline
 │   │   └── runtime/            # btr-runtime binary: Provider trait, 3 providers, RenkoStream, engine
 │   ├── monitor/                # Svelte 5 monitoring dashboard (btr.supply)
