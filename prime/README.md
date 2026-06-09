@@ -65,8 +65,9 @@ BTR Prime is a **consumer** of NX Rates. Canonical specs for upstream concepts l
 | `nxr_sdk::Bar` wire layout | `nx-rates/mitch/model/bar.md` |
 | Composite Index (TDWAP) | `nx-rates/mitch/model/index.md` |
 | TDWAP / staleness / triangulation | `nx-rates/docs/aggregation-methodology.md` |
-| Adaptive Renko brick generator | `nx-rates/series-factory/src/bar_construction/renko.rs` |
-| MTF Parkinson blender | `nx-rates/series-factory/src/bar_construction/parkinson.rs` |
+| Adaptive Renko brick generator (ONE engine, hist == live) | `nx-rates/sdk/rust/src/renko.rs` (`RenkoGenerator`) |
+| k calibrator (scale-to-target, rolling 365d) | `nx-rates/series-factory/src/bar_construction/calibrate.rs`; spec `nx-rates/docs/renko-methodology.md` |
+| MTF Rogers-Satchell σ blender | `nx-rates/sdk/rust/src/vol.rs` (`vol_estimator::rs_sigma_from_ohlc`) |
 
 This documentation **links** to those rather than re-specifying.
 
